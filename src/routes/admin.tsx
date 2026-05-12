@@ -47,7 +47,7 @@ function AdminPage() {
       <AppHeader name="Administrador" />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <h1 className="text-3xl font-bold text-foreground">Panel de Administración</h1>
-        <Tabs defaultValue="investors" className="mt-6">
+        <Tabs defaultValue="projects" className="mt-6">
           <TabsList className="bg-muted/60">
             <TabsTrigger value="projects">Proyectos</TabsTrigger>
             <TabsTrigger value="opps">Oportunidades</TabsTrigger>
