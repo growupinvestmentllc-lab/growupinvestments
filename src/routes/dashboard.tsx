@@ -9,7 +9,7 @@ import { MapPin, ArrowRight } from "lucide-react";
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
 type Project = {
-  id: string; address: string; status: string;
+  id: string; address: string; status: string; hero_image_url: string | null;
 };
 
 function Dashboard() {
@@ -27,7 +27,7 @@ function Dashboard() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data: p } = await supabase.from("projects").select("id,address,status").order("created_at");
+      const { data: p } = await supabase.from("projects").select("id,address,status,hero_image_url").order("created_at");
       const list = p ?? [];
       const enriched = await Promise.all(
         list.map(async (proj) => {
@@ -74,8 +74,16 @@ function Dashboard() {
               key={p.id}
               to="/dashboard/$projectId"
               params={{ projectId: p.id }}
-              className="card-soft p-5 hover:shadow-lg transition group"
+              className="card-soft overflow-hidden hover:shadow-lg transition group"
             >
+              <div className="aspect-[16/9] w-full bg-muted overflow-hidden">
+                <img
+                  src={p.hero_image_url || "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80"}
+                  alt={p.address}
+                  className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+              <div className="p-5">
               <div className="flex items-start justify-between">
                 <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
                   {p.status}
@@ -94,6 +102,7 @@ function Dashboard() {
                   <div className="h-full bg-primary transition-all" style={{ width: `${p.progress}%` }} />
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">Etapa actual: <span className="text-foreground font-medium">{p.activeStage}</span></p>
+              </div>
               </div>
             </Link>
           ))}

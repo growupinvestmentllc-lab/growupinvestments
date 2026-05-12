@@ -207,6 +207,7 @@ export type Database = {
           expected_sale_price: number | null
           features: string | null
           garage: boolean | null
+          hero_image_url: string | null
           id: string
           investor_id: string
           model_name: string | null
@@ -227,6 +228,7 @@ export type Database = {
           expected_sale_price?: number | null
           features?: string | null
           garage?: boolean | null
+          hero_image_url?: string | null
           id?: string
           investor_id: string
           model_name?: string | null
@@ -247,6 +249,7 @@ export type Database = {
           expected_sale_price?: number | null
           features?: string | null
           garage?: boolean | null
+          hero_image_url?: string | null
           id?: string
           investor_id?: string
           model_name?: string | null

@@ -47,13 +47,11 @@ function AdminPage() {
       <AppHeader name="Administrador" />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
         <h1 className="text-3xl font-bold text-foreground">Panel de Administración</h1>
-        <Tabs defaultValue="investors" className="mt-6">
+        <Tabs defaultValue="projects" className="mt-6">
           <TabsList className="bg-muted/60">
-            <TabsTrigger value="investors">Inversionistas</TabsTrigger>
             <TabsTrigger value="projects">Proyectos</TabsTrigger>
             <TabsTrigger value="opps">Oportunidades</TabsTrigger>
           </TabsList>
-          <TabsContent value="investors" className="mt-6"><InvestorsTab /></TabsContent>
           <TabsContent value="projects" className="mt-6"><ProjectsTab /></TabsContent>
           <TabsContent value="opps" className="mt-6"><OpportunitiesTab /></TabsContent>
         </Tabs>
@@ -283,6 +281,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             <div><Label>Depositado (USD)</Label><Input type="number" value={p.amount_deposited ?? 0} onChange={(e) => setP({ ...p, amount_deposited: Number(e.target.value) })} /></div>
             <div><Label>Precio venta estimado</Label><Input type="number" value={p.expected_sale_price ?? 0} onChange={(e) => setP({ ...p, expected_sale_price: Number(e.target.value) })} /></div>
             <div><Label>Costo total proyecto</Label><Input type="number" value={p.total_cost ?? 0} onChange={(e) => setP({ ...p, total_cost: Number(e.target.value) })} /></div>
+            <div className="sm:col-span-2"><Label>URL imagen principal (hero)</Label><Input value={p.hero_image_url ?? ""} placeholder="https://..." onChange={(e) => setP({ ...p, hero_image_url: e.target.value })} /></div>
           </section>
 
           {/* Specs */}
