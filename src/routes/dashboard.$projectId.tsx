@@ -5,11 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
@@ -27,7 +23,6 @@ type Stage = {
 };
 type Comp = { id: string; address: string; sale_price: number; sqft_total: number | null; sqft_living: number | null; days_on_market: number | null; sale_date: string | null };
 type Image = { id: string; image_url: string; caption: string | null };
-type Opportunity = { id: string; name: string; location: string; expected_roi: number; total_investment: number; status: string; contact_url: string | null; image_url: string | null };
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
@@ -37,24 +32,21 @@ function ProjectDetail() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [comps, setComps] = useState<Comp[]>([]);
   const [images, setImages] = useState<Image[]>([]);
-  const [opps, setOpps] = useState<Opportunity[]>([]);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: c }, { data: i }, { data: o }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: c }, { data: i }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
         supabase.from("comparables").select("*").eq("project_id", projectId).order("created_at"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
-        supabase.from("opportunities").select("*").order("created_at", { ascending: false }),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
       setComps((c ?? []) as Comp[]);
       setImages((i ?? []) as Image[]);
-      setOpps((o ?? []) as Opportunity[]);
     })();
   }, [projectId]);
 
@@ -94,11 +86,9 @@ function ProjectDetail() {
 
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
-            <TabsTrigger value="overview">Resumen</TabsTrigger>
-            <TabsTrigger value="opps">Oportunidades</TabsTrigger>
-            <TabsTrigger value="details">Detalles</TabsTrigger>
+            <TabsTrigger value="overview">Información</TabsTrigger>
             <TabsTrigger value="portfolio">Portafolio</TabsTrigger>
-            <TabsTrigger value="sim">Simulador</TabsTrigger>
+            <TabsTrigger value="comparables">Comparables</TabsTrigger>
             <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
@@ -124,37 +114,7 @@ function ProjectDetail() {
             </div>
 
             <DrawSchedule stages={stages} />
-          </TabsContent>
 
-          {/* OPPORTUNITIES */}
-          <TabsContent value="opps" className="mt-6">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {opps.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">No hay oportunidades disponibles.</p>}
-              {opps.map((o) => (
-                <div key={o.id} className="card-soft overflow-hidden flex flex-col">
-                  {o.image_url ? (
-                    <img src={o.image_url} alt={o.name} className="w-full h-40 object-cover" />
-                  ) : (
-                    <div className="w-full h-40 bg-secondary/40 flex items-center justify-center text-secondary-foreground"><Home className="h-8 w-8" /></div>
-                  )}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <span className="self-start text-xs font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">{o.status}</span>
-                    <h3 className="mt-2 font-semibold text-foreground">{o.name}</h3>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><MapPin className="h-3 w-3" />{o.location}</p>
-                    <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                      <div><p className="text-xs text-muted-foreground">ROI esperado</p><p className="font-semibold text-primary">{o.expected_roi}%</p></div>
-                      <div><p className="text-xs text-muted-foreground">Inversión</p><p className="font-semibold text-foreground">{formatUSD(o.total_investment)}</p></div>
-                    </div>
-                    <Button asChild className="mt-5"><a href={o.contact_url || "#"} target="_blank" rel="noreferrer">Quiero saber más <ExternalLink className="h-3 w-3" /></a></Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* DETAILS */}
-          <TabsContent value="details" className="mt-6 space-y-6">
-            <ComparablesTab />
             <div className="card-soft p-5 bg-secondary/30 border-secondary">
               <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>
             </div>
@@ -173,6 +133,11 @@ function ProjectDetail() {
                 <p className="text-sm text-muted-foreground whitespace-pre-line">{project.notes}</p>
               </div>
             )}
+          </TabsContent>
+
+          {/* COMPARABLES */}
+          <TabsContent value="comparables" className="mt-6 space-y-6">
+            <ComparablesTab />
           </TabsContent>
 
           {/* PORTFOLIO */}
@@ -200,11 +165,6 @@ function ProjectDetail() {
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
             </div>
-          </TabsContent>
-
-          {/* SIMULATOR */}
-          <TabsContent value="sim" className="mt-6">
-            <Simulator baseCost={project.total_cost || 0} basePrice={project.expected_sale_price || 250000} />
           </TabsContent>
 
           {/* DOCS */}
@@ -345,69 +305,6 @@ function Spec({ label, value, icon }: { label: string; value: string; icon?: Rea
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="text-sm font-semibold text-foreground">{value}</p>
       </div>
-    </div>
-  );
-}
-
-function Simulator({ baseCost, basePrice }: { baseCost: number; basePrice: number }) {
-  const [price, setPrice] = useState(basePrice || 250000);
-  const [cost, setCost] = useState(baseCost || 180000);
-  const [commission, setCommission] = useState(6);
-  const [closing, setClosing] = useState(2);
-  const [other, setOther] = useState(0);
-
-  const calc = (p: number) => {
-    const net = p - p * (commission / 100) - p * (closing / 100) - other;
-    const gain = net - cost;
-    const roi = cost ? (gain / cost) * 100 : 0;
-    return { net, gain, roi, price: p };
-  };
-  const conservative = calc(price * 0.9);
-  const base = calc(price);
-  const optimistic = calc(price * 1.1);
-
-  return (
-    <div className="grid lg:grid-cols-3 gap-6">
-      <div className="card-soft p-6 lg:col-span-1 space-y-5">
-        <h3 className="font-semibold text-foreground">Parámetros</h3>
-        <div>
-          <Label>Precio de venta estimado: <span className="text-primary font-semibold">{formatUSD(price)}</span></Label>
-          <Slider min={150000} max={600000} step={5000} value={[price]} onValueChange={(v) => setPrice(v[0])} className="mt-3" />
-        </div>
-        <div>
-          <Label>Costo total invertido</Label>
-          <Input type="number" value={cost} onChange={(e) => setCost(Number(e.target.value))} />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div><Label>Comisión %</Label><Input type="number" value={commission} onChange={(e) => setCommission(Number(e.target.value))} /></div>
-          <div><Label>Closing %</Label><Input type="number" value={closing} onChange={(e) => setClosing(Number(e.target.value))} /></div>
-        </div>
-        <div><Label>Otros gastos</Label><Input type="number" value={other} onChange={(e) => setOther(Number(e.target.value))} /></div>
-      </div>
-      <div className="lg:col-span-2 grid sm:grid-cols-3 gap-4">
-        <ScenarioCard title="Conservador" tone="red" {...conservative} />
-        <ScenarioCard title="Base" tone="yellow" {...base} />
-        <ScenarioCard title="Optimista" tone="green" {...optimistic} />
-      </div>
-    </div>
-  );
-}
-
-function ScenarioCard({ title, tone, price, gain, roi }: { title: string; tone: "red" | "yellow" | "green"; price: number; net?: number; gain: number; roi: number }) {
-  const tones = {
-    red: "border-l-4 border-red-500",
-    yellow: "border-l-4 border-yellow-500",
-    green: "border-l-4 border-primary",
-  } as const;
-  return (
-    <div className={`card-soft p-5 ${tones[tone]}`}>
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{title}</p>
-      <p className="mt-3 text-xs text-muted-foreground">Precio venta</p>
-      <p className="text-lg font-bold text-foreground">{formatUSD(price)}</p>
-      <p className="mt-3 text-xs text-muted-foreground">Ganancia neta</p>
-      <p className={`text-lg font-bold ${gain >= 0 ? "text-primary" : "text-destructive"}`}>{formatUSD(gain)}</p>
-      <p className="mt-3 text-xs text-muted-foreground">ROI</p>
-      <p className="text-2xl font-bold text-foreground">{roi.toFixed(1)}%</p>
     </div>
   );
 }

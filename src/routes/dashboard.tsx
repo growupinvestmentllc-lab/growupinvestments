@@ -4,13 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES } from "@/lib/stages";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight, Home, ExternalLink } from "lucide-react";
+import { formatUSD } from "@/lib/stages";
+import { Button } from "@/components/ui/button";
+import { Simulator } from "@/components/Simulator";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
 type Project = {
   id: string; address: string; status: string; hero_image_url: string | null;
 };
+type Opportunity = { id: string; name: string; location: string; expected_roi: number; total_investment: number; status: string; contact_url: string | null; image_url: string | null };
 
 function Dashboard() {
   const { user, role, loading } = useAuth();
@@ -18,6 +22,7 @@ function Dashboard() {
   const location = useLocation();
   const [projects, setProjects] = useState<(Project & { progress: number; activeStage: string })[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
+  const [opps, setOpps] = useState<Opportunity[]>([]);
 
   useEffect(() => {
     if (loading) return;
@@ -49,6 +54,8 @@ function Dashboard() {
       setProjects(enriched);
       const { data: pr } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
       setProfile(pr);
+      const { data: o } = await supabase.from("opportunities").select("*").order("created_at", { ascending: false });
+      setOpps((o ?? []) as Opportunity[]);
     })();
   }, [user, location.pathname]);
 
@@ -110,6 +117,49 @@ function Dashboard() {
             </Link>
           ))}
         </div>
+
+        {/* Oportunidades */}
+        <section className="mt-16">
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Oportunidades</h2>
+              <p className="text-sm text-muted-foreground mt-1">Nuevos proyectos disponibles para invertir</p>
+            </div>
+          </div>
+          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {opps.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">No hay oportunidades disponibles.</p>}
+            {opps.map((o) => (
+              <div key={o.id} className="card-soft overflow-hidden flex flex-col">
+                {o.image_url ? (
+                  <img src={o.image_url} alt={o.name} className="w-full h-40 object-cover" />
+                ) : (
+                  <div className="w-full h-40 bg-secondary/40 flex items-center justify-center text-secondary-foreground"><Home className="h-8 w-8" /></div>
+                )}
+                <div className="p-5 flex-1 flex flex-col">
+                  <span className="self-start text-xs font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">{o.status}</span>
+                  <h3 className="mt-2 font-semibold text-foreground">{o.name}</h3>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5"><MapPin className="h-3 w-3" />{o.location}</p>
+                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                    <div><p className="text-xs text-muted-foreground">ROI esperado</p><p className="font-semibold text-primary">{o.expected_roi}%</p></div>
+                    <div><p className="text-xs text-muted-foreground">Inversión</p><p className="font-semibold text-foreground">{formatUSD(o.total_investment)}</p></div>
+                  </div>
+                  <Button asChild className="mt-5"><a href={o.contact_url || "#"} target="_blank" rel="noreferrer">Quiero saber más <ExternalLink className="h-3 w-3" /></a></Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Simulador */}
+        <section className="mt-16">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground">Simulador de rentabilidad</h2>
+            <p className="text-sm text-muted-foreground mt-1">Estima ganancias y ROI según escenarios de venta</p>
+          </div>
+          <div className="mt-6">
+            <Simulator />
+          </div>
+        </section>
       </main>
     </div>
   );
