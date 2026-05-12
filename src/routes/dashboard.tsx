@@ -80,12 +80,7 @@ function Dashboard() {
             </div>
           )}
           {projects.map((p) => (
-            <Link
-              key={p.id}
-              to="/dashboard/$projectId"
-              params={{ projectId: p.id }}
-              className="card-soft overflow-hidden hover:shadow-lg transition group"
-            >
+            <div key={p.id} className="card-soft overflow-hidden hover:shadow-lg transition group">
               <div className="aspect-[16/9] w-full bg-muted overflow-hidden">
                 <img
                   src={p.hero_image_url || "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1200&q=80"}
@@ -98,7 +93,14 @@ function Dashboard() {
                 <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
                   {p.status}
                 </span>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition" />
+                <Link
+                  to="/dashboard/$projectId"
+                  params={{ projectId: p.id }}
+                  aria-label={`Ver más información de ${p.address}`}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground transition hover:bg-primary/90"
+                >
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
               <h3 className="mt-4 text-lg font-semibold text-foreground leading-snug">{p.address}</h3>
               <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
@@ -113,8 +115,13 @@ function Dashboard() {
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">Etapa actual: <span className="text-foreground font-medium">{p.activeStage}</span></p>
               </div>
+              <Button asChild className="mt-5 w-full">
+                <Link to="/dashboard/$projectId" params={{ projectId: p.id }}>
+                  Ver información <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
 
