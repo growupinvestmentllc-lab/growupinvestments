@@ -14,7 +14,7 @@ import { Slider } from "@/components/ui/slider";
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
 type Project = {
-  id: string; address: string; status: string;
+  id: string; address: string; status: string; hero_image_url: string | null;
   total_value: number; amount_deposited: number;
   expected_sale_price: number; total_cost: number;
   notes: string | null;
@@ -77,6 +77,13 @@ function ProjectDetail() {
         <Link to="/dashboard" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" /> Volver a proyectos
         </Link>
+        <div className="aspect-[16/9] w-full overflow-hidden rounded-xl mb-6 bg-muted">
+          <img
+            src={project.hero_image_url || "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1600&q=80"}
+            alt={project.address}
+            className="h-full w-full object-cover"
+          />
+        </div>
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground">{project.address}</h1>
@@ -90,6 +97,7 @@ function ProjectDetail() {
             <TabsTrigger value="overview">Resumen</TabsTrigger>
             <TabsTrigger value="opps">Nuevas Oportunidades</TabsTrigger>
             <TabsTrigger value="details">Detalles</TabsTrigger>
+            <TabsTrigger value="comps">Comparables</TabsTrigger>
             <TabsTrigger value="portfolio">Portafolio</TabsTrigger>
             <TabsTrigger value="sim">Simulador</TabsTrigger>
           </TabsList>
