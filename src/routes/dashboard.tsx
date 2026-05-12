@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
@@ -15,6 +15,7 @@ type Project = {
 function Dashboard() {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [projects, setProjects] = useState<(Project & { progress: number; activeStage: string })[]>([]);
   const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
 
@@ -25,7 +26,7 @@ function Dashboard() {
   }, [user, role, loading, navigate]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || location.pathname !== "/dashboard") return;
     (async () => {
       const { data: p } = await supabase.from("projects").select("id,address,status,hero_image_url").order("created_at");
       const list = p ?? [];
@@ -49,7 +50,9 @@ function Dashboard() {
       const { data: pr } = await supabase.from("profiles").select("full_name").eq("id", user.id).single();
       setProfile(pr);
     })();
-  }, [user]);
+  }, [user, location.pathname]);
+
+  if (location.pathname !== "/dashboard") return <Outlet />;
 
   return (
     <div className="min-h-screen bg-background">
