@@ -1,0 +1,1 @@
+update public.projects set hero_image_url = 'https://pagtjvlmxokpjytdrtgy.supabase.co/storage/v1/object/public/project-images/embers-hero.jpg' where address ilike '%2217 SW Embers%';
