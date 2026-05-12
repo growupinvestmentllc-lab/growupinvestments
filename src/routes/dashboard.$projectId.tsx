@@ -95,11 +95,11 @@ function ProjectDetail() {
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Resumen</TabsTrigger>
-            <TabsTrigger value="opps">Nuevas Oportunidades</TabsTrigger>
+            <TabsTrigger value="opps">Oportunidades</TabsTrigger>
             <TabsTrigger value="details">Detalles</TabsTrigger>
-            <TabsTrigger value="comps">Comparables</TabsTrigger>
             <TabsTrigger value="portfolio">Portafolio</TabsTrigger>
             <TabsTrigger value="sim">Simulador</TabsTrigger>
+            <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
           {/* OVERVIEW */}
@@ -122,6 +122,8 @@ function ProjectDetail() {
               <StatCard label="Total del Proyecto" value={formatUSD(project.total_value)} />
               <StatCard label="Pendiente" value={formatUSD(pending)} accent="muted" />
             </div>
+
+            <DrawSchedule stages={stages} />
           </TabsContent>
 
           {/* OPPORTUNITIES */}
@@ -152,31 +154,9 @@ function ProjectDetail() {
 
           {/* DETAILS */}
           <TabsContent value="details" className="mt-6 space-y-6">
-            <div className="card-soft p-6">
-              <h3 className="font-semibold text-foreground mb-4">Comparables</h3>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="text-left text-xs uppercase text-muted-foreground border-b border-border">
-                    <tr><th className="py-2">Dirección</th><th>Precio</th><th>Sqft total</th><th>Sqft living</th><th>Días</th><th>Fecha</th></tr>
-                  </thead>
-                  <tbody>
-                    {comps.length === 0 && <tr><td colSpan={6} className="py-6 text-center text-muted-foreground">Sin comparables aún.</td></tr>}
-                    {comps.map((c) => (
-                      <tr key={c.id} className="border-b border-border/60">
-                        <td className="py-3 font-medium text-foreground">{c.address}</td>
-                        <td>{formatUSD(c.sale_price)}</td>
-                        <td>{c.sqft_total ?? "—"}</td>
-                        <td>{c.sqft_living ?? "—"}</td>
-                        <td>{c.days_on_market ?? "—"}</td>
-                        <td>{c.sale_date ?? "—"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <ComparablesTab />
             <div className="card-soft p-5 bg-secondary/30 border-secondary">
-              <p className="text-sm text-foreground"><strong>Financiamiento:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta. Consultar con el equipo GrowUp.</p>
+              <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>
             </div>
             <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">Rentabilidad esperada</h3>
@@ -215,22 +195,71 @@ function ProjectDetail() {
                 <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
                 <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
                 <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "Sí" : "No"} />
+                <Spec label="Constructor" value="Total Smartors LLC" />
+                <Spec label="Arquitecto" value="Olympus Designs Group" />
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
             </div>
-          </TabsContent>
-
-          {/* COMPARABLES */}
-          <TabsContent value="comps" className="mt-6 space-y-8">
-            <ComparablesTab />
           </TabsContent>
 
           {/* SIMULATOR */}
           <TabsContent value="sim" className="mt-6">
             <Simulator baseCost={project.total_cost || 0} basePrice={project.expected_sale_price || 250000} />
           </TabsContent>
+
+          {/* DOCS */}
+          <TabsContent value="docs" className="mt-6">
+            <div className="card-soft p-8 text-center">
+              <h3 className="font-semibold text-foreground mb-2">Documentación</h3>
+              <p className="text-sm text-muted-foreground">Próximamente: contratos, escrituras, permisos y reportes de obra disponibles para descarga.</p>
+            </div>
+          </TabsContent>
         </Tabs>
       </main>
+    </div>
+  );
+}
+
+function DrawSchedule({ stages }: { stages: Stage[] }) {
+  const draws = stages
+    .filter((s) => s.draw_number != null)
+    .reduce<Record<number, { num: number; group: string; amount: number; completed: boolean; active: boolean }>>((acc, s) => {
+      const n = s.draw_number as number;
+      if (!acc[n]) acc[n] = { num: n, group: s.stage_group ?? `Draw ${n}`, amount: 0, completed: true, active: false };
+      acc[n].amount += Number(s.draw_amount || 0);
+      if (!s.completed) acc[n].completed = false;
+      if (s.active) acc[n].active = true;
+      return acc;
+    }, {});
+  const list = Object.values(draws).sort((a, b) => a.num - b.num);
+  if (!list.length) return null;
+  return (
+    <div className="card-soft p-6">
+      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Cronograma de Draws</h3>
+      <div className="space-y-2">
+        {list.map((d) => {
+          const status = d.completed ? "completado" : d.active ? "en-progreso" : "pendiente";
+          const badge =
+            status === "completado"
+              ? "bg-primary/15 text-primary"
+              : status === "en-progreso"
+              ? "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400"
+              : "bg-muted text-muted-foreground";
+          const label = status === "completado" ? "✅ Completado" : status === "en-progreso" ? "🔄 En progreso" : "⏳ Pendiente";
+          return (
+            <div key={d.num} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border bg-background">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="h-8 w-8 rounded-full bg-muted text-foreground flex items-center justify-center text-sm font-semibold">{d.num}</span>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
+                  <p className="text-xs text-muted-foreground">{formatUSD(d.amount)}</p>
+                </div>
+              </div>
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge}`}>{label}</span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
