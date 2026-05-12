@@ -197,12 +197,6 @@ function ProjectDetail() {
 
           {/* PORTFOLIO */}
           <TabsContent value="portfolio" className="mt-6 space-y-6">
-          </TabsContent>
-          {/* COMPARABLES */}
-          <TabsContent value="comps" className="mt-6 space-y-8">
-            <ComparablesTab />
-          </TabsContent>
-          <TabsContent value="portfolio_real" className="hidden">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {images.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">Sin fotos aún.</p>}
               {images.map((img) => (
@@ -224,6 +218,11 @@ function ProjectDetail() {
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
             </div>
+          </TabsContent>
+
+          {/* COMPARABLES */}
+          <TabsContent value="comps" className="mt-6 space-y-8">
+            <ComparablesTab />
           </TabsContent>
 
           {/* SIMULATOR */}
