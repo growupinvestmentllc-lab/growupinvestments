@@ -49,11 +49,9 @@ function AdminPage() {
         <h1 className="text-3xl font-bold text-foreground">Panel de Administración</h1>
         <Tabs defaultValue="investors" className="mt-6">
           <TabsList className="bg-muted/60">
-            <TabsTrigger value="investors">Inversionistas</TabsTrigger>
             <TabsTrigger value="projects">Proyectos</TabsTrigger>
             <TabsTrigger value="opps">Oportunidades</TabsTrigger>
           </TabsList>
-          <TabsContent value="investors" className="mt-6"><InvestorsTab /></TabsContent>
           <TabsContent value="projects" className="mt-6"><ProjectsTab /></TabsContent>
           <TabsContent value="opps" className="mt-6"><OpportunitiesTab /></TabsContent>
         </Tabs>
