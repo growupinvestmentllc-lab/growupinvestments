@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
@@ -169,10 +169,7 @@ function ProjectDetail() {
 
           {/* DOCS */}
           <TabsContent value="docs" className="mt-6">
-            <div className="card-soft p-8 text-center">
-              <h3 className="font-semibold text-foreground mb-2">Documentación</h3>
-              <p className="text-sm text-muted-foreground">Próximamente: contratos, escrituras, permisos y reportes de obra disponibles para descarga.</p>
-            </div>
+            <DocsTab address={project.address} />
           </TabsContent>
         </Tabs>
       </main>
@@ -448,6 +445,52 @@ function ComparablesTab() {
           </div>
         </div>
       </section>
+    </div>
+  );
+}
+const DOCS_2217 = [
+  { name: "Plano Arquitectónico y Estructural", file: "Architectural_Structural_Plan.pdf" },
+  { name: "Contrato de Construcción", file: "Contrato_de_Construccion.pdf" },
+  { name: "Addendum del Contrato", file: "Addendum.pdf" },
+  { name: "Land Trust", file: "Landtrust.pdf" },
+  { name: "Due Diligence", file: "Due_Diligence.pdf" },
+  { name: "Ledger (06-12-2024)", file: "Ledger_06-12-2024.pdf" },
+];
+
+function DocsTab({ address }: { address: string }) {
+  const is2217 = address?.includes("2217");
+  const docs = is2217 ? DOCS_2217 : [];
+  if (!docs.length) {
+    return (
+      <div className="card-soft p-8 text-center">
+        <h3 className="font-semibold text-foreground mb-2">Documentación</h3>
+        <p className="text-sm text-muted-foreground">Próximamente: contratos, escrituras, permisos y reportes de obra disponibles para descarga.</p>
+      </div>
+    );
+  }
+  return (
+    <div className="card-soft p-6">
+      <h3 className="font-semibold text-foreground mb-4">Documentación del Proyecto</h3>
+      <div className="grid sm:grid-cols-2 gap-3">
+        {docs.map((d) => (
+          <a
+            key={d.file}
+            href={`/docs/2217/${d.file}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 p-4 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 transition-colors group"
+          >
+            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+              <FileText className="h-5 w-5" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground truncate">{d.name}</p>
+              <p className="text-xs text-muted-foreground">PDF</p>
+            </div>
+            <Download className="h-4 w-4 text-muted-foreground group-hover:text-primary shrink-0" />
+          </a>
+        ))}
+      </div>
     </div>
   );
 }
