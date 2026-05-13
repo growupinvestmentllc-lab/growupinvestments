@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
@@ -169,10 +169,7 @@ function ProjectDetail() {
 
           {/* DOCS */}
           <TabsContent value="docs" className="mt-6">
-            <div className="card-soft p-8 text-center">
-              <h3 className="font-semibold text-foreground mb-2">Documentación</h3>
-              <p className="text-sm text-muted-foreground">Próximamente: contratos, escrituras, permisos y reportes de obra disponibles para descarga.</p>
-            </div>
+            <DocsTab address={project.address} />
           </TabsContent>
         </Tabs>
       </main>
