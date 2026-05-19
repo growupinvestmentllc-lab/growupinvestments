@@ -110,7 +110,7 @@ function ProjectDetail() {
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                 <ProgressCircle value={progress} />
                 <p className="mt-3 text-sm text-muted-foreground text-center">Etapa actual</p>
-                <p className="text-base font-semibold text-foreground text-center">{activeStage?.stage_name ?? "Por iniciar"}</p>
+                <p className="text-base font-semibold text-foreground text-center">{progress >= 100 ? "Obra 100% completada y entregada" : (activeStage?.stage_name ?? "Por iniciar")}</p>
               </div>
               <div className="card-soft p-6 lg:col-span-2">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Etapas de Construcción</h3>
