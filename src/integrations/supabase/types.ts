@@ -135,18 +135,21 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          llc_name: string | null
         }
         Insert: {
           created_at?: string
           email: string
           full_name?: string | null
           id: string
+          llc_name?: string | null
         }
         Update: {
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
+          llc_name?: string | null
         }
         Relationships: []
       }
@@ -212,6 +215,7 @@ export type Database = {
           investor_id: string
           model_name: string | null
           notes: string | null
+          owner_llc: string | null
           sqft_living: number | null
           sqft_total: number | null
           status: string
@@ -233,6 +237,7 @@ export type Database = {
           investor_id: string
           model_name?: string | null
           notes?: string | null
+          owner_llc?: string | null
           sqft_living?: number | null
           sqft_total?: number | null
           status?: string
@@ -254,6 +259,7 @@ export type Database = {
           investor_id?: string
           model_name?: string | null
           notes?: string | null
+          owner_llc?: string | null
           sqft_living?: number | null
           sqft_total?: number | null
           status?: string
@@ -289,6 +295,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_user_llc: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
