@@ -29,6 +29,7 @@ type Project = {
   id: string; address: string; status: string; hero_image_url: string | null;
   total_value: number; amount_deposited: number;
   expected_sale_price: number; total_cost: number;
+  construction_cost: number; lot_cost: number;
   notes: string | null;
   model_name: string | null; sqft_total: number | null; sqft_living: number | null;
   bedrooms: number | null; bathrooms: number | null; garage: boolean; features: string | null;
