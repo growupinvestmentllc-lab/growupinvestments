@@ -299,6 +299,8 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             <div><Label>Depositado (USD)</Label><Input type="number" value={p.amount_deposited ?? 0} onChange={(e) => setP({ ...p, amount_deposited: Number(e.target.value) })} /></div>
             <div><Label>Precio venta estimado</Label><Input type="number" value={p.expected_sale_price ?? 0} onChange={(e) => setP({ ...p, expected_sale_price: Number(e.target.value) })} /></div>
             <div><Label>Costo total proyecto</Label><Input type="number" value={p.total_cost ?? 0} onChange={(e) => setP({ ...p, total_cost: Number(e.target.value) })} /></div>
+            <div><Label>Costo construcción</Label><Input type="number" value={(p as any).construction_cost ?? 0} onChange={(e) => setP({ ...p, construction_cost: Number(e.target.value) } as any)} /></div>
+            <div><Label>Costo lote</Label><Input type="number" value={(p as any).lot_cost ?? 0} onChange={(e) => setP({ ...p, lot_cost: Number(e.target.value) } as any)} /></div>
             <div className="sm:col-span-2"><Label>URL imagen principal (hero)</Label><Input value={p.hero_image_url ?? ""} placeholder="https://..." onChange={(e) => setP({ ...p, hero_image_url: e.target.value })} /></div>
           </section>
 

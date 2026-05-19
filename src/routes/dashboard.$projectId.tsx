@@ -29,6 +29,7 @@ type Project = {
   id: string; address: string; status: string; hero_image_url: string | null;
   total_value: number; amount_deposited: number;
   expected_sale_price: number; total_cost: number;
+  construction_cost: number; lot_cost: number;
   notes: string | null;
   model_name: string | null; sqft_total: number | null; sqft_living: number | null;
   bedrooms: number | null; bathrooms: number | null; garage: boolean; features: string | null;
@@ -136,10 +137,11 @@ function ProjectDetail() {
             </div>
             <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">Rentabilidad esperada</h3>
-              <div className="grid sm:grid-cols-4 gap-4 text-sm">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
                 <Stat dark label="Precio est. de venta" value={formatUSD(project.expected_sale_price)} />
+                <Stat dark label="Costo construcción" value={formatUSD(project.construction_cost)} />
+                <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
                 <Stat dark label="Costo total" value={formatUSD(project.total_cost)} />
-                <Stat dark label="Ganancia neta" value={formatUSD((project.expected_sale_price ?? 0) - (project.total_cost ?? 0))} />
                 <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
               </div>
             </div>
