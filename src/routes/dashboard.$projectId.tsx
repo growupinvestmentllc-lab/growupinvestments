@@ -21,6 +21,7 @@ const DOC_LABELS: Record<string, string> = {
   informe_1: "Informe 1",
   informe_2: "Informe 2",
   informe_3: "Informe 3",
+  landtrust: "Landtrust",
 };
 
 type Project = {
