@@ -150,7 +150,9 @@ function Dashboard() {
                   </div>
                   <p className="mt-2 text-xs text-muted-foreground">
                     Etapa actual:{" "}
-                    <span className="text-foreground font-medium">{p.activeStage}</span>
+                    <span className="text-foreground font-medium">
+                      {p.progress >= 100 ? "Obra 100% completada y entregada" : p.activeStage}
+                    </span>
                   </p>
                 </div>
                 <Button asChild className="mt-5 w-full">
