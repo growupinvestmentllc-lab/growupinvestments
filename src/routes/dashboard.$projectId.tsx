@@ -458,49 +458,66 @@ function ComparablesTab() {
     </div>
   );
 }
-const DOCS_2217 = [
-  { name: "Plano Arquitectónico y Estructural", file: "Architectural_Structural_Plan.pdf" },
-  { name: "Contrato de Construcción", file: "Contrato_de_Construccion.pdf" },
-  { name: "Addendum del Contrato", file: "Addendum.pdf" },
-  { name: "Land Trust", file: "Landtrust.pdf" },
-  { name: "Due Diligence", file: "Due_Diligence.pdf" },
-  { name: "Ledger (06-12-2024)", file: "Ledger_06-12-2024.pdf" },
-];
+function DocsTab({ projectId }: { projectId: string }) {
+  const [docs, setDocs] = useState<any[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await (supabase as any).from("project_documents").select("*").eq("project_id", projectId);
+      setDocs(data ?? []);
+    })();
+  }, [projectId]);
 
-function DocsTab({ address }: { address: string }) {
-  const is2217 = address?.includes("2217");
-  const docs = is2217 ? DOCS_2217 : [];
-  if (!docs.length) {
-    return (
-      <div className="card-soft p-8 text-center">
-        <h3 className="font-semibold text-foreground mb-2">Documentación</h3>
-        <p className="text-sm text-muted-foreground">Próximamente: contratos, escrituras, permisos y reportes de obra disponibles para descarga.</p>
-      </div>
-    );
-  }
+  const open = async (path: string) => {
+    const { data, error } = await supabase.storage.from("project-documents").createSignedUrl(path, 60 * 10);
+    if (error || !data) return;
+    window.open(data.signedUrl, "_blank");
+  };
+
+  const groups = [
+    { key: "legal", label: "Documentos Legales" },
+    { key: "construccion", label: "Documentos de Construcción" },
+  ];
+
   return (
-    <div className="card-soft p-6">
-      <h3 className="font-semibold text-foreground mb-4">Documentación del Proyecto</h3>
-      <div className="grid sm:grid-cols-2 gap-3">
-        {docs.map((d) => (
-          <a
-            key={d.file}
-            href={`/docs/2217/${d.file}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-3 p-4 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 transition-colors group"
-          >
-            <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
-              <FileText className="h-5 w-5" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{d.name}</p>
-              <p className="text-xs text-muted-foreground">PDF</p>
-            </div>
-            <Download className="h-4 w-4 text-muted-foreground group-hover:text-primary shrink-0" />
-          </a>
-        ))}
-      </div>
+    <div className="space-y-6">
+      {groups.map((g) => {
+        const items = docs.filter((d) => d.category === g.key);
+        return (
+          <div key={g.key} className="card-soft p-6">
+            <h3 className="font-semibold text-foreground mb-4">{g.label}</h3>
+            {items.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Sin documentos disponibles.</p>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-3">
+                {items.map((d) => {
+                  const label = DOC_LABELS[d.doc_type] ?? d.doc_type;
+                  const uploaded = !!d.file_path;
+                  return (
+                    <button
+                      key={d.id}
+                      disabled={!uploaded}
+                      onClick={() => uploaded && open(d.file_path)}
+                      className="text-left flex items-center gap-3 p-4 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-background"
+                    >
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{label}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {d.llc_name ? `${d.llc_name} · ` : ""}
+                          {uploaded ? "Cargado" : "Pendiente"}
+                        </p>
+                      </div>
+                      {uploaded && <Download className="h-4 w-4 text-muted-foreground group-hover:text-primary shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
