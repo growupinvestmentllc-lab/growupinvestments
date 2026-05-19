@@ -250,6 +250,7 @@ export type Database = {
           amount_deposited: number
           bathrooms: number | null
           bedrooms: number | null
+          construction_cost: number | null
           created_at: string
           expected_sale_price: number | null
           features: string | null
@@ -257,6 +258,7 @@ export type Database = {
           hero_image_url: string | null
           id: string
           investor_id: string
+          lot_cost: number | null
           model_name: string | null
           notes: string | null
           owner_llc: string | null
@@ -275,6 +277,7 @@ export type Database = {
           amount_deposited?: number
           bathrooms?: number | null
           bedrooms?: number | null
+          construction_cost?: number | null
           created_at?: string
           expected_sale_price?: number | null
           features?: string | null
@@ -282,6 +285,7 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           investor_id: string
+          lot_cost?: number | null
           model_name?: string | null
           notes?: string | null
           owner_llc?: string | null
@@ -300,6 +304,7 @@ export type Database = {
           amount_deposited?: number
           bathrooms?: number | null
           bedrooms?: number | null
+          construction_cost?: number | null
           created_at?: string
           expected_sale_price?: number | null
           features?: string | null
@@ -307,6 +312,7 @@ export type Database = {
           hero_image_url?: string | null
           id?: string
           investor_id?: string
+          lot_cost?: number | null
           model_name?: string | null
           notes?: string | null
           owner_llc?: string | null
