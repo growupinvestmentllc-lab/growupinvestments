@@ -354,6 +354,8 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
           </section>
 
           {/* Comparables */}
+          <DocumentsSection projectId={project.id} docs={docs} onChange={loadDocs} />
+
           <section>
             <h4 className="font-semibold mb-2 flex items-center justify-between">Comparables
               <Button size="sm" variant="outline" onClick={async () => {
