@@ -284,6 +284,18 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             <div className="sm:col-span-2"><Label>URL imagen principal (hero)</Label><Input value={p.hero_image_url ?? ""} placeholder="https://..." onChange={(e) => setP({ ...p, hero_image_url: e.target.value })} /></div>
           </section>
 
+          {/* Propietarios LLC */}
+          <section>
+            <h4 className="font-semibold mb-2">Propietarios (LLC)</h4>
+            <div className="grid sm:grid-cols-2 gap-3">
+              <div><Label>Propietario 1 (LLC)</Label><Input value={(p as any).owner_llc ?? ""} placeholder="EJ: AFJ LLC" onChange={(e) => setP({ ...p, owner_llc: e.target.value } as any)} /></div>
+              <div><Label>% Propietario 1</Label><Input type="number" step="0.01" value={(p as any).owner_pct_1 ?? ""} onChange={(e) => setP({ ...p, owner_pct_1: e.target.value === "" ? null : Number(e.target.value) } as any)} /></div>
+              <div><Label>Propietario 2 (LLC)</Label><Input value={(p as any).owner_llc_2 ?? ""} placeholder="Opcional" onChange={(e) => setP({ ...p, owner_llc_2: e.target.value || null } as any)} /></div>
+              <div><Label>% Propietario 2</Label><Input type="number" step="0.01" value={(p as any).owner_pct_2 ?? ""} onChange={(e) => setP({ ...p, owner_pct_2: e.target.value === "" ? null : Number(e.target.value) } as any)} /></div>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">El inversor verá la propiedad si su LLC coincide con Propietario 1 o Propietario 2.</p>
+          </section>
+
           {/* Specs */}
           <section>
             <h4 className="font-semibold mb-2">Especificaciones (Portafolio)</h4>
