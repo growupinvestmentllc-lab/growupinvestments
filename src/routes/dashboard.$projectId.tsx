@@ -9,6 +9,16 @@ import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } fr
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
+const DOC_LABELS: Record<string, string> = {
+  contrato_construccion: "Contrato de Construcción",
+  assignment_beneficiary: "Assignment of Beneficiary",
+  buyer: "Buyer",
+  due_diligence: "Due Diligence",
+  joint_venture: "Joint Venture",
+  warranty_deed: "Warranty Deed",
+  structural_plan: "Structural Plan",
+};
+
 type Project = {
   id: string; address: string; status: string; hero_image_url: string | null;
   total_value: number; amount_deposited: number;
@@ -169,7 +179,7 @@ function ProjectDetail() {
 
           {/* DOCS */}
           <TabsContent value="docs" className="mt-6">
-            <DocsTab address={project.address} />
+            <DocsTab projectId={project.id} />
           </TabsContent>
         </Tabs>
       </main>
