@@ -412,6 +412,89 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
 }
 
 /* ---------------- OPPORTUNITIES ---------------- */
+function DocumentsSection({ projectId, docs, onChange }: { projectId: string; docs: any[]; onChange: () => void }) {
+  const [busy, setBusy] = useState<string | null>(null);
+
+  const upload = async (doc: any, file: File) => {
+    setBusy(doc.id);
+    try {
+      const ext = file.name.split(".").pop() || "bin";
+      const path = `${projectId}/${doc.id}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("project-documents").upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { error } = await (supabase as any).from("project_documents").update({
+        file_path: path, file_name: file.name, uploaded_at: new Date().toISOString(),
+      }).eq("id", doc.id);
+      if (error) throw error;
+      toast.success("Documento cargado");
+      onChange();
+    } catch (e: any) { toast.error(e.message); }
+    finally { setBusy(null); }
+  };
+
+  const remove = async (doc: any) => {
+    if (!doc.file_path) return;
+    if (!confirm("¿Eliminar archivo cargado?")) return;
+    await supabase.storage.from("project-documents").remove([doc.file_path]);
+    await (supabase as any).from("project_documents").update({ file_path: null, file_name: null, uploaded_at: null }).eq("id", doc.id);
+    onChange();
+  };
+
+  const open = async (path: string) => {
+    const { data } = await supabase.storage.from("project-documents").createSignedUrl(path, 600);
+    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+  };
+
+  const groups = [
+    { key: "legal", label: "Legales" },
+    { key: "construccion", label: "Construcción" },
+  ];
+
+  return (
+    <section>
+      <h4 className="font-semibold mb-2">Documentos</h4>
+      <p className="text-xs text-muted-foreground mb-3">Los documentos se generan automáticamente según los propietarios (LLC) de la propiedad.</p>
+      <div className="space-y-4">
+        {groups.map((g) => {
+          const items = docs.filter((d) => d.category === g.key);
+          return (
+            <div key={g.key} className="border border-border rounded-md p-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{g.label}</p>
+              {items.length === 0 ? <p className="text-xs text-muted-foreground">Sin documentos.</p> : (
+                <div className="space-y-2">
+                  {items.map((d) => (
+                    <div key={d.id} className="flex items-center gap-2 text-xs">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate">{DOC_LABELS[d.doc_type] ?? d.doc_type}{d.llc_name ? ` — ${d.llc_name}` : ""}</p>
+                        <p className="text-muted-foreground">
+                          {d.file_path ? (
+                            <button className="underline" onClick={() => open(d.file_path)}>{d.file_name || "Cargado"}</button>
+                          ) : "Pendiente"}
+                        </p>
+                      </div>
+                      <label className="cursor-pointer">
+                        <input type="file" className="hidden" onChange={(e) => {
+                          const f = e.target.files?.[0]; if (f) upload(d, f); e.target.value = "";
+                        }} />
+                        <span className="inline-flex items-center px-2 py-1 rounded border border-input bg-background hover:bg-muted">
+                          {busy === d.id ? "Subiendo…" : (d.file_path ? "Reemplazar" : "Subir")}
+                        </span>
+                      </label>
+                      {d.file_path && (
+                        <Button size="sm" variant="ghost" onClick={() => remove(d)}><Trash2 className="h-3 w-3 text-destructive" /></Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function OpportunitiesTab() {
   const [opps, setOpps] = useState<any[]>([]);
   const [editing, setEditing] = useState<any | null>(null);
