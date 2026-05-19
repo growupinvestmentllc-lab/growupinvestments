@@ -22,6 +22,7 @@ const DOC_LABELS: Record<string, string> = {
   informe_2: "Informe 2",
   informe_3: "Informe 3",
   landtrust: "Landtrust",
+  certificado_ocupacion: "Certificado de Ocupación (CO)",
 };
 
 type Project = {
