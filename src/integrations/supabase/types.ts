@@ -216,6 +216,9 @@ export type Database = {
           model_name: string | null
           notes: string | null
           owner_llc: string | null
+          owner_llc_2: string | null
+          owner_pct_1: number | null
+          owner_pct_2: number | null
           sqft_living: number | null
           sqft_total: number | null
           status: string
@@ -238,6 +241,9 @@ export type Database = {
           model_name?: string | null
           notes?: string | null
           owner_llc?: string | null
+          owner_llc_2?: string | null
+          owner_pct_1?: number | null
+          owner_pct_2?: number | null
           sqft_living?: number | null
           sqft_total?: number | null
           status?: string
@@ -260,6 +266,9 @@ export type Database = {
           model_name?: string | null
           notes?: string | null
           owner_llc?: string | null
+          owner_llc_2?: string | null
+          owner_pct_1?: number | null
+          owner_pct_2?: number | null
           sqft_living?: number | null
           sqft_total?: number | null
           status?: string
