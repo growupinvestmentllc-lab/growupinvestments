@@ -17,6 +17,16 @@ import { Plus, Trash2, Edit, X } from "lucide-react";
 import { toast } from "sonner";
 import { adminExists, bootstrapAdmin, createInvestor, deleteInvestor, updateInvestorPassword } from "@/lib/admin.functions";
 
+const DOC_LABELS: Record<string, string> = {
+  contrato_construccion: "Contrato de Construcción",
+  assignment_beneficiary: "Assignment of Beneficiary",
+  buyer: "Buyer",
+  due_diligence: "Due Diligence",
+  joint_venture: "Joint Venture",
+  warranty_deed: "Warranty Deed",
+  structural_plan: "Structural Plan",
+};
+
 export const Route = createFileRoute("/admin")({ component: AdminPage });
 
 function AdminPage() {
@@ -244,6 +254,12 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
   const [stages, setStages] = useState<any[]>([]);
   const [comps, setComps] = useState<any[]>([]);
   const [images, setImages] = useState<any[]>([]);
+  const [docs, setDocs] = useState<any[]>([]);
+
+  const loadDocs = async () => {
+    const { data } = await (supabase as any).from("project_documents").select("*").eq("project_id", project.id).order("category").order("doc_type");
+    setDocs(data ?? []);
+  };
 
   useEffect(() => {
     (async () => {
@@ -253,6 +269,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
         supabase.from("portfolio_images").select("*").eq("project_id", project.id).order("sort_order"),
       ]);
       setStages(s ?? []); setComps(c ?? []); setImages(i ?? []);
+      await loadDocs();
     })();
   }, [project.id]);
 
