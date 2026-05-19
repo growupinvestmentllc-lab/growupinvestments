@@ -153,6 +153,50 @@ export type Database = {
         }
         Relationships: []
       }
+      project_documents: {
+        Row: {
+          category: string
+          created_at: string
+          doc_type: string
+          file_name: string | null
+          file_path: string | null
+          id: string
+          llc_name: string | null
+          project_id: string
+          uploaded_at: string | null
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          doc_type: string
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          llc_name?: string | null
+          project_id: string
+          uploaded_at?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          doc_type?: string
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          llc_name?: string | null
+          project_id?: string
+          uploaded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_documents_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_stages: {
         Row: {
           active: boolean
@@ -305,6 +349,10 @@ export type Database = {
     }
     Functions: {
       current_user_llc: { Args: never; Returns: string }
+      ensure_project_documents: {
+        Args: { _project_id: string }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
