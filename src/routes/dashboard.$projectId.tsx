@@ -17,6 +17,7 @@ const DOC_LABELS: Record<string, string> = {
   joint_venture: "Joint Venture",
   warranty_deed: "Warranty Deed",
   structural_plan: "Structural Plan",
+  ledger_balance: "Ledger Balance Report",
 };
 
 type Project = {
