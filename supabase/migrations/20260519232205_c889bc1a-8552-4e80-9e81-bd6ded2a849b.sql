@@ -1,0 +1,2 @@
+ALTER TABLE public.project_documents DROP CONSTRAINT project_documents_doc_type_check;
+ALTER TABLE public.project_documents ADD CONSTRAINT project_documents_doc_type_check CHECK (doc_type = ANY (ARRAY['contrato_construccion'::text, 'assignment_beneficiary'::text, 'buyer'::text, 'due_diligence'::text, 'joint_venture'::text, 'warranty_deed'::text, 'structural_plan'::text, 'ledger_balance'::text, 'informe_1'::text, 'informe_2'::text, 'informe_3'::text, 'landtrust'::text, 'certificado_ocupacion'::text, 'seawall_letter'::text]));
