@@ -12,8 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { ALL_STAGES, formatUSD } from "@/lib/stages";
-import { Plus, Trash2, Edit, X } from "lucide-react";
+import { ALL_STAGES, STAGE_GROUPS, formatUSD } from "@/lib/stages";
+import { Plus, Trash2, Edit, X, ListChecks } from "lucide-react";
 import { toast } from "sonner";
 import { adminExists, bootstrapAdmin, createInvestor, deleteInvestor, updateInvestorPassword } from "@/lib/admin.functions";
 
@@ -183,6 +183,7 @@ function ProjectsTab() {
   const [projects, setProjects] = useState<any[]>([]);
   const [investors, setInvestors] = useState<any[]>([]);
   const [editing, setEditing] = useState<any | null>(null);
+  const [stagesOnly, setStagesOnly] = useState<any | null>(null);
 
   const load = async () => {
     const { data: p } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
@@ -232,6 +233,7 @@ function ProjectsTab() {
                   <p className="text-xs mt-2">{formatUSD(p.amount_deposited)} / {formatUSD(p.total_cost)}</p>
                 </div>
                 <div className="flex gap-1">
+                  <Button size="sm" variant="ghost" title="Etapas" onClick={() => setStagesOnly(p)}><ListChecks className="h-4 w-4" /></Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditing(p)}><Edit className="h-4 w-4" /></Button>
                   <Button size="sm" variant="ghost" onClick={async () => {
                     if (confirm("¿Eliminar proyecto?")) {
@@ -246,6 +248,7 @@ function ProjectsTab() {
         })}
       </div>
       {editing && <ProjectEditor project={editing} investors={investors} onClose={() => { setEditing(null); load(); }} />}
+      {stagesOnly && <StagesDialog project={stagesOnly} onClose={() => setStagesOnly(null)} />}
     </div>
   );
 }
@@ -332,29 +335,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
           </section>
 
           {/* Stages */}
-          <section>
-            <h4 className="font-semibold mb-2">Etapas / Draws</h4>
-            <div className="space-y-1 max-h-72 overflow-y-auto border border-border rounded-md p-2">
-              {stages.map((s) => (
-                <div key={s.id} className="grid grid-cols-12 gap-2 items-center text-xs">
-                  <span className="col-span-5 truncate" title={s.stage_name}>{s.stage_name}</span>
-                  <Input className="col-span-2 h-8" type="number" value={s.draw_amount} onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))} />
-                  <label className="col-span-2 flex items-center gap-1"><input type="checkbox" checked={s.completed} onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, completed: e.target.checked } : x))} /> OK</label>
-                  <label className="col-span-2 flex items-center gap-1"><input type="checkbox" checked={s.active} onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, active: e.target.checked, completed: e.target.checked ? false : x.completed } : { ...x, active: false }))} /> Actual</label>
-                  <Button size="sm" variant="ghost" className="col-span-1 h-8 px-2" onClick={async () => {
-                    await supabase.from("project_stages").update({ draw_amount: s.draw_amount, completed: s.completed, active: s.active }).eq("id", s.id);
-                    toast.success("Etapa guardada");
-                  }}>💾</Button>
-                </div>
-              ))}
-            </div>
-            <Button size="sm" variant="outline" className="mt-2" onClick={async () => {
-              for (const s of stages) {
-                await supabase.from("project_stages").update({ draw_amount: s.draw_amount, completed: s.completed, active: s.active }).eq("id", s.id);
-              }
-              toast.success("Todas las etapas guardadas");
-            }}>Guardar todas las etapas</Button>
-          </section>
+          <StagesEditor stages={stages} setStages={setStages} />
 
           {/* Comparables */}
           <DocumentsSection projectId={project.id} docs={docs} onChange={loadDocs} />
@@ -559,5 +540,109 @@ function OpportunitiesTab() {
         </Dialog>
       )}
     </div>
+  );
+}
+
+/* ---------------- STAGES ---------------- */
+function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any[]) => void }) {
+  const saveOne = async (s: any) => {
+    await supabase.from("project_stages").update({
+      draw_amount: s.draw_amount, completed: s.completed, active: s.active,
+    }).eq("id", s.id);
+  };
+
+  const toggleCompleted = async (s: any, checked: boolean) => {
+    const next = stages.map((x) => x.id === s.id ? { ...x, completed: checked, active: checked ? false : x.active } : x);
+    setStages(next);
+    await saveOne({ ...s, completed: checked, active: checked ? false : s.active });
+    toast.success(checked ? "Etapa completada" : "Etapa pendiente");
+  };
+
+  const setActive = async (s: any) => {
+    const next = stages.map((x) => x.id === s.id
+      ? { ...x, active: true, completed: false }
+      : { ...x, active: false });
+    setStages(next);
+    // persist: set this active, all others not active
+    await Promise.all(next.map((x) => supabase.from("project_stages").update({
+      active: x.active, completed: x.completed,
+    }).eq("id", x.id)));
+    toast.success("Etapa actual actualizada");
+  };
+
+  return (
+    <section>
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-semibold">Etapas de construcción</h4>
+        <p className="text-xs text-muted-foreground">Marca completadas y la etapa actual</p>
+      </div>
+      <div className="space-y-3 max-h-[28rem] overflow-y-auto pr-1">
+        {STAGE_GROUPS.map((g) => {
+          const groupStages = stages.filter((s) => s.stage_group === g.group);
+          if (groupStages.length === 0) return null;
+          const done = groupStages.filter((s) => s.completed).length;
+          return (
+            <div key={g.group} className="border border-border rounded-md">
+              <div className="flex items-center justify-between px-3 py-2 bg-muted/40 rounded-t-md">
+                <p className="text-xs font-semibold uppercase tracking-wider text-foreground">{g.group}</p>
+                <span className="text-xs text-muted-foreground">{done}/{groupStages.length}</span>
+              </div>
+              <div className="divide-y divide-border">
+                {groupStages.map((s) => (
+                  <div key={s.id} className={`flex items-center gap-3 px-3 py-2 text-sm ${s.active ? "bg-primary/5" : ""}`}>
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-primary"
+                      checked={s.completed}
+                      onChange={(e) => toggleCompleted(s, e.target.checked)}
+                    />
+                    <span className={`flex-1 ${s.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                      {s.stage_name}
+                    </span>
+                    {s.active && <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Actual</span>}
+                    <Button
+                      size="sm"
+                      variant={s.active ? "default" : "outline"}
+                      className="h-7 text-xs"
+                      onClick={() => setActive(s)}
+                      disabled={s.completed}
+                    >
+                      Marcar actual
+                    </Button>
+                    <Input
+                      className="h-7 w-24 text-xs"
+                      type="number"
+                      placeholder="Draw $"
+                      value={s.draw_amount ?? 0}
+                      onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))}
+                      onBlur={() => saveOne(s)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function StagesDialog({ project, onClose }: { project: any; onClose: () => void }) {
+  const [stages, setStages] = useState<any[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("project_stages").select("*").eq("project_id", project.id).order("stage_order");
+      setStages(data ?? []);
+    })();
+  }, [project.id]);
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader><DialogTitle>Etapas · {project.address}</DialogTitle></DialogHeader>
+        <StagesEditor stages={stages} setStages={setStages} />
+        <DialogFooter><Button variant="outline" onClick={onClose}>Cerrar</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
