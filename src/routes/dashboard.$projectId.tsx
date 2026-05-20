@@ -187,7 +187,6 @@ function ProjectDetail() {
                 <Stat dark label="Alquiler est. (mensual)" value={formatUSD(project.expected_rent_price ?? 0)} />
                 <Stat dark label="Costo construcción" value={formatUSD(project.construction_cost)} />
                 <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
-                <Stat dark label="Costo total" value={formatUSD(project.total_cost)} />
                 <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
               </div>
             </div>
