@@ -252,6 +252,7 @@ export type Database = {
           bedrooms: number | null
           construction_cost: number | null
           created_at: string
+          expected_rent_price: number | null
           expected_sale_price: number | null
           features: string | null
           garage: boolean | null
@@ -279,6 +280,7 @@ export type Database = {
           bedrooms?: number | null
           construction_cost?: number | null
           created_at?: string
+          expected_rent_price?: number | null
           expected_sale_price?: number | null
           features?: string | null
           garage?: boolean | null
@@ -306,6 +308,7 @@ export type Database = {
           bedrooms?: number | null
           construction_cost?: number | null
           created_at?: string
+          expected_rent_price?: number | null
           expected_sale_price?: number | null
           features?: string | null
           garage?: boolean | null
