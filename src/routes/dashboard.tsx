@@ -166,6 +166,7 @@ function Dashboard() {
         </div>
 
         {/* Oportunidades */}
+        {profile?.full_name?.toUpperCase() !== "LAS TROPAS LLC" && (
         <section className="mt-16">
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div>
@@ -221,6 +222,7 @@ function Dashboard() {
             ))}
           </div>
         </section>
+        )}
 
         {/* Simulador */}
         {profile?.full_name?.toUpperCase() !== "LAS TROPAS LLC" && (
