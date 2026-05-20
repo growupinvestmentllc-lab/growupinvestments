@@ -233,7 +233,9 @@ function ProjectsTab() {
                   <p className="text-xs mt-2">{formatUSD(p.amount_deposited)} / {formatUSD(p.total_cost)}</p>
                 </div>
                 <div className="flex gap-1">
-                  <Button size="sm" variant="ghost" title="Etapas" onClick={() => setStagesOnly(p)}><ListChecks className="h-4 w-4" /></Button>
+                  <Button size="sm" variant="outline" onClick={() => setStagesOnly(p)}>
+                    <ListChecks className="h-4 w-4" /> Etapas
+                  </Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditing(p)}><Edit className="h-4 w-4" /></Button>
                   <Button size="sm" variant="ghost" onClick={async () => {
                     if (confirm("¿Eliminar proyecto?")) {
