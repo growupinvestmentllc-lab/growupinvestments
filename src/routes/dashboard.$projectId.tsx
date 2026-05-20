@@ -360,9 +360,6 @@ function Timeline({ stages }: { stages: Stage[] }) {
                   <div className="flex-1 min-w-0">
                     <p className={`text-sm ${s.completed || s.active ? "text-foreground font-medium" : "text-muted-foreground"}`}>{s.stage_name}</p>
                   </div>
-                  {s.draw_number != null && (
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">Draw {s.draw_number} · {formatUSD(s.draw_amount)}</span>
-                  )}
                 </div>
               ))}
             </div>
