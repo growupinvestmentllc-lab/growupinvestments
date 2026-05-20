@@ -181,7 +181,7 @@ function ProjectDetail() {
               </div>
             </div>
 
-            <DrawSchedule stages={stages} />
+            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} />
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
@@ -261,7 +261,7 @@ function ProjectDetail() {
   );
 }
 
-function DrawSchedule({ stages }: { stages: Stage[] }) {
+function DrawSchedule({ stages, lotCost = 0 }: { stages: Stage[]; lotCost?: number }) {
   const DRAW_GROUPS = [
     "Soft Construction",
     "Hard Construction 1",
@@ -273,7 +273,7 @@ function DrawSchedule({ stages }: { stages: Stage[] }) {
   const LABELS: Record<string, string> = {
     "CO (Certificate of Occupancy)": "C.O",
   };
-  const list = DRAW_GROUPS.map((group, idx) => {
+  const groupRows = DRAW_GROUPS.map((group, idx) => {
     const groupStages = stages.filter((s) => (s.stage_group ?? "") === group);
     const amount = groupStages.reduce((sum, s) => sum + Number(s.draw_amount || 0), 0);
     const allCompleted = groupStages.length > 0 && groupStages.every((s) => s.completed);
@@ -287,6 +287,12 @@ function DrawSchedule({ stages }: { stages: Stage[] }) {
       active: anyActive || (anyCompleted && !allCompleted),
     };
   });
+  const list = lotCost > 0
+    ? [
+        { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
+        ...groupRows.map((g) => ({ ...g, num: g.num + 1 })),
+      ]
+    : groupRows;
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
