@@ -262,17 +262,31 @@ function ProjectDetail() {
 }
 
 function DrawSchedule({ stages }: { stages: Stage[] }) {
-  const draws = stages
-    .filter((s) => s.draw_number != null)
-    .reduce<Record<number, { num: number; group: string; amount: number; completed: boolean; active: boolean }>>((acc, s) => {
-      const n = s.draw_number as number;
-      if (!acc[n]) acc[n] = { num: n, group: s.stage_group ?? `Draw ${n}`, amount: 0, completed: true, active: false };
-      acc[n].amount += Number(s.draw_amount || 0);
-      if (!s.completed) acc[n].completed = false;
-      if (s.active) acc[n].active = true;
-      return acc;
-    }, {});
-  const list = Object.values(draws).sort((a, b) => a.num - b.num);
+  const DRAW_GROUPS = [
+    "Soft Construction",
+    "Hard Construction 1",
+    "Hard Construction 2",
+    "Hard Construction 3",
+    "Hard Construction 4",
+    "CO (Certificate of Occupancy)",
+  ];
+  const LABELS: Record<string, string> = {
+    "CO (Certificate of Occupancy)": "C.O",
+  };
+  const list = DRAW_GROUPS.map((group, idx) => {
+    const groupStages = stages.filter((s) => (s.stage_group ?? "") === group);
+    const amount = groupStages.reduce((sum, s) => sum + Number(s.draw_amount || 0), 0);
+    const allCompleted = groupStages.length > 0 && groupStages.every((s) => s.completed);
+    const anyActive = groupStages.some((s) => s.active);
+    const anyCompleted = groupStages.some((s) => s.completed);
+    return {
+      num: idx + 1,
+      group: LABELS[group] ?? group,
+      amount,
+      completed: allCompleted,
+      active: anyActive || (anyCompleted && !allCompleted),
+    };
+  });
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
