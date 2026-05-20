@@ -223,6 +223,7 @@ function Dashboard() {
         </section>
 
         {/* Simulador */}
+        {profile?.full_name?.toUpperCase() !== "LAS TROPAS LLC" && (
         <section className="mt-16">
           <div>
             <h2 className="text-2xl font-bold text-foreground">Simulador de rentabilidad</h2>
@@ -234,6 +235,7 @@ function Dashboard() {
             <Simulator />
           </div>
         </section>
+        )}
       </main>
     </div>
   );
