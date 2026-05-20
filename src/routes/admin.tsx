@@ -12,8 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
-import { ALL_STAGES, formatUSD } from "@/lib/stages";
-import { Plus, Trash2, Edit, X } from "lucide-react";
+import { ALL_STAGES, STAGE_GROUPS, formatUSD } from "@/lib/stages";
+import { Plus, Trash2, Edit, X, ListChecks } from "lucide-react";
 import { toast } from "sonner";
 import { adminExists, bootstrapAdmin, createInvestor, deleteInvestor, updateInvestorPassword } from "@/lib/admin.functions";
 
@@ -183,6 +183,7 @@ function ProjectsTab() {
   const [projects, setProjects] = useState<any[]>([]);
   const [investors, setInvestors] = useState<any[]>([]);
   const [editing, setEditing] = useState<any | null>(null);
+  const [stagesOnly, setStagesOnly] = useState<any | null>(null);
 
   const load = async () => {
     const { data: p } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
@@ -232,6 +233,7 @@ function ProjectsTab() {
                   <p className="text-xs mt-2">{formatUSD(p.amount_deposited)} / {formatUSD(p.total_cost)}</p>
                 </div>
                 <div className="flex gap-1">
+                  <Button size="sm" variant="ghost" title="Etapas" onClick={() => setStagesOnly(p)}><ListChecks className="h-4 w-4" /></Button>
                   <Button size="sm" variant="ghost" onClick={() => setEditing(p)}><Edit className="h-4 w-4" /></Button>
                   <Button size="sm" variant="ghost" onClick={async () => {
                     if (confirm("¿Eliminar proyecto?")) {
@@ -246,6 +248,7 @@ function ProjectsTab() {
         })}
       </div>
       {editing && <ProjectEditor project={editing} investors={investors} onClose={() => { setEditing(null); load(); }} />}
+      {stagesOnly && <StagesDialog project={stagesOnly} onClose={() => setStagesOnly(null)} />}
     </div>
   );
 }
