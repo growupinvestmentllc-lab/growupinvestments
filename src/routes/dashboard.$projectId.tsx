@@ -185,7 +185,8 @@ function ProjectDetail() {
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
-              (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake"))
+              (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
+              project.address?.toLowerCase().includes("710")
             ) && (
               <div className="card-soft p-5 bg-secondary/30 border-secondary">
                 <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>
