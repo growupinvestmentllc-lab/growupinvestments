@@ -29,6 +29,7 @@ type Project = {
   id: string; address: string; status: string; hero_image_url: string | null;
   total_value: number; amount_deposited: number;
   expected_sale_price: number; total_cost: number;
+  expected_rent_price: number | null;
   construction_cost: number; lot_cost: number;
   notes: string | null;
   model_name: string | null; sqft_total: number | null; sqft_living: number | null;
@@ -183,6 +184,7 @@ function ProjectDetail() {
               <h3 className="font-semibold mb-4">Rentabilidad esperada</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
                 <Stat dark label="Precio est. de venta" value={formatUSD(project.expected_sale_price)} />
+                <Stat dark label="Alquiler est. (mensual)" value={formatUSD(project.expected_rent_price ?? 0)} />
                 <Stat dark label="Costo construcción" value={formatUSD(project.construction_cost)} />
                 <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
                 <Stat dark label="Costo total" value={formatUSD(project.total_cost)} />
