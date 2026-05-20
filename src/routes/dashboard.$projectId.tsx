@@ -33,6 +33,9 @@ type Project = {
   notes: string | null;
   model_name: string | null; sqft_total: number | null; sqft_living: number | null;
   bedrooms: number | null; bathrooms: number | null; garage: boolean; features: string | null;
+  investor_id: string;
+  owner_llc: string | null; owner_llc_2: string | null;
+  owner_pct_1: number | null; owner_pct_2: number | null;
 };
 type Stage = {
   id: string; stage_order: number; stage_name: string; stage_group: string | null;
@@ -49,21 +52,24 @@ function ProjectDetail() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [comps, setComps] = useState<Comp[]>([]);
   const [images, setImages] = useState<Image[]>([]);
+  const [myLlc, setMyLlc] = useState<string | null>(null);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: c }, { data: i }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: c }, { data: i }, { data: prof }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
         supabase.from("comparables").select("*").eq("project_id", projectId).order("created_at"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
+        supabase.from("profiles").select("llc_name").maybeSingle(),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
       setComps((c ?? []) as Comp[]);
       setImages((i ?? []) as Image[]);
+      setMyLlc((prof as { llc_name: string | null } | null)?.llc_name ?? null);
     })();
   }, [projectId]);
 
@@ -75,7 +81,23 @@ function ProjectDetail() {
   }, [stages]);
 
   const activeStage = stages.find((s) => s.active);
-  const pending = (project?.total_value ?? 0) - (project?.amount_deposited ?? 0);
+  const totalCost = (Number(project?.construction_cost) || 0) + (Number(project?.lot_cost) || 0)
+    || Number(project?.total_cost) || 0;
+  const deposited = Number(project?.amount_deposited) || 0;
+  const pending = totalCost - deposited;
+
+  // Determine current investor share (%)
+  const myPct = useMemo(() => {
+    if (!project) return null;
+    if (myLlc && project.owner_llc && project.owner_llc.trim() === myLlc.trim()) {
+      return Number(project.owner_pct_1) || null;
+    }
+    if (myLlc && project.owner_llc_2 && project.owner_llc_2.trim() === myLlc.trim()) {
+      return Number(project.owner_pct_2) || null;
+    }
+    return null;
+  }, [project, myLlc]);
+  const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
 
   if (!project) return <div className="min-h-screen bg-background"><AppHeader /><div className="p-12 text-center text-muted-foreground">Cargando...</div></div>;
 
@@ -124,10 +146,32 @@ function ProjectDetail() {
               </div>
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-4">
-              <StatCard label="Depositado" value={formatUSD(project.amount_deposited)} accent="primary" />
-              <StatCard label="Total del Proyecto" value={formatUSD(project.total_value)} />
-              <StatCard label="Pendiente" value={formatUSD(pending)} accent="muted" />
+            <div className="grid sm:grid-cols-2 gap-4">
+              <StatCard
+                label="Depositado"
+                value={formatUSD(deposited)}
+                accent="primary"
+                sub={hasMultipleOwners && myPct != null
+                  ? `Tu parte ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
+                  : undefined}
+              />
+              <StatCard
+                label="Pendiente"
+                value={formatUSD(pending)}
+                accent="muted"
+                sub={hasMultipleOwners && myPct != null
+                  ? `Tu parte ${myPct}% = ${formatUSD(pending * (myPct / 100))}`
+                  : undefined}
+              />
+            </div>
+
+            <div>
+              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
+              <div className="grid sm:grid-cols-3 gap-4">
+                <StatCard label="Construcción" value={formatUSD(project.construction_cost)} />
+                <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
+                <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
+              </div>
             </div>
 
             <DrawSchedule stages={stages} />
@@ -293,12 +337,15 @@ function Timeline({ stages }: { stages: Stage[] }) {
   );
 }
 
-function StatCard({ label, value, accent }: { label: string; value: string; accent?: "primary" | "muted" }) {
+function StatCard({ label, value, accent, sub }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string }) {
   const cls = accent === "primary" ? "bg-primary text-primary-foreground" : accent === "muted" ? "bg-secondary/40 text-foreground" : "bg-card text-foreground";
   return (
     <div className={`card-soft p-5 ${cls}`}>
       <p className={`text-xs uppercase tracking-wider ${accent === "primary" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{label}</p>
       <p className="text-2xl font-bold mt-2">{value}</p>
+      {sub && (
+        <p className={`text-xs mt-2 ${accent === "primary" ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{sub}</p>
+      )}
     </div>
   );
 }
