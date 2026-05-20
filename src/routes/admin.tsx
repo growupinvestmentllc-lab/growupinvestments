@@ -298,6 +298,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             <div><Label>Total del proyecto (USD)</Label><Input type="number" value={p.total_value ?? 0} onChange={(e) => setP({ ...p, total_value: Number(e.target.value) })} /></div>
             <div><Label>Depositado (USD)</Label><Input type="number" value={p.amount_deposited ?? 0} onChange={(e) => setP({ ...p, amount_deposited: Number(e.target.value) })} /></div>
             <div><Label>Precio venta estimado</Label><Input type="number" value={p.expected_sale_price ?? 0} onChange={(e) => setP({ ...p, expected_sale_price: Number(e.target.value) })} /></div>
+            <div><Label>Precio alquiler estimado (mensual)</Label><Input type="number" value={(p as any).expected_rent_price ?? 0} onChange={(e) => setP({ ...p, expected_rent_price: Number(e.target.value) } as any)} /></div>
             <div><Label>Costo total proyecto</Label><Input type="number" value={p.total_cost ?? 0} onChange={(e) => setP({ ...p, total_cost: Number(e.target.value) })} /></div>
             <div><Label>Costo construcción</Label><Input type="number" value={(p as any).construction_cost ?? 0} onChange={(e) => setP({ ...p, construction_cost: Number(e.target.value) } as any)} /></div>
             <div><Label>Costo lote</Label><Input type="number" value={(p as any).lot_cost ?? 0} onChange={(e) => setP({ ...p, lot_cost: Number(e.target.value) } as any)} /></div>
