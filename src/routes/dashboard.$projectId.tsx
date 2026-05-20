@@ -124,11 +124,17 @@ function ProjectDetail() {
           <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">{project.status}</span>
         </div>
 
+        {(() => null)()}
+        {/* hide comparables tab for specific projects */}
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
             <TabsTrigger value="portfolio">Portafolio</TabsTrigger>
-            <TabsTrigger value="comparables">Comparables</TabsTrigger>
+            {!(
+              (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
+              (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
+              project.address?.toLowerCase().includes("jaguar")
+            ) && <TabsTrigger value="comparables">Comparables</TabsTrigger>}
             <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
@@ -208,9 +214,15 @@ function ProjectDetail() {
           </TabsContent>
 
           {/* COMPARABLES */}
-          <TabsContent value="comparables" className="mt-6 space-y-6">
-            <ComparablesTab />
-          </TabsContent>
+          {!(
+            (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
+            (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
+            project.address?.toLowerCase().includes("jaguar")
+          ) && (
+            <TabsContent value="comparables" className="mt-6 space-y-6">
+              <ComparablesTab />
+            </TabsContent>
+          )}
 
           {/* PORTFOLIO */}
           <TabsContent value="portfolio" className="mt-6 space-y-6">
