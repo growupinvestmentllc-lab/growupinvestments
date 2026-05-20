@@ -542,3 +542,107 @@ function OpportunitiesTab() {
     </div>
   );
 }
+
+/* ---------------- STAGES ---------------- */
+function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any[]) => void }) {
+  const saveOne = async (s: any) => {
+    await supabase.from("project_stages").update({
+      draw_amount: s.draw_amount, completed: s.completed, active: s.active,
+    }).eq("id", s.id);
+  };
+
+  const toggleCompleted = async (s: any, checked: boolean) => {
+    const next = stages.map((x) => x.id === s.id ? { ...x, completed: checked, active: checked ? false : x.active } : x);
+    setStages(next);
+    await saveOne({ ...s, completed: checked, active: checked ? false : s.active });
+    toast.success(checked ? "Etapa completada" : "Etapa pendiente");
+  };
+
+  const setActive = async (s: any) => {
+    const next = stages.map((x) => x.id === s.id
+      ? { ...x, active: true, completed: false }
+      : { ...x, active: false });
+    setStages(next);
+    // persist: set this active, all others not active
+    await Promise.all(next.map((x) => supabase.from("project_stages").update({
+      active: x.active, completed: x.completed,
+    }).eq("id", x.id)));
+    toast.success("Etapa actual actualizada");
+  };
+
+  return (
+    <section>
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-semibold">Etapas de construcción</h4>
+        <p className="text-xs text-muted-foreground">Marca completadas y la etapa actual</p>
+      </div>
+      <div className="space-y-3 max-h-[28rem] overflow-y-auto pr-1">
+        {STAGE_GROUPS.map((g) => {
+          const groupStages = stages.filter((s) => s.stage_group === g.group);
+          if (groupStages.length === 0) return null;
+          const done = groupStages.filter((s) => s.completed).length;
+          return (
+            <div key={g.group} className="border border-border rounded-md">
+              <div className="flex items-center justify-between px-3 py-2 bg-muted/40 rounded-t-md">
+                <p className="text-xs font-semibold uppercase tracking-wider text-foreground">{g.group}</p>
+                <span className="text-xs text-muted-foreground">{done}/{groupStages.length}</span>
+              </div>
+              <div className="divide-y divide-border">
+                {groupStages.map((s) => (
+                  <div key={s.id} className={`flex items-center gap-3 px-3 py-2 text-sm ${s.active ? "bg-primary/5" : ""}`}>
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-primary"
+                      checked={s.completed}
+                      onChange={(e) => toggleCompleted(s, e.target.checked)}
+                    />
+                    <span className={`flex-1 ${s.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                      {s.stage_name}
+                    </span>
+                    {s.active && <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Actual</span>}
+                    <Button
+                      size="sm"
+                      variant={s.active ? "default" : "outline"}
+                      className="h-7 text-xs"
+                      onClick={() => setActive(s)}
+                      disabled={s.completed}
+                    >
+                      Marcar actual
+                    </Button>
+                    <Input
+                      className="h-7 w-24 text-xs"
+                      type="number"
+                      placeholder="Draw $"
+                      value={s.draw_amount ?? 0}
+                      onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))}
+                      onBlur={() => saveOne(s)}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function StagesDialog({ project, onClose }: { project: any; onClose: () => void }) {
+  const [stages, setStages] = useState<any[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("project_stages").select("*").eq("project_id", project.id).order("stage_order");
+      setStages(data ?? []);
+    })();
+  }, [project.id]);
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader><DialogTitle>Etapas · {project.address}</DialogTitle></DialogHeader>
+        <StagesEditor stages={stages} setStages={setStages} />
+        <DialogFooter><Button variant="outline" onClick={onClose}>Cerrar</Button></DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
