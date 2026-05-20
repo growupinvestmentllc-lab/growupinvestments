@@ -335,29 +335,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
           </section>
 
           {/* Stages */}
-          <section>
-            <h4 className="font-semibold mb-2">Etapas / Draws</h4>
-            <div className="space-y-1 max-h-72 overflow-y-auto border border-border rounded-md p-2">
-              {stages.map((s) => (
-                <div key={s.id} className="grid grid-cols-12 gap-2 items-center text-xs">
-                  <span className="col-span-5 truncate" title={s.stage_name}>{s.stage_name}</span>
-                  <Input className="col-span-2 h-8" type="number" value={s.draw_amount} onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))} />
-                  <label className="col-span-2 flex items-center gap-1"><input type="checkbox" checked={s.completed} onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, completed: e.target.checked } : x))} /> OK</label>
-                  <label className="col-span-2 flex items-center gap-1"><input type="checkbox" checked={s.active} onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, active: e.target.checked, completed: e.target.checked ? false : x.completed } : { ...x, active: false }))} /> Actual</label>
-                  <Button size="sm" variant="ghost" className="col-span-1 h-8 px-2" onClick={async () => {
-                    await supabase.from("project_stages").update({ draw_amount: s.draw_amount, completed: s.completed, active: s.active }).eq("id", s.id);
-                    toast.success("Etapa guardada");
-                  }}>💾</Button>
-                </div>
-              ))}
-            </div>
-            <Button size="sm" variant="outline" className="mt-2" onClick={async () => {
-              for (const s of stages) {
-                await supabase.from("project_stages").update({ draw_amount: s.draw_amount, completed: s.completed, active: s.active }).eq("id", s.id);
-              }
-              toast.success("Todas las etapas guardadas");
-            }}>Guardar todas las etapas</Button>
-          </section>
+          <StagesEditor stages={stages} setStages={setStages} />
 
           {/* Comparables */}
           <DocumentsSection projectId={project.id} docs={docs} onChange={loadDocs} />
