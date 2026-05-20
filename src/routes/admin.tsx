@@ -229,7 +229,7 @@ function ProjectsTab() {
                 <div>
                   <h3 className="font-semibold text-foreground">{p.address}</h3>
                   <p className="text-xs text-muted-foreground mt-1">{inv?.full_name ?? "—"} · {p.status}</p>
-                  <p className="text-xs mt-2">{formatUSD(p.amount_deposited)} / {formatUSD(p.total_value)}</p>
+                  <p className="text-xs mt-2">{formatUSD(p.amount_deposited)} / {formatUSD(p.total_cost)}</p>
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => setEditing(p)}><Edit className="h-4 w-4" /></Button>
@@ -295,7 +295,6 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             </div>
             <div><Label>Estado</Label><Input value={p.status} onChange={(e) => setP({ ...p, status: e.target.value })} /></div>
             <div className="sm:col-span-2"><Label>Dirección</Label><Input value={p.address} onChange={(e) => setP({ ...p, address: e.target.value })} /></div>
-            <div><Label>Total del proyecto (USD)</Label><Input type="number" value={p.total_value ?? 0} onChange={(e) => setP({ ...p, total_value: Number(e.target.value) })} /></div>
             <div><Label>Depositado (USD)</Label><Input type="number" value={p.amount_deposited ?? 0} onChange={(e) => setP({ ...p, amount_deposited: Number(e.target.value) })} /></div>
             <div><Label>Precio venta estimado</Label><Input type="number" value={p.expected_sale_price ?? 0} onChange={(e) => setP({ ...p, expected_sale_price: Number(e.target.value) })} /></div>
             <div><Label>Precio alquiler estimado (mensual)</Label><Input type="number" value={(p as any).expected_rent_price ?? 0} onChange={(e) => setP({ ...p, expected_rent_price: Number(e.target.value) } as any)} /></div>
