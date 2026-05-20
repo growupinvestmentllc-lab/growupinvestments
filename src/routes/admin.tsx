@@ -635,17 +635,7 @@ function StagesDialog({ project, onClose }: { project: any; onClose: () => void 
   useEffect(() => {
     (async () => {
       const { data } = await supabase.from("project_stages").select("*").eq("project_id", project.id).order("stage_order");
-      if (!data || data.length === 0) {
-        const rows = ALL_STAGES.map((s, idx) => ({
-          project_id: project.id, stage_order: idx + 1, stage_name: s.name, stage_group: s.group,
-          draw_number: idx + 1, draw_amount: 0,
-        }));
-        const { data: inserted, error } = await supabase.from("project_stages").insert(rows).select().order("stage_order");
-        if (error) { toast.error(error.message); return; }
-        setStages(inserted ?? []);
-      } else {
-        setStages(data);
-      }
+      setStages(data ?? []);
     })();
   }, [project.id]);
   return (
