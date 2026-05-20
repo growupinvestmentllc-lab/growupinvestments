@@ -177,9 +177,14 @@ function ProjectDetail() {
 
             <DrawSchedule stages={stages} />
 
-            <div className="card-soft p-5 bg-secondary/30 border-secondary">
-              <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>
-            </div>
+            {!(
+              (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
+              (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake"))
+            ) && (
+              <div className="card-soft p-5 bg-secondary/30 border-secondary">
+                <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>
+              </div>
+            )}
             <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">Rentabilidad esperada</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
