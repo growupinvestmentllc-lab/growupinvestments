@@ -187,7 +187,11 @@ function ProjectDetail() {
                 <Stat dark label="Alquiler est. (mensual)" value={formatUSD(project.expected_rent_price ?? 0)} />
                 <Stat dark label="Costo construcción" value={formatUSD(project.construction_cost)} />
                 <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
-                <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
+                {project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
+                  <Stat dark label="NOI estimado" value="6.34%" />
+                ) : (
+                  <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
+                )}
               </div>
             </div>
             {project.notes && (
