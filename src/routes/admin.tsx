@@ -338,6 +338,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
 
           {/* Stages */}
           <StagesEditor stages={stages} setStages={setStages} />
+          <DrawCostsEditor project={p} setProject={setP} stages={stages} setStages={setStages} />
 
           {/* Comparables */}
           <DocumentsSection projectId={project.id} docs={docs} onChange={loadDocs} />
