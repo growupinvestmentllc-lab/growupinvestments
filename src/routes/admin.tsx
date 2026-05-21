@@ -338,6 +338,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
 
           {/* Stages */}
           <StagesEditor stages={stages} setStages={setStages} />
+          <DrawCostsEditor project={p} setProject={setP} stages={stages} setStages={setStages} />
 
           {/* Comparables */}
           <DocumentsSection projectId={project.id} docs={docs} onChange={loadDocs} />
@@ -643,8 +644,115 @@ function StagesDialog({ project, onClose }: { project: any; onClose: () => void 
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Etapas · {project.address}</DialogTitle></DialogHeader>
         <StagesEditor stages={stages} setStages={setStages} />
+        <DrawCostsEditor project={project} stages={stages} setStages={setStages} />
         <DialogFooter><Button variant="outline" onClick={onClose}>Cerrar</Button></DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function DrawCostsEditor({
+  project,
+  setProject,
+  stages,
+  setStages,
+}: {
+  project: any;
+  setProject?: (p: any) => void;
+  stages: any[];
+  setStages: (s: any[]) => void;
+}) {
+  const [lot, setLot] = useState<number>(Number(project.lot_cost ?? 0));
+  useEffect(() => { setLot(Number(project.lot_cost ?? 0)); }, [project.id]);
+
+  const saveLot = async () => {
+    await supabase.from("projects").update({ lot_cost: lot }).eq("id", project.id);
+    if (setProject) setProject({ ...project, lot_cost: lot });
+    toast.success("Compra Lote guardado");
+  };
+
+  const groupTotals = STAGE_GROUPS.map((g) => {
+    const gs = stages.filter((s) => s.stage_group === g.group);
+    const total = gs.reduce((sum, s) => sum + Number(s.draw_amount || 0), 0);
+    return { group: g.group, total, stages: gs };
+  });
+
+  const setGroupAmount = async (group: string, amount: number) => {
+    const gs = stages.filter((s) => s.stage_group === group).sort((a, b) => a.stage_order - b.stage_order);
+    if (gs.length === 0) return;
+    const updated = stages.map((s) => {
+      if (s.stage_group !== group) return s;
+      if (s.id === gs[0].id) return { ...s, draw_amount: amount };
+      return { ...s, draw_amount: 0 };
+    });
+    setStages(updated);
+    await Promise.all(
+      gs.map((s) =>
+        supabase
+          .from("project_stages")
+          .update({ draw_amount: s.id === gs[0].id ? amount : 0 })
+          .eq("id", s.id),
+      ),
+    );
+    toast.success(`${group} guardado`);
+  };
+
+  return (
+    <section>
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="font-semibold">Costo por Draw</h4>
+        <p className="text-xs text-muted-foreground">Monto total que se mostrará en cada draw</p>
+      </div>
+      <div className="space-y-2">
+        <div className="flex items-center gap-3 p-3 rounded-md border border-border">
+          <span className="h-7 w-7 rounded-full bg-muted text-foreground flex items-center justify-center text-xs font-semibold">0</span>
+          <span className="flex-1 text-sm font-medium">Compra Lote</span>
+          <Input
+            type="number"
+            className="h-8 w-32"
+            value={lot}
+            onChange={(e) => setLot(Number(e.target.value))}
+            onBlur={saveLot}
+          />
+        </div>
+        {groupTotals.map((g, idx) => (
+          <DrawAmountRow
+            key={g.group}
+            num={idx + 1}
+            label={g.group}
+            initial={g.total}
+            onSave={(v) => setGroupAmount(g.group, v)}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DrawAmountRow({
+  num,
+  label,
+  initial,
+  onSave,
+}: {
+  num: number;
+  label: string;
+  initial: number;
+  onSave: (v: number) => void;
+}) {
+  const [v, setV] = useState<number>(initial);
+  useEffect(() => { setV(initial); }, [initial]);
+  return (
+    <div className="flex items-center gap-3 p-3 rounded-md border border-border">
+      <span className="h-7 w-7 rounded-full bg-muted text-foreground flex items-center justify-center text-xs font-semibold">{num}</span>
+      <span className="flex-1 text-sm font-medium">Draw {num} — {label}</span>
+      <Input
+        type="number"
+        className="h-8 w-32"
+        value={v}
+        onChange={(e) => setV(Number(e.target.value))}
+        onBlur={() => onSave(v)}
+      />
+    </div>
   );
 }
