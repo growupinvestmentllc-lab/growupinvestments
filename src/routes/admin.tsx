@@ -644,6 +644,7 @@ function StagesDialog({ project, onClose }: { project: any; onClose: () => void 
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Etapas · {project.address}</DialogTitle></DialogHeader>
         <StagesEditor stages={stages} setStages={setStages} />
+        <DrawCostsEditor project={project} stages={stages} setStages={setStages} />
         <DialogFooter><Button variant="outline" onClick={onClose}>Cerrar</Button></DialogFooter>
       </DialogContent>
     </Dialog>
