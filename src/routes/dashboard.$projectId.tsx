@@ -201,6 +201,8 @@ function ProjectDetail() {
                 <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
                 {project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
                   <Stat dark label="NOI estimado" value="6.34%" />
+                ) : project.address?.toLowerCase().includes("710") ? (
+                  <Stat dark label="ROI estimado" value="11%" />
                 ) : (
                   <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
                 )}
