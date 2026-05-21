@@ -632,10 +632,6 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
 }
 
 function StagesDialog({ project, onClose }: { project: any; onClose: () => void }) {
-  return <StagesDialogInner project={project} onClose={onClose} />;
-}
-
-function StagesDialogInner({ project, onClose }: { project: any; onClose: () => void }) {
   const [stages, setStages] = useState<any[]>([]);
   useEffect(() => {
     (async () => {
