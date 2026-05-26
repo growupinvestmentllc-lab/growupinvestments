@@ -295,7 +295,7 @@ function DrawSchedule({ stages, lotCost = 0 }: { stages: Stage[]; lotCost?: numb
   const list = lotCost > 0
     ? [
         { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
-        ...groupRows.map((g) => ({ ...g, num: g.num + 1 })),
+        ...groupRows,
       ]
     : groupRows;
   if (!list.length) return null;
