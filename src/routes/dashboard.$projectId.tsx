@@ -193,14 +193,14 @@ function ProjectDetail() {
               </div>
             )}
             <div className="card-soft p-6 bg-primary text-primary-foreground">
-              <h3 className="font-semibold mb-4">{project.address?.toLowerCase().includes("7305") ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
+              <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Precio de venta" : "Precio est. de venta"} value={formatUSD(project.expected_sale_price)} />
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
                 <Stat dark label="Costo construcción" value={formatUSD(project.construction_cost)} />
                 <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
                 {project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
-                  <Stat dark label="NOI estimado" value="6.34%" />
+                  <Stat dark label="NOI" value="6.34%" />
                 ) : project.address?.toLowerCase().includes("710") ? (
                   <Stat dark label="ROI estimado" value="11%" />
                 ) : project.address?.toLowerCase().includes("7305") ? (
