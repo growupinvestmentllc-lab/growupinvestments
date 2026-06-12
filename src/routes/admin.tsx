@@ -621,13 +621,6 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
                       onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))}
                       onBlur={() => saveOne(s)}
                     />
-                    <Input
-                      className="h-7 w-36 text-xs"
-                      type="date"
-                      value={s.estimated_date ?? ""}
-                      onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, estimated_date: e.target.value || null } : x))}
-                      onBlur={() => saveOne(s)}
-                    />
                   </div>
                 ))}
               </div>
