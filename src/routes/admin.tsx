@@ -551,6 +551,7 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
   const saveOne = async (s: any) => {
     await supabase.from("project_stages").update({
       draw_amount: s.draw_amount, completed: s.completed, active: s.active,
+      estimated_date: s.estimated_date ?? null,
     }).eq("id", s.id);
   };
 
@@ -618,6 +619,13 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
                       placeholder="Draw $"
                       value={s.draw_amount ?? 0}
                       onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))}
+                      onBlur={() => saveOne(s)}
+                    />
+                    <Input
+                      className="h-7 w-36 text-xs"
+                      type="date"
+                      value={s.estimated_date ?? ""}
+                      onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, estimated_date: e.target.value || null } : x))}
                       onBlur={() => saveOne(s)}
                     />
                   </div>

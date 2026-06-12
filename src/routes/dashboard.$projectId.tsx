@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
+import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
@@ -41,6 +42,7 @@ type Project = {
 type Stage = {
   id: string; stage_order: number; stage_name: string; stage_group: string | null;
   draw_number: number | null; draw_amount: number; completed: boolean; active: boolean;
+  estimated_date?: string | null;
 };
 type Comp = { id: string; address: string; sale_price: number; sqft_total: number | null; sqft_living: number | null; days_on_market: number | null; sale_date: string | null };
 type Image = { id: string; image_url: string; caption: string | null };
@@ -152,6 +154,8 @@ function ProjectDetail() {
                 <Timeline stages={stages} />
               </div>
             </div>
+
+            <ConstructionProgressBar stages={stages} />
 
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard

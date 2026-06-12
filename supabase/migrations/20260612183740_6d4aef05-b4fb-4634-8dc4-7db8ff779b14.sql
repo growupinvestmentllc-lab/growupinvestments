@@ -1,0 +1,1 @@
+alter table public.project_stages add column if not exists estimated_date date;
