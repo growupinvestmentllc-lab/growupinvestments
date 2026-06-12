@@ -9,6 +9,8 @@ type Stage = {
   completed: boolean;
   active: boolean;
   estimated_date?: string | null;
+  estimated_start_date?: string | null;
+  estimated_end_date?: string | null;
 };
 
 const GROUP_SHORT: Record<string, string> = {
@@ -47,17 +49,21 @@ export function GanttChart({ stages }: { stages: Stage[] }) {
 
   // Determine each group's month range using estimated_date of its stages.
   const groupRanges = STAGE_GROUPS.map((g, idx) => {
-    const gs = stages
-      .filter((s) => s.stage_group === g.group)
-      .map((s) => s.estimated_date)
+    const gs = stages.filter((s) => s.stage_group === g.group);
+    const starts = gs
+      .map((s) => s.estimated_start_date ?? s.estimated_date)
+      .filter((d): d is string => !!d)
+      .map(monthIndex);
+    const ends = gs
+      .map((s) => s.estimated_end_date ?? s.estimated_start_date ?? s.estimated_date)
       .filter((d): d is string => !!d)
       .map(monthIndex);
     return {
       group: g.group,
       label: GROUP_SHORT[g.group] ?? g.group,
       status: groupStatus(stages, g.group),
-      start: gs.length ? Math.min(...gs) : null,
-      end: gs.length ? Math.max(...gs) : null,
+      start: starts.length ? Math.min(...starts) : null,
+      end: ends.length ? Math.max(...ends) : null,
       order: idx,
     };
   });

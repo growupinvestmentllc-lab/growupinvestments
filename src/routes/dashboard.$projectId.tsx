@@ -44,6 +44,8 @@ type Stage = {
   id: string; stage_order: number; stage_name: string; stage_group: string | null;
   draw_number: number | null; draw_amount: number; completed: boolean; active: boolean;
   estimated_date?: string | null;
+  estimated_start_date?: string | null;
+  estimated_end_date?: string | null;
 };
 type Comp = { id: string; address: string; sale_price: number; sqft_total: number | null; sqft_living: number | null; days_on_market: number | null; sale_date: string | null };
 type Image = { id: string; image_url: string; caption: string | null };
