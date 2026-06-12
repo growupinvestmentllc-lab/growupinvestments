@@ -204,6 +204,7 @@ export type Database = {
           created_at: string
           draw_amount: number | null
           draw_number: number | null
+          estimated_date: string | null
           id: string
           project_id: string
           stage_group: string | null
@@ -216,6 +217,7 @@ export type Database = {
           created_at?: string
           draw_amount?: number | null
           draw_number?: number | null
+          estimated_date?: string | null
           id?: string
           project_id: string
           stage_group?: string | null
@@ -228,6 +230,7 @@ export type Database = {
           created_at?: string
           draw_amount?: number | null
           draw_number?: number | null
+          estimated_date?: string | null
           id?: string
           project_id?: string
           stage_group?: string | null
