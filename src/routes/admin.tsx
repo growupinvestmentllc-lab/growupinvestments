@@ -552,6 +552,8 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
     await supabase.from("project_stages").update({
       draw_amount: s.draw_amount, completed: s.completed, active: s.active,
       estimated_date: s.estimated_date ?? null,
+      estimated_start_date: s.estimated_start_date ?? null,
+      estimated_end_date: s.estimated_end_date ?? null,
     }).eq("id", s.id);
   };
 
@@ -593,34 +595,58 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
               </div>
               <div className="divide-y divide-border">
                 {groupStages.map((s) => (
-                  <div key={s.id} className={`flex items-center gap-3 px-3 py-2 text-sm ${s.active ? "bg-primary/5" : ""}`}>
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 accent-primary"
-                      checked={s.completed}
-                      onChange={(e) => toggleCompleted(s, e.target.checked)}
-                    />
-                    <span className={`flex-1 ${s.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
-                      {s.stage_name}
-                    </span>
-                    {s.active && <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Actual</span>}
-                    <Button
-                      size="sm"
-                      variant={s.active ? "default" : "outline"}
-                      className="h-7 text-xs"
-                      onClick={() => setActive(s)}
-                      disabled={s.completed}
-                    >
-                      Marcar actual
-                    </Button>
-                    <Input
-                      className="h-7 w-24 text-xs"
-                      type="number"
-                      placeholder="Draw $"
-                      value={s.draw_amount ?? 0}
-                      onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))}
-                      onBlur={() => saveOne(s)}
-                    />
+                  <div key={s.id} className={`px-3 py-2 text-sm ${s.active ? "bg-primary/5" : ""}`}>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 accent-primary"
+                        checked={s.completed}
+                        onChange={(e) => toggleCompleted(s, e.target.checked)}
+                      />
+                      <span className={`flex-1 ${s.completed ? "line-through text-muted-foreground" : "text-foreground"}`}>
+                        {s.stage_name}
+                      </span>
+                      {s.active && <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">Actual</span>}
+                      <Button
+                        size="sm"
+                        variant={s.active ? "default" : "outline"}
+                        className="h-7 text-xs"
+                        onClick={() => setActive(s)}
+                        disabled={s.completed}
+                      >
+                        Marcar actual
+                      </Button>
+                      <Input
+                        className="h-7 w-24 text-xs"
+                        type="number"
+                        placeholder="Draw $"
+                        value={s.draw_amount ?? 0}
+                        onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, draw_amount: Number(e.target.value) } : x))}
+                        onBlur={() => saveOne(s)}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2 mt-2 ml-7 text-xs text-muted-foreground">
+                      <label className="flex items-center gap-1">
+                        <span>Inicio:</span>
+                        <Input
+                          className="h-7 w-36 text-xs"
+                          type="date"
+                          value={s.estimated_start_date ?? ""}
+                          onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, estimated_start_date: e.target.value || null } : x))}
+                          onBlur={() => saveOne(s)}
+                        />
+                      </label>
+                      <label className="flex items-center gap-1">
+                        <span>Fin:</span>
+                        <Input
+                          className="h-7 w-36 text-xs"
+                          type="date"
+                          value={s.estimated_end_date ?? ""}
+                          onChange={(e) => setStages(stages.map((x) => x.id === s.id ? { ...x, estimated_end_date: e.target.value || null } : x))}
+                          onBlur={() => saveOne(s)}
+                        />
+                      </label>
+                    </div>
                   </div>
                 ))}
               </div>
