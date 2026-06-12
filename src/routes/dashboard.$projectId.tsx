@@ -158,9 +158,12 @@ function ProjectDetail() {
               </div>
             </div>
 
-            <ConstructionProgressBar stages={stages} />
-
-            <GanttChart stages={stages} />
+            {project.status === "En construcción" && (
+              <>
+                <ConstructionProgressBar stages={stages} />
+                <GanttChart stages={stages} />
+              </>
+            )}
 
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
