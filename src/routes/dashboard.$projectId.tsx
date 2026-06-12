@@ -7,6 +7,7 @@ import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
+import { GanttChart } from "@/components/GanttChart";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
@@ -156,6 +157,8 @@ function ProjectDetail() {
             </div>
 
             <ConstructionProgressBar stages={stages} />
+
+            <GanttChart stages={stages} />
 
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
