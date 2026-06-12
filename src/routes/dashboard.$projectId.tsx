@@ -158,7 +158,7 @@ function ProjectDetail() {
               </div>
             </div>
 
-            {project.status === "En construcción" && (
+            {stages.length > 0 && stages.some((s) => !s.completed) && (
               <>
                 <ConstructionProgressBar stages={stages} />
                 <GanttChart stages={stages} />
