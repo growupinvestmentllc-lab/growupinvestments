@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url='/__l5e/assets-v1/b004e0d9-a0cf-4c25-95ca-866b00d38303/2258-hero.png' WHERE address ILIKE '2258 Embers Pkwy W%';
