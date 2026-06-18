@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url='/__l5e/assets-v1/faa45520-0b7f-4efb-b563-5a6807addc70/2130-hero.png' WHERE id='52ae3f9e-e14f-478f-a426-4140829b2051';
