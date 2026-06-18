@@ -1,0 +1,1 @@
+UPDATE public.opportunities SET image_url='/__l5e/assets-v1/76d6ee69-2a09-4092-a0af-96f03b34f744/35-sw-19th-hero.png' WHERE id='6000a446-e994-4e5a-a874-f1122a6ce0df';
