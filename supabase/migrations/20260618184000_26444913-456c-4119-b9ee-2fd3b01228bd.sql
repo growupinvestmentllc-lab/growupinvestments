@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url='/__l5e/assets-v1/76d6ee69-2a09-4092-a0af-96f03b34f744/35-sw-19th-hero.png' WHERE address ILIKE '35 SW 19th Ct%';
