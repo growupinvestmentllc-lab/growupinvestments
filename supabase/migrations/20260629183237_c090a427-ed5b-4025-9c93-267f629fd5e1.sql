@@ -1,0 +1,1 @@
+UPDATE projects SET hero_image_url = '/__l5e/assets-v1/d4ac4304-1b96-44fe-9d57-cd2be12abaa3/1405-cortez-hero.png', updated_at = now() WHERE id = 'ed024506-b782-401f-9fd6-6c6691430a0c';
