@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url = '/__l5e/assets-v1/120c9c4c-3e68-49af-b0e1-e0525578f411/710-jaguar-hero.png' WHERE id = '6d1ecd13-451b-432c-88a1-7f4b2eef2bab';
