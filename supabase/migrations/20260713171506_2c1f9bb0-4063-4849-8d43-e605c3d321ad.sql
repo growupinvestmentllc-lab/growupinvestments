@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url = '/__l5e/assets-v1/4a95a956-86af-466c-8d48-d4f245fe184c/2217-embers-hero.jpeg' WHERE id = 'd7e72435-c615-4524-a338-b936e6e10c58';
