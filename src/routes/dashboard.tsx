@@ -102,7 +102,7 @@ function Dashboard() {
       setProjects(enriched);
       const { data: pr } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name,llc_name")
         .eq("id", user.id)
         .single();
       setProfile(pr);
