@@ -60,6 +60,18 @@ function ProjectDetail() {
   const [images, setImages] = useState<Image[]>([]);
   const [myLlc, setMyLlc] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIdx(null);
+      else if (e.key === "ArrowRight") setLightboxIdx((i) => (i === null ? null : (i + 1) % images.length));
+      else if (e.key === "ArrowLeft") setLightboxIdx((i) => (i === null ? null : (i - 1 + images.length) % images.length));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, images.length]);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
@@ -303,7 +315,12 @@ function ProjectDetail() {
               {images.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">Sin fotos aún.</p>}
               {images.map((img) => (
                 <div key={img.id} className="card-soft overflow-hidden">
-                  <img src={img.image_url} alt={img.caption ?? "Portafolio"} className="w-full h-56 object-cover" />
+                  <img
+                    src={img.image_url}
+                    alt={img.caption ?? "Portafolio"}
+                    className="w-full h-56 object-cover cursor-zoom-in"
+                    onClick={() => setLightboxIdx(images.findIndex((x) => x.id === img.id))}
+                  />
                   {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
                 </div>
               ))}
