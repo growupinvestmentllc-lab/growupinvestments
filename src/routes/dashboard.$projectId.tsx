@@ -91,6 +91,8 @@ function ProjectDetail() {
     || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   const pending = totalCost - deposited;
+  const is2217Embers = project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
+    project?.address?.toLowerCase().includes("2217 sw embers ter");
 
   // Determine current investor share (%)
   const myPct = useMemo(() => {
@@ -120,12 +122,10 @@ function ProjectDetail() {
             alt={project.address}
             className="h-full w-full object-cover"
           />
-          {(project.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
-            (project.address?.toLowerCase().includes("2217") &&
-              project.address?.toLowerCase().includes("ember"))) && (
+          {is2217Embers && (
             <span
-              className="absolute top-4 right-4 z-10 inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full shadow-md"
-              style={{ backgroundColor: "#000", color: "#fff" }}
+              className="absolute top-4 right-4 z-30 inline-flex items-center rounded-full px-3 py-1.5 text-xs font-semibold uppercase shadow-lg ring-2 ring-white/90"
+              style={{ backgroundColor: "#000000", color: "#ffffff" }}
             >
               ESTADO ACTUAL
             </span>
