@@ -1,5 +1,7 @@
 import { STAGE_GROUPS } from "@/lib/stages";
 import { Check } from "lucide-react";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type Stage = {
   id: string;
@@ -45,6 +47,89 @@ const GROUP_SHORT_LABELS: Record<string, string> = {
   "CO (Certificate of Occupancy)": "C.O.",
 };
 
+function GroupStagesList({ stages, group }: { stages: Stage[]; group: string }) {
+  const gs = stages
+    .filter((s) => s.stage_group === group)
+    .sort((a, b) => a.stage_order - b.stage_order);
+  if (gs.length === 0) {
+    return <p className="text-xs text-muted-foreground">Sin etapas cargadas.</p>;
+  }
+  return (
+    <div className="space-y-2">
+      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{group}</p>
+      <ul className="space-y-1.5">
+        {gs.map((s) => (
+          <li key={s.id} className="flex items-start gap-2 text-sm">
+            <span
+              className={`mt-0.5 h-4 w-4 rounded-full flex items-center justify-center flex-shrink-0 border ${
+                s.completed
+                  ? "bg-primary border-primary text-primary-foreground"
+                  : s.active
+                  ? "bg-primary/15 border-primary text-primary"
+                  : "bg-muted border-border text-muted-foreground"
+              }`}
+            >
+              {s.completed ? <Check className="h-2.5 w-2.5" /> : <span className="h-1.5 w-1.5 rounded-full bg-current" />}
+            </span>
+            <span className={`${s.active ? "text-primary font-medium" : s.completed ? "text-foreground" : "text-muted-foreground"}`}>
+              {s.stage_name}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function GroupCircle({
+  stages,
+  group,
+  isCompleted,
+  isActive,
+  index,
+  size = "md",
+}: {
+  stages: Stage[];
+  group: string;
+  isCompleted: boolean;
+  isActive: boolean;
+  index: number;
+  size?: "md" | "sm";
+}) {
+  const dims = size === "md" ? "h-10 w-10 text-sm" : "h-8 w-8 text-xs";
+  const icon = size === "md" ? "h-5 w-5" : "h-4 w-4";
+  const btn = (
+    <button
+      type="button"
+      aria-label={`Ver etapas de ${group}`}
+      className={`${dims} rounded-full flex items-center justify-center font-semibold border-2 transition hover:scale-105 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer ${
+        isCompleted
+          ? "bg-primary text-primary-foreground border-primary"
+          : isActive
+          ? "bg-primary/15 text-primary border-primary"
+          : "bg-muted text-muted-foreground border-border"
+      }`}
+    >
+      {isCompleted ? <Check className={icon} /> : <span>{index + 1}</span>}
+    </button>
+  );
+  return (
+    <Popover>
+      <HoverCard openDelay={80} closeDelay={100}>
+        <HoverCardTrigger asChild>
+          <PopoverTrigger asChild>{btn}</PopoverTrigger>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-72" align="center">
+          <GroupStagesList stages={stages} group={group} />
+        </HoverCardContent>
+      </HoverCard>
+      <PopoverContent className="w-72" align="center">
+        <GroupStagesList stages={stages} group={group} />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
 export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
   if (!stages.length) return null;
 
@@ -72,17 +157,14 @@ export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
             return (
               <div key={g.group} className="flex items-start flex-1 min-w-0">
                 <div className="flex flex-col items-center flex-shrink-0 w-full">
-                  <div
-                    className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-semibold border-2 ${
-                      isCompleted
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : isActive
-                        ? "bg-primary/15 text-primary border-primary"
-                        : "bg-muted text-muted-foreground border-border"
-                    }`}
-                  >
-                    {isCompleted ? <Check className="h-5 w-5" /> : <span>{i + 1}</span>}
-                  </div>
+                  <GroupCircle
+                    stages={stages}
+                    group={g.group}
+                    isCompleted={isCompleted}
+                    isActive={isActive}
+                    index={i}
+                    size="md"
+                  />
                   <p
                     className={`mt-2 text-xs font-semibold text-center ${
                       isActive ? "text-primary" : isCompleted ? "text-foreground" : "text-muted-foreground"
@@ -125,17 +207,14 @@ export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
           return (
             <div key={g.group} className="flex gap-3">
               <div className="flex flex-col items-center">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold border-2 flex-shrink-0 ${
-                    isCompleted
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : isActive
-                      ? "bg-primary/15 text-primary border-primary"
-                      : "bg-muted text-muted-foreground border-border"
-                  }`}
-                >
-                  {isCompleted ? <Check className="h-4 w-4" /> : <span>{i + 1}</span>}
-                </div>
+                <GroupCircle
+                  stages={stages}
+                  group={g.group}
+                  isCompleted={isCompleted}
+                  isActive={isActive}
+                  index={i}
+                  size="sm"
+                />
                 {!isLast && (
                   <div
                     className={`w-0.5 flex-1 min-h-[28px] my-1 ${
