@@ -16,6 +16,10 @@ type Project = {
   address: string;
   status: string;
   hero_image_url: string | null;
+  owner_llc: string | null;
+  owner_llc_2: string | null;
+  owner_pct_1: number | null;
+  owner_pct_2: number | null;
 };
 type Opportunity = {
   id: string;
@@ -32,10 +36,10 @@ function Dashboard() {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [projects, setProjects] = useState<(Project & { progress: number; activeStage: string })[]>(
+  const [projects, setProjects] = useState<(Project & { progress: number; activeStage: string; myPct: number | null })[]>(
     [],
   );
-  const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string | null; llc_name: string | null } | null>(null);
   const [opps, setOpps] = useState<Opportunity[]>([]);
 
   useEffect(() => {
@@ -49,9 +53,14 @@ function Dashboard() {
     (async () => {
       const { data: p } = await supabase
         .from("projects")
-        .select("id,address,status,hero_image_url")
+        .select("id,address,status,hero_image_url,owner_llc,owner_llc_2,owner_pct_1,owner_pct_2")
         .order("created_at");
       const list = p ?? [];
+      const userLlc = (await supabase
+        .from("profiles")
+        .select("llc_name")
+        .eq("id", user.id)
+        .single()).data?.llc_name ?? null;
       const enriched = await Promise.all(
         list.map(async (proj) => {
           const { data: stages } = await supabase
@@ -61,10 +70,17 @@ function Dashboard() {
           const total = ALL_STAGES.length;
           const done = (stages ?? []).filter((s) => s.completed).length;
           const active = (stages ?? []).find((s) => s.active);
+          let myPct: number | null = null;
+          if (userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
+            myPct = Number(proj.owner_pct_1) || null;
+          } else if (userLlc && proj.owner_llc_2 && proj.owner_llc_2.trim() === userLlc.trim()) {
+            myPct = Number(proj.owner_pct_2) || null;
+          }
           return {
             ...proj,
             progress: total ? Math.round((done / total) * 100) : 0,
             activeStage: active?.stage_name ?? "Por iniciar",
+            myPct,
           };
         }),
       );
@@ -86,7 +102,7 @@ function Dashboard() {
       setProjects(enriched);
       const { data: pr } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name,llc_name")
         .eq("id", user.id)
         .single();
       setProfile(pr);
@@ -138,9 +154,9 @@ function Dashboard() {
                     <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
                       {p.status}
                     </span>
-                    {p.address?.toLowerCase().includes("2217 sw embers") && (
-                      <span className="inline-flex items-center text-xs font-semibold px-2 py-1 rounded-full bg-orange-100 text-orange-800">
-                        Tu Participación: 50%
+                    {p.myPct != null && (
+                      <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-orange-100 text-orange-800">
+                        Tu participación: {p.myPct}%
                       </span>
                     )}
                   </div>
