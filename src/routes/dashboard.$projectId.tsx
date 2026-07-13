@@ -92,7 +92,8 @@ function ProjectDetail() {
   const deposited = Number(project?.amount_deposited) || 0;
   const pending = totalCost - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
-  const is2217Embers = project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
+  const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
+    project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
 
   // Determine current investor share (%)
@@ -127,7 +128,13 @@ function ProjectDetail() {
             <div className="absolute inset-0 z-40 pointer-events-none">
               <div
                 className="absolute top-4 right-4 inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold uppercase shadow-2xl ring-2 ring-white"
-                style={{ backgroundColor: "#000000", color: "#ffffff" }}
+                style={{
+                  background: "#000000",
+                  backgroundColor: "#000000",
+                  color: "#ffffff",
+                  opacity: 1,
+                  visibility: "visible",
+                }}
               >
                 ESTADO ACTUAL
               </div>
