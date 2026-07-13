@@ -146,7 +146,14 @@ function ProjectDetail() {
             <h1 className="text-3xl sm:text-4xl font-bold text-foreground">{project.address}</h1>
             <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-4 w-4" /> Florida, USA</p>
           </div>
-          <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">{project.status}</span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">{project.status}</span>
+            {is2217Embers && (
+              <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-orange-100 text-orange-800">
+                Tu Participación: 50%
+              </span>
+            )}
+          </div>
         </div>
 
         {(() => null)()}
