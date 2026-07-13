@@ -53,7 +53,7 @@ function Dashboard() {
     (async () => {
       const { data: p } = await supabase
         .from("projects")
-        .select("id,address,status,hero_image_url")
+        .select("id,address,status,hero_image_url,owner_llc,owner_llc_2,owner_pct_1,owner_pct_2")
         .order("created_at");
       const list = p ?? [];
       const enriched = await Promise.all(
