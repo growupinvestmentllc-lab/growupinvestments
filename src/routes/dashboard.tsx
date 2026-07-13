@@ -36,10 +36,10 @@ function Dashboard() {
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [projects, setProjects] = useState<(Project & { progress: number; activeStage: string })[]>(
+  const [projects, setProjects] = useState<(Project & { progress: number; activeStage: string; myPct: number | null })[]>(
     [],
   );
-  const [profile, setProfile] = useState<{ full_name: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string | null; llc_name: string | null } | null>(null);
   const [opps, setOpps] = useState<Opportunity[]>([]);
 
   useEffect(() => {
