@@ -16,6 +16,10 @@ type Project = {
   address: string;
   status: string;
   hero_image_url: string | null;
+  owner_llc: string | null;
+  owner_llc_2: string | null;
+  owner_pct_1: number | null;
+  owner_pct_2: number | null;
 };
 type Opportunity = {
   id: string;
