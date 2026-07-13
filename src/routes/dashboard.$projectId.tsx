@@ -159,13 +159,7 @@ function ProjectDetail() {
             </div>
 
             {stages.length > 0 && stages.some((s) => !s.completed) && (
-              <>
-                <ConstructionProgressBar stages={stages} />
-                <div className="card-soft p-6">
-                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Etapas de Construcción</h3>
-                  <Timeline stages={stages} />
-                </div>
-              </>
+              <ConstructionProgressBar stages={stages} />
             )}
 
             <div className="grid sm:grid-cols-2 gap-4">
