@@ -60,6 +60,18 @@ function ProjectDetail() {
   const [images, setImages] = useState<Image[]>([]);
   const [myLlc, setMyLlc] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (lightboxIdx === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightboxIdx(null);
+      else if (e.key === "ArrowRight") setLightboxIdx((i) => (i === null ? null : (i + 1) % images.length));
+      else if (e.key === "ArrowLeft") setLightboxIdx((i) => (i === null ? null : (i - 1 + images.length) % images.length));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [lightboxIdx, images.length]);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
@@ -303,7 +315,12 @@ function ProjectDetail() {
               {images.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">Sin fotos aún.</p>}
               {images.map((img) => (
                 <div key={img.id} className="card-soft overflow-hidden">
-                  <img src={img.image_url} alt={img.caption ?? "Portafolio"} className="w-full h-56 object-cover" />
+                  <img
+                    src={img.image_url}
+                    alt={img.caption ?? "Portafolio"}
+                    className="w-full h-56 object-cover cursor-zoom-in"
+                    onClick={() => setLightboxIdx(images.findIndex((x) => x.id === img.id))}
+                  />
                   {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
                 </div>
               ))}
@@ -350,6 +367,51 @@ function ProjectDetail() {
           </TabsContent>
         </Tabs>
       </main>
+      {lightboxIdx !== null && images[lightboxIdx] && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          onClick={() => setLightboxIdx(null)}
+        >
+          <img
+            src={images[lightboxIdx].image_url}
+            alt=""
+            className="max-w-[95vw] max-h-[95vh] object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <button
+            type="button"
+            aria-label="Anterior"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIdx((i) => (i === null ? null : (i - 1 + images.length) % images.length));
+            }}
+            className="absolute left-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white select-none"
+            style={{ fontSize: "6rem", lineHeight: 1, fontFamily: "serif" }}
+          >
+            ‹
+          </button>
+          <button
+            type="button"
+            aria-label="Siguiente"
+            onClick={(e) => {
+              e.stopPropagation();
+              setLightboxIdx((i) => (i === null ? null : (i + 1) % images.length));
+            }}
+            className="absolute right-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white select-none"
+            style={{ fontSize: "6rem", lineHeight: 1, fontFamily: "serif" }}
+          >
+            ›
+          </button>
+          <button
+            type="button"
+            aria-label="Cerrar"
+            onClick={(e) => { e.stopPropagation(); setLightboxIdx(null); }}
+            className="absolute top-4 right-4 text-white/90 hover:text-white text-3xl leading-none"
+          >
+            ×
+          </button>
+        </div>
+      )}
     </div>
   );
 }
