@@ -148,9 +148,9 @@ function ProjectDetail() {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">{project.status}</span>
-            {is2217Embers && (
+            {myPct != null && (
               <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-orange-100 text-orange-800">
-                Tu Participación: 50%
+                Tu participación: {myPct}%
               </span>
             )}
           </div>
