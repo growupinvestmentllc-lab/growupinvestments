@@ -120,8 +120,13 @@ function ProjectDetail() {
             alt={project.address}
             className="h-full w-full object-cover"
           />
-          {project.address?.toLowerCase().includes("2217") && project.address?.toLowerCase().includes("ember") && (
-            <span className="absolute top-4 right-4 inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-black text-white shadow-md">
+          {(project.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
+            (project.address?.toLowerCase().includes("2217") &&
+              project.address?.toLowerCase().includes("ember"))) && (
+            <span
+              className="absolute top-4 right-4 z-10 inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full shadow-md"
+              style={{ backgroundColor: "#000", color: "#fff" }}
+            >
               ESTADO ACTUAL
             </span>
           )}
