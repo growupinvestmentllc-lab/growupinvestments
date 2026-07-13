@@ -114,12 +114,17 @@ function ProjectDetail() {
         <Link to="/dashboard" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary mb-4">
           <ArrowLeft className="h-4 w-4 mr-1" /> Volver a proyectos
         </Link>
-        <div className="aspect-[16/9] w-full overflow-hidden rounded-xl mb-6 bg-muted">
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl mb-6 bg-muted">
           <img
             src={project.hero_image_url || "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=1600&q=80"}
             alt={project.address}
             className="h-full w-full object-cover"
           />
+          {project.address?.toLowerCase().includes("2217") && project.address?.toLowerCase().includes("ember") && (
+            <span className="absolute top-4 right-4 inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-black text-white shadow-md">
+              ESTADO ACTUAL
+            </span>
+          )}
         </div>
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
