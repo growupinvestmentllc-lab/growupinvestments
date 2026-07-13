@@ -56,6 +56,11 @@ function Dashboard() {
         .select("id,address,status,hero_image_url,owner_llc,owner_llc_2,owner_pct_1,owner_pct_2")
         .order("created_at");
       const list = p ?? [];
+      const userLlc = (await supabase
+        .from("profiles")
+        .select("llc_name")
+        .eq("id", user.id)
+        .single()).data?.llc_name ?? null;
       const enriched = await Promise.all(
         list.map(async (proj) => {
           const { data: stages } = await supabase
@@ -65,10 +70,17 @@ function Dashboard() {
           const total = ALL_STAGES.length;
           const done = (stages ?? []).filter((s) => s.completed).length;
           const active = (stages ?? []).find((s) => s.active);
+          let myPct: number | null = null;
+          if (userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
+            myPct = Number(proj.owner_pct_1) || null;
+          } else if (userLlc && proj.owner_llc_2 && proj.owner_llc_2.trim() === userLlc.trim()) {
+            myPct = Number(proj.owner_pct_2) || null;
+          }
           return {
             ...proj,
             progress: total ? Math.round((done / total) * 100) : 0,
             activeStage: active?.stage_name ?? "Por iniciar",
+            myPct,
           };
         }),
       );
