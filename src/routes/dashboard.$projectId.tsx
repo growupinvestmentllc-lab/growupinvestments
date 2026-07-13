@@ -134,7 +134,7 @@ function ProjectDetail() {
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
-            <TabsTrigger value="portfolio">Portafolio</TabsTrigger>
+            <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
               (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
