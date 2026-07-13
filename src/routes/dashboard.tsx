@@ -154,9 +154,9 @@ function Dashboard() {
                     <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
                       {p.status}
                     </span>
-                    {p.address?.toLowerCase().includes("2217 sw embers") && (
-                      <span className="inline-flex items-center text-xs font-semibold px-2 py-1 rounded-full bg-orange-100 text-orange-800">
-                        Tu Participación: 50%
+                    {p.myPct != null && (
+                      <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-orange-100 text-orange-800">
+                        Tu participación: {p.myPct}%
                       </span>
                     )}
                   </div>
