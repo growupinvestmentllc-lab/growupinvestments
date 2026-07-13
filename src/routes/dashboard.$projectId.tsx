@@ -153,15 +153,18 @@ function ProjectDetail() {
                 <p className="text-base font-semibold text-foreground text-center">{progress >= 100 ? "Obra 100% completada y entregada" : (activeStage?.stage_name ?? "Por iniciar")}</p>
               </div>
               <div className="card-soft p-6 lg:col-span-2">
-                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Etapas de Construcción</h3>
-                <Timeline stages={stages} />
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Cronograma de Obra</h3>
+                <GanttChart stages={stages} />
               </div>
             </div>
 
             {stages.length > 0 && stages.some((s) => !s.completed) && (
               <>
                 <ConstructionProgressBar stages={stages} />
-                <GanttChart stages={stages} />
+                <div className="card-soft p-6">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-5">Etapas de Construcción</h3>
+                  <Timeline stages={stages} />
+                </div>
               </>
             )}
 
