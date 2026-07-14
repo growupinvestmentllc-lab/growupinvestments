@@ -14,10 +14,10 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          {/* upper-left bracket: tick-top, left side, bottom edge */}
-          <path d="M14 4 H6 a2 2 0 0 0 -2 2 V26 a2 2 0 0 0 2 2 H26" />
-          {/* lower-right bracket: tick-bottom, right side, top edge */}
-          <path d="M30 28 H38 a2 2 0 0 0 2 -2 V6 a2 2 0 0 0 -2 -2 H18" />
+          {/* upper bracket (G rotated 180°): top edge, right side down to middle, then tick left */}
+          <path d="M6 4 H38 a2 2 0 0 1 2 2 V15 a1 1 0 0 1 -1 1 H26" />
+          {/* lower bracket (G): bottom edge, left side up to middle, then tick right */}
+          <path d="M38 28 H6 a2 2 0 0 1 -2 -2 V17 a1 1 0 0 1 1 -1 H18" />
         </svg>
         <span className="text-2xl tracking-tight">
           <span className="font-extrabold">GROW</span>
