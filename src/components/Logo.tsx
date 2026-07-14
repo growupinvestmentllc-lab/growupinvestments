@@ -5,19 +5,18 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
     <div className="flex flex-col leading-none">
       <div className={`flex items-center gap-2 font-sans ${main}`}>
         <svg
-          viewBox="0 0 44 32"
+          viewBox="0 0 48 32"
           className="h-7 w-auto"
           fill="none"
           stroke="currentColor"
-          strokeWidth="4"
+          strokeWidth="3.8"
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          {/* upper bracket (G rotated 180°): top edge, right side down to middle, then tick left */}
-          <path d="M6 4 H38 a2 2 0 0 1 2 2 V15 a1 1 0 0 1 -1 1 H26" />
-          {/* lower bracket (G): bottom edge, left side up to middle, then tick right */}
-          <path d="M38 28 H6 a2 2 0 0 1 -2 -2 V17 a1 1 0 0 1 1 -1 H18" />
+          <path d="M8 25.5 V10.5 C8 6.9 10.9 4 14.5 4 H33.5 C37.1 4 40 6.9 40 10.5 V25.5" />
+          <path d="M8 25.5 H18.2 V18.4" />
+          <path d="M40 25.5 H29.8" />
         </svg>
         <span className="text-2xl tracking-tight">
           <span className="font-extrabold">GROW</span>
