@@ -19,7 +19,10 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
           {/* bottom-right bracket with inward tick (G) */}
           <polyline points="26,29 37,29 37,16 28,16" />
         </svg>
-        <span className="text-2xl font-extrabold tracking-tight">GROWUP</span>
+        <span className="text-2xl tracking-tight">
+          <span className="font-extrabold">GROW</span>
+          <span className="font-light ml-1">UP</span>
+        </span>
       </div>
       {subtitle && (
         <span className={`mt-1 text-[10px] uppercase tracking-[0.2em] ${subtle}`}>
