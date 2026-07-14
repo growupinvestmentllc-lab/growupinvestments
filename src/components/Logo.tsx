@@ -14,7 +14,7 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
           strokeLinecap="butt"
           strokeLinejoin="miter"
         >
-          <path d="M 8,66 L 8,10 L 112,8 L 116,62 L 82,62 M 48,62 L 14,62 M 48,62 L 48,44" />
+          <path d="M 14,62 L 8,66 L 8,10 L 112,8 L 116,62 L 82,62 M 48,62 L 14,62 M 48,62 L 48,44" />
         </svg>
         <span className="text-2xl tracking-tight">
           <span className="font-extrabold">GROW</span>
