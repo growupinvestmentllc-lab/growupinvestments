@@ -10,11 +10,11 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
           className="h-7 w-[44px] shrink-0"
           fill="none"
           stroke="currentColor"
-          strokeWidth="2.5"
+          strokeWidth="3"
           strokeLinecap="butt"
           strokeLinejoin="miter"
         >
-          <path d="M 2,2 L 118,2 L 118,16 L 38,16 L 38,60 L 118,60 L 118,73 L 2,73 Z" />
+          <path d="M 14,62 L 8,66 L 8,10 L 112,8 L 116,62 L 82,62 M 48,62 L 14,62 M 48,62 L 48,44" />
         </svg>
         <span className="text-2xl tracking-tight">
           <span className="font-extrabold">GROW</span>
