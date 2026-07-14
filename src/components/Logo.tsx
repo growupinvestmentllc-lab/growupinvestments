@@ -5,19 +5,19 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
     <div className="flex flex-col leading-none">
       <div className={`flex items-center gap-2 font-sans ${main}`}>
         <svg
-          viewBox="0 0 40 32"
-          className="h-6 w-auto"
+          viewBox="0 0 44 32"
+          className="h-7 w-auto"
           fill="none"
           stroke="currentColor"
-          strokeWidth="3"
-          strokeLinecap="square"
-          strokeLinejoin="miter"
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           aria-hidden="true"
         >
-          {/* top-left bracket */}
-          <polyline points="14,3 3,3 3,14" />
-          {/* bottom-right bracket with inward tick (G) */}
-          <polyline points="26,29 37,29 37,16 28,16" />
+          {/* upper-left bracket: tick-top, left side, bottom edge */}
+          <path d="M14 4 H6 a2 2 0 0 0 -2 2 V26 a2 2 0 0 0 2 2 H26" />
+          {/* lower-right bracket: tick-bottom, right side, top edge */}
+          <path d="M30 28 H38 a2 2 0 0 0 2 -2 V6 a2 2 0 0 0 -2 -2 H18" />
         </svg>
         <span className="text-2xl tracking-tight">
           <span className="font-extrabold">GROW</span>
