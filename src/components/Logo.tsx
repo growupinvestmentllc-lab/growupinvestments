@@ -4,19 +4,7 @@ export function Logo({ subtitle = true, light = false }: { subtitle?: boolean; l
   return (
     <div className="flex flex-col leading-none">
       <div className={`flex items-center gap-2 font-sans ${main}`}>
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 141 94"
-          className="h-7 w-[42px] shrink-0"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="4"
-          strokeLinecap="butt"
-          strokeLinejoin="miter"
-          strokeMiterlimit="10"
-        >
-          <path d="M 8,86 L 8,8 L 133,8 L 133,86 L 78,86 L 78,58 L 55,58 L 55,86" />
-        </svg>
+        <span className="text-2xl font-extralight">[</span>
         <span className="text-2xl tracking-tight">
           <span className="font-extrabold">GROW</span>
           <span className="font-light ml-1">UP</span>
