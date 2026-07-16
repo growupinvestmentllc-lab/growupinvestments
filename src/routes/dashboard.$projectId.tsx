@@ -235,7 +235,7 @@ function ProjectDetail() {
 
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
-                label="Depositado"
+                label="Total depositado"
                 value={formatUSD(deposited)}
                 accent="primary"
                 sub={hasMultipleOwners && myPct != null
@@ -243,7 +243,7 @@ function ProjectDetail() {
                   : undefined}
               />
               <StatCard
-                label="Pendiente"
+                label="Total pendiente"
                 value={formatUSD(pending)}
                 accent="muted"
                 sub={hasMultipleOwners && myPct != null
