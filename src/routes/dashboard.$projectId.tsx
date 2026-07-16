@@ -481,7 +481,7 @@ function DrawSchedule({
                   <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatUSD(d.amount)}
-                    {(d.num === 0 || d.num === 1) && hasMultipleOwners && myPct != null && (
+                    {hasMultipleOwners && myPct != null && (
                       <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
                     )}
                   </p>
