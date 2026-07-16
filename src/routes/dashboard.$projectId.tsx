@@ -261,7 +261,7 @@ function ProjectDetail() {
               </div>
             </div>
 
-            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} />
+            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} />
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
@@ -417,7 +417,17 @@ function ProjectDetail() {
   );
 }
 
-function DrawSchedule({ stages, lotCost = 0 }: { stages: Stage[]; lotCost?: number }) {
+function DrawSchedule({
+  stages,
+  lotCost = 0,
+  myPct,
+  hasMultipleOwners,
+}: {
+  stages: Stage[];
+  lotCost?: number;
+  myPct?: number | null;
+  hasMultipleOwners?: boolean;
+}) {
   const DRAW_GROUPS = [
     "Soft Construction",
     "Hard Construction 1",
@@ -469,7 +479,12 @@ function DrawSchedule({ stages, lotCost = 0 }: { stages: Stage[]; lotCost?: numb
                 <span className="h-8 w-8 rounded-full bg-muted text-foreground flex items-center justify-center text-sm font-semibold">{d.num}</span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
-                  <p className="text-xs text-muted-foreground">{formatUSD(d.amount)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatUSD(d.amount)}
+                    {d.num === 0 && hasMultipleOwners && myPct != null && (
+                      <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
+                    )}
+                  </p>
                 </div>
               </div>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge}`}>{label}</span>
