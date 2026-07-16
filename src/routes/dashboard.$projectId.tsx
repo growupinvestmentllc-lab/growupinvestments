@@ -417,7 +417,17 @@ function ProjectDetail() {
   );
 }
 
-function DrawSchedule({ stages, lotCost = 0 }: { stages: Stage[]; lotCost?: number }) {
+function DrawSchedule({
+  stages,
+  lotCost = 0,
+  myPct,
+  hasMultipleOwners,
+}: {
+  stages: Stage[];
+  lotCost?: number;
+  myPct?: number | null;
+  hasMultipleOwners?: boolean;
+}) {
   const DRAW_GROUPS = [
     "Soft Construction",
     "Hard Construction 1",
