@@ -479,7 +479,12 @@ function DrawSchedule({
                 <span className="h-8 w-8 rounded-full bg-muted text-foreground flex items-center justify-center text-sm font-semibold">{d.num}</span>
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
-                  <p className="text-xs text-muted-foreground">{formatUSD(d.amount)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatUSD(d.amount)}
+                    {d.num === 0 && hasMultipleOwners && myPct != null && (
+                      <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
+                    )}
+                  </p>
                 </div>
               </div>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge}`}>{label}</span>
