@@ -230,6 +230,11 @@ function ProjectDetail() {
               <div className="card-soft p-6 lg:col-span-2">
                 <GanttChart
                   stages={stages}
+                  subtitle={
+                    normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
+                      ? "Tiempos reales"
+                      : undefined
+                  }
                   plannedVsActual={
                     normalizedAddress.includes("621") && normalizedAddress.includes("flamingo")
                       ? ({
@@ -238,6 +243,13 @@ function ProjectDetail() {
                           "Hard Construction 3": { planned: { start: ym(2026, 4), end: ym(2026, 5) }, actual: { start: ym(2026, 6), end: ym(2026, 7) } },
                           "Hard Construction 4": { planned: { start: ym(2026, 5), end: ym(2026, 5) }, actual: { start: ym(2026, 8), end: ym(2026, 8) } },
                           "CO (Certificate of Occupancy)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2026, 9), end: ym(2026, 9) } },
+                        } satisfies PlannedVsActual)
+                      : normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
+                      ? ({
+                          "Hard Construction 1": { actual: { start: ym(2026, 3), end: ym(2026, 4) } },
+                          "Hard Construction 2": { actual: { start: ym(2026, 5), end: ym(2026, 6) } },
+                          "Hard Construction 3": { actual: { start: ym(2026, 7), end: ym(2026, 9) } },
+                          "Hard Construction 4": { actual: { start: ym(2026, 10), end: ym(2026, 10) } },
                         } satisfies PlannedVsActual)
                       : undefined
                   }
