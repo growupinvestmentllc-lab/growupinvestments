@@ -1,6 +1,14 @@
 import { STAGE_GROUPS } from "@/lib/stages";
 import { Check } from "lucide-react";
 
+export type PhasePeriod = { start: number; end: number }; // absolute month index (year*12+month)
+export type PhaseRange = { planned?: PhasePeriod; actual?: PhasePeriod };
+export type PlannedVsActual = Record<string, PhaseRange>;
+
+export function ym(year: number, monthIndex0: number): number {
+  return year * 12 + monthIndex0;
+}
+
 type Stage = {
   id: string;
   stage_order: number;
@@ -44,7 +52,16 @@ function fmtMonth(absMonth: number): string {
   return MONTH_LABELS[m];
 }
 
-export function GanttChart({ stages }: { stages: Stage[] }) {
+export function GanttChart({
+  stages,
+  plannedVsActual,
+}: {
+  stages: Stage[];
+  plannedVsActual?: PlannedVsActual;
+}) {
+  if (plannedVsActual) {
+    return <PlannedVsActualGantt data={plannedVsActual} />;
+  }
   if (!stages.length) return null;
 
   // Determine each group's month range using estimated_date of its stages.
@@ -205,6 +222,136 @@ export function GanttChart({ stages }: { stages: Stage[] }) {
         <div className="flex items-center gap-1.5">
           <div className="w-2 h-2 rounded-full bg-muted-foreground/20" />
           <span className="text-muted-foreground">Pendiente</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PlannedVsActualGantt({ data }: { data: PlannedVsActual }) {
+  const groups = STAGE_GROUPS.map((g) => ({
+    group: g.group,
+    label: GROUP_SHORT[g.group] ?? g.group,
+    planned: data[g.group]?.planned,
+    actual: data[g.group]?.actual,
+  })).filter((g) => g.planned || g.actual);
+
+  const months = groups.flatMap((g) => [
+    ...(g.planned ? [g.planned.start, g.planned.end] : []),
+    ...(g.actual ? [g.actual.start, g.actual.end] : []),
+  ]);
+  const minMonth = Math.min(...months);
+  const maxMonth = Math.max(...months);
+  const totalMonths = maxMonth - minMonth + 1;
+
+  return (
+    <div className="card-soft p-5">
+      <div className="mb-5">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+          Cronograma de Obra
+        </h3>
+        <p className="text-xs text-muted-foreground/70 mt-1">
+          Proyectado vs Real por fase
+        </p>
+      </div>
+
+      {/* Months header */}
+      <div className="grid mb-3" style={{ gridTemplateColumns: "80px 1fr" }}>
+        <div />
+        <div
+          className="grid text-[10px] font-bold text-muted-foreground/70 uppercase tracking-widest"
+          style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+        >
+          {Array.from({ length: totalMonths }).map((_, i) => (
+            <div key={i} className="text-center truncate">{fmtMonth(minMonth + i)}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Rows: two bars per phase */}
+      <div className="space-y-3">
+        {groups.map((g) => (
+          <div
+            key={g.group}
+            className="grid items-center gap-2"
+            style={{ gridTemplateColumns: "80px 1fr" }}
+          >
+            <span className="text-[11px] font-bold text-foreground truncate">{g.label}</span>
+            <div className="space-y-1.5">
+              {/* Planned bar */}
+              <div className="flex items-center gap-2">
+                <div
+                  className="grid relative flex-1"
+                  style={{
+                    gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
+                    height: "10px",
+                  }}
+                >
+                  <div
+                    className="absolute inset-0 grid pointer-events-none"
+                    style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                  >
+                    {Array.from({ length: totalMonths }).map((_, i) => (
+                      <div key={i} className="border-l border-border/40 first:border-l-0" />
+                    ))}
+                  </div>
+                  {g.planned && (
+                    <div
+                      className="h-full rounded-full bg-primary/25"
+                      style={{
+                        gridColumn: `${g.planned.start - minMonth + 1} / span ${
+                          g.planned.end - g.planned.start + 1
+                        }`,
+                      }}
+                    />
+                  )}
+                </div>
+                <span className="text-[9px] text-muted-foreground w-14 shrink-0">Proyectado</span>
+              </div>
+              {/* Actual bar */}
+              <div className="flex items-center gap-2">
+                <div
+                  className="grid relative flex-1"
+                  style={{
+                    gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
+                    height: "10px",
+                  }}
+                >
+                  <div
+                    className="absolute inset-0 grid pointer-events-none"
+                    style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                  >
+                    {Array.from({ length: totalMonths }).map((_, i) => (
+                      <div key={i} className="border-l border-border/40 first:border-l-0" />
+                    ))}
+                  </div>
+                  {g.actual && (
+                    <div
+                      className="h-full rounded-full bg-primary shadow-md"
+                      style={{
+                        gridColumn: `${g.actual.start - minMonth + 1} / span ${
+                          g.actual.end - g.actual.start + 1
+                        }`,
+                      }}
+                    />
+                  )}
+                </div>
+                <span className="text-[9px] text-foreground font-semibold w-14 shrink-0">Real</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Legend */}
+      <div className="mt-5 pt-4 border-t border-border/50 flex flex-wrap items-center justify-center gap-6 text-[10px]">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-2 rounded-full bg-primary/25" />
+          <span className="text-muted-foreground">Proyectado</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-2 rounded-full bg-primary" />
+          <span className="text-foreground font-semibold">Real</span>
         </div>
       </div>
     </div>
