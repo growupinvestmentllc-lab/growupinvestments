@@ -1,0 +1,1 @@
+UPDATE public.project_documents SET file_path='b525d962-242f-4d8b-b632-c0f061c67dd2/ledger.pdf', file_name='621_Flamingo-2.pdf', uploaded_at=now() WHERE project_id='b525d962-242f-4d8b-b632-c0f061c67dd2' AND doc_type='ledger_balance';
