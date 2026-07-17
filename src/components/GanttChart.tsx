@@ -230,7 +230,7 @@ export function GanttChart({
   );
 }
 
-function PlannedVsActualGantt({ data }: { data: PlannedVsActual }) {
+function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subtitle?: string }) {
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT[g.group] ?? g.group,
