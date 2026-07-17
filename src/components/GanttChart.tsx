@@ -1,6 +1,14 @@
 import { STAGE_GROUPS } from "@/lib/stages";
 import { Check } from "lucide-react";
 
+export type PhasePeriod = { start: number; end: number }; // absolute month index (year*12+month)
+export type PhaseRange = { planned?: PhasePeriod; actual?: PhasePeriod };
+export type PlannedVsActual = Record<string, PhaseRange>;
+
+export function ym(year: number, monthIndex0: number): number {
+  return year * 12 + monthIndex0;
+}
+
 type Stage = {
   id: string;
   stage_order: number;
@@ -44,7 +52,16 @@ function fmtMonth(absMonth: number): string {
   return MONTH_LABELS[m];
 }
 
-export function GanttChart({ stages }: { stages: Stage[] }) {
+export function GanttChart({
+  stages,
+  plannedVsActual,
+}: {
+  stages: Stage[];
+  plannedVsActual?: PlannedVsActual;
+}) {
+  if (plannedVsActual) {
+    return <PlannedVsActualGantt data={plannedVsActual} />;
+  }
   if (!stages.length) return null;
 
   // Determine each group's month range using estimated_date of its stages.
