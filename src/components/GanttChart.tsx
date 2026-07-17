@@ -55,9 +55,11 @@ function fmtMonth(absMonth: number): string {
 export function GanttChart({
   stages,
   plannedVsActual,
+  subtitle,
 }: {
   stages: Stage[];
   plannedVsActual?: PlannedVsActual;
+  subtitle?: string;
 }) {
   if (plannedVsActual) {
     return <PlannedVsActualGantt data={plannedVsActual} />;
