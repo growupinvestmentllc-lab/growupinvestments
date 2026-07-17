@@ -103,8 +103,12 @@ function ProjectDetail() {
   const totalCost = (Number(project?.construction_cost) || 0) + (Number(project?.lot_cost) || 0)
     || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
-  const pending = totalCost - deposited;
+  let pending = totalCost - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
+  const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
+  if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
+    pending = 0;
+  }
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
