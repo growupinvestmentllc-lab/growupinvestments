@@ -253,7 +253,7 @@ function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subti
           Cronograma de Obra
         </h3>
         <p className="text-xs text-muted-foreground/70 mt-1">
-          Proyectado vs Real por fase
+          {subtitle ?? "Proyectado vs Real por fase"}
         </p>
       </div>
 
