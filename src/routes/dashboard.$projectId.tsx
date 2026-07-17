@@ -229,9 +229,7 @@ function ProjectDetail() {
               </div>
             </div>
 
-            {stages.length > 0 && stages.some((s) => !s.completed) && (
-              <ConstructionProgressBar stages={stages} />
-            )}
+            <ConstructionProgressBar stages={stages} />
 
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
