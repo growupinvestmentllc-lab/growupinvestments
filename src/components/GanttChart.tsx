@@ -55,12 +55,14 @@ function fmtMonth(absMonth: number): string {
 export function GanttChart({
   stages,
   plannedVsActual,
+  subtitle,
 }: {
   stages: Stage[];
   plannedVsActual?: PlannedVsActual;
+  subtitle?: string;
 }) {
   if (plannedVsActual) {
-    return <PlannedVsActualGantt data={plannedVsActual} />;
+    return <PlannedVsActualGantt data={plannedVsActual} subtitle={subtitle} />;
   }
   if (!stages.length) return null;
 
@@ -228,7 +230,7 @@ export function GanttChart({
   );
 }
 
-function PlannedVsActualGantt({ data }: { data: PlannedVsActual }) {
+function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subtitle?: string }) {
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT[g.group] ?? g.group,
@@ -251,7 +253,7 @@ function PlannedVsActualGantt({ data }: { data: PlannedVsActual }) {
           Cronograma de Obra
         </h3>
         <p className="text-xs text-muted-foreground/70 mt-1">
-          Proyectado vs Real por fase
+          {subtitle ?? "Proyectado vs Real por fase"}
         </p>
       </div>
 
