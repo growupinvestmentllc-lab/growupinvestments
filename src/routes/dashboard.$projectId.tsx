@@ -7,7 +7,7 @@ import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download, Plus } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
-import { GanttChart } from "@/components/GanttChart";
+import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
