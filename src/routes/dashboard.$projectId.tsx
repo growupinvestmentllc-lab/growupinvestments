@@ -454,12 +454,10 @@ function DrawSchedule({
       active: anyActive || (anyCompleted && !allCompleted),
     };
   });
-  const list = lotCost > 0
-    ? [
-        { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
-        ...groupRows,
-      ]
-    : groupRows;
+  const list = [
+    { num: 0, group: "Compra Lote", amount: lotCost, completed: lotCost > 0, active: false },
+    ...groupRows,
+  ];
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
