@@ -52,7 +52,23 @@ function GroupStagesList({ stages, group }: { stages: Stage[]; group: string }) 
     .filter((s) => s.stage_group === group)
     .sort((a, b) => a.stage_order - b.stage_order);
   if (gs.length === 0) {
-    return <p className="text-xs text-muted-foreground">Sin etapas cargadas.</p>;
+    const def = STAGE_GROUPS.find((g) => g.group === group);
+    const names = def?.stages ?? [];
+    return (
+      <div className="space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{group}</p>
+        <ul className="space-y-1.5">
+          {names.map((n) => (
+            <li key={n} className="flex items-start gap-2 text-sm">
+              <span className="mt-0.5 h-4 w-4 rounded-full flex items-center justify-center flex-shrink-0 border bg-muted border-border text-muted-foreground">
+                <span className="h-1.5 w-1.5 rounded-full bg-current" />
+              </span>
+              <span className="text-muted-foreground">{n}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   }
   return (
     <div className="space-y-2">
@@ -131,8 +147,6 @@ function GroupCircle({
 }
 
 export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
-  if (!stages.length) return null;
-
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT_LABELS[g.group] ?? g.group,
