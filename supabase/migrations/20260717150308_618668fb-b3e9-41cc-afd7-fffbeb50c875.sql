@@ -1,0 +1,1 @@
+UPDATE public.projects SET construction_cost=265000 WHERE address ILIKE '621 Flamingo%';
