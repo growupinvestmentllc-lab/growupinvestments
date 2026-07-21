@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download, Plus } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 
