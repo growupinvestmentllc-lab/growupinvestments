@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download, Plus } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 
@@ -59,7 +59,7 @@ function ProjectDetail() {
   const [comps, setComps] = useState<Comp[]>([]);
   const [images, setImages] = useState<Image[]>([]);
   const [myLlc, setMyLlc] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
 
   useEffect(() => {
@@ -140,37 +140,6 @@ function ProjectDetail() {
   }, [project, myLlc]);
   const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
 
-  const handleUploadPhotos = async (files: FileList | null) => {
-    if (!files || !files.length || !project) return;
-    setUploading(true);
-    try {
-      const nextSort = images.length;
-      const inserted: Image[] = [];
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        const ext = file.name.split(".").pop() || "jpg";
-        const path = `${project.id}/${Date.now()}-${i}.${ext}`;
-        const { error: upErr } = await supabase.storage.from("portfolio").upload(path, file, {
-          cacheControl: "3600",
-          upsert: false,
-          contentType: file.type,
-        });
-        if (upErr) { console.error(upErr); continue; }
-        // Store the storage path; we generate signed URLs on read
-        const { data: signed } = await supabase.storage.from("portfolio").createSignedUrl(path, 60 * 60);
-        const { data: row, error: insErr } = await supabase
-          .from("portfolio_images")
-          .insert({ project_id: project.id, image_url: path, sort_order: nextSort + i })
-          .select()
-          .single();
-        if (insErr) { console.error(insErr); continue; }
-        if (row) inserted.push({ ...(row as Image), image_url: signed?.signedUrl || (row as Image).image_url });
-      }
-      if (inserted.length) setImages((prev) => [...prev, ...inserted]);
-    } finally {
-      setUploading(false);
-    }
-  };
 
   if (!project) return <div className="min-h-screen bg-background"><AppHeader /><div className="p-12 text-center text-muted-foreground">Cargando...</div></div>;
 
@@ -367,26 +336,6 @@ function ProjectDetail() {
                   {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
                 </div>
               ))}
-              <label
-                className="card-soft overflow-hidden cursor-pointer flex flex-col items-center justify-center h-56 text-white transition hover:opacity-90"
-                style={{ backgroundColor: "#14532d" }}
-              >
-                <Plus className="h-10 w-10 mb-2" strokeWidth={2.5} />
-                <span className="text-sm font-semibold tracking-wide">
-                  {uploading ? "SUBIENDO..." : "AGREGAR FOTO"}
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  disabled={uploading}
-                  onChange={(e) => {
-                    handleUploadPhotos(e.target.files);
-                    e.currentTarget.value = "";
-                  }}
-                />
-              </label>
             </div>
             <div className="card-soft p-6">
               <h3 className="font-semibold text-foreground mb-4">Especificaciones</h3>
