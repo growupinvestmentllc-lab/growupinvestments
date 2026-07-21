@@ -87,7 +87,21 @@ function ProjectDetail() {
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
       setComps((c ?? []) as Comp[]);
-      setImages((i ?? []) as Image[]);
+      const rawImgs = (i ?? []) as Image[];
+      // Bucket is private → generate signed URLs from stored path
+      const signed = await Promise.all(rawImgs.map(async (img) => {
+        const url = img.image_url || "";
+        const marker = "/portfolio/";
+        const idx = url.indexOf(marker);
+        const path = idx >= 0 ? url.slice(idx + marker.length).split("?")[0] : url;
+        try {
+          const { data } = await supabase.storage.from("portfolio").createSignedUrl(path, 60 * 60);
+          return { ...img, image_url: data?.signedUrl || img.image_url };
+        } catch {
+          return img;
+        }
+      }));
+      setImages(signed);
       setMyLlc((prof as { llc_name: string | null } | null)?.llc_name ?? null);
     })();
   }, [projectId]);
@@ -142,14 +156,15 @@ function ProjectDetail() {
           contentType: file.type,
         });
         if (upErr) { console.error(upErr); continue; }
-        const { data: pub } = supabase.storage.from("portfolio").getPublicUrl(path);
+        // Store the storage path; we generate signed URLs on read
+        const { data: signed } = await supabase.storage.from("portfolio").createSignedUrl(path, 60 * 60);
         const { data: row, error: insErr } = await supabase
           .from("portfolio_images")
-          .insert({ project_id: project.id, image_url: pub.publicUrl, sort_order: nextSort + i })
+          .insert({ project_id: project.id, image_url: path, sort_order: nextSort + i })
           .select()
           .single();
         if (insErr) { console.error(insErr); continue; }
-        if (row) inserted.push(row as Image);
+        if (row) inserted.push({ ...(row as Image), image_url: signed?.signedUrl || (row as Image).image_url });
       }
       if (inserted.length) setImages((prev) => [...prev, ...inserted]);
     } finally {
