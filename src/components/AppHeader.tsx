@@ -8,9 +8,9 @@ export function AppHeader({ name }: { name?: string }) {
   const { signOut, role } = useAuth();
   return (
     <header className="sticky top-0 z-30 bg-background/80 backdrop-blur border-b border-border">
-      <div className="px-4 sm:px-6 h-20 flex items-center justify-between">
-        <Link to={role === "admin" ? "/admin" : "/dashboard"} className="flex items-center">
-          <Logo className="h-12" />
+      <div className="pl-0 pr-4 sm:pr-6 h-24 flex items-center justify-between">
+        <Link to={role === "admin" ? "/admin" : "/dashboard"} className="flex items-center pl-2">
+          <Logo className="h-20" />
         </Link>
         <div className="flex items-center gap-3">
           {name && <span className="hidden sm:inline text-sm text-muted-foreground">{name}</span>}
