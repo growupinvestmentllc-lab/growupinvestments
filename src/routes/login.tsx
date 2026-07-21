@@ -34,9 +34,9 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-primary text-primary-foreground">
-        <Logo light />
-        <div>
+      <div className="hidden lg:flex flex-col justify-between py-12 pr-12 pl-0 bg-primary text-primary-foreground overflow-hidden">
+        <Logo light className="h-24 max-w-[680px]" />
+        <div className="pl-12">
           <h1 className="text-4xl font-bold leading-tight">
             Tu portafolio inmobiliario,<br />en tiempo real.
           </h1>
@@ -44,11 +44,11 @@ function LoginPage() {
             Sigue cada etapa de construcción, draws y rentabilidad de tus inversiones con GrowUp Investments.
           </p>
         </div>
-        <p className="text-xs text-primary-foreground/60">© GrowUp Investments LLC · Florida</p>
+        <p className="pl-12 text-xs text-primary-foreground/60">© GrowUp Investments LLC · Florida</p>
       </div>
       <div className="flex items-center justify-center p-6 sm:p-12 bg-background">
         <div className="w-full max-w-sm">
-          <div className="lg:hidden mb-8 flex justify-center"><Logo /></div>
+          <div className="lg:hidden mb-8 flex justify-start"><Logo className="h-16 max-w-full" /></div>
           <h2 className="text-2xl font-bold text-foreground">Iniciar sesión</h2>
           <p className="text-sm text-muted-foreground mt-1">Accede a tu portal de inversionista.</p>
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
