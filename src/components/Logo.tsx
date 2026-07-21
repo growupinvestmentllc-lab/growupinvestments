@@ -8,12 +8,10 @@ export function Logo({
   className?: string;
 }) {
   return (
-    <div className="flex flex-col leading-none">
-      <img
-        src={logoAsset.url}
-        alt="GrowUp Investments"
-        className={`h-8 w-auto object-contain ${light ? "" : "invert"} ${className}`}
-      />
-    </div>
+    <img
+      src={logoAsset.url}
+      alt="GrowUp Investments"
+      className={`w-auto object-contain ${light ? "" : "invert"} ${className || "h-8"}`}
+    />
   );
 }
