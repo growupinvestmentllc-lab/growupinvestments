@@ -10,7 +10,7 @@ export function AppHeader({ name }: { name?: string }) {
     <header className="sticky top-0 z-30 bg-background/80 backdrop-blur border-b border-border">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link to={role === "admin" ? "/admin" : "/dashboard"} className="flex items-center">
-          <Logo subtitle={false} />
+          <Logo />
         </Link>
         <div className="flex items-center gap-3">
           {name && <span className="hidden sm:inline text-sm text-muted-foreground">{name}</span>}
