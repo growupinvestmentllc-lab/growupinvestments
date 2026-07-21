@@ -156,7 +156,7 @@ function ProjectDetail() {
             alt={project.address}
             className="h-full w-full object-cover"
           />
-          {is2217Embers && (
+          {(
             <div className="absolute inset-0 z-40 pointer-events-none">
               <div
                 className="absolute top-4 right-4 inline-flex items-center rounded-full px-4 py-2 text-xs font-semibold uppercase shadow-2xl ring-2 ring-white"
