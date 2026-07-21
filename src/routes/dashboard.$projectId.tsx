@@ -367,26 +367,6 @@ function ProjectDetail() {
                   {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
                 </div>
               ))}
-              <label
-                className="card-soft overflow-hidden cursor-pointer flex flex-col items-center justify-center h-56 text-white transition hover:opacity-90"
-                style={{ backgroundColor: "#14532d" }}
-              >
-                <Plus className="h-10 w-10 mb-2" strokeWidth={2.5} />
-                <span className="text-sm font-semibold tracking-wide">
-                  {uploading ? "SUBIENDO..." : "AGREGAR FOTO"}
-                </span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="hidden"
-                  disabled={uploading}
-                  onChange={(e) => {
-                    handleUploadPhotos(e.target.files);
-                    e.currentTarget.value = "";
-                  }}
-                />
-              </label>
             </div>
             <div className="card-soft p-6">
               <h3 className="font-semibold text-foreground mb-4">Especificaciones</h3>
