@@ -269,6 +269,19 @@ function ProjectDetail() {
                 <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
                 <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
               </div>
+              {project.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb" && (
+                <div className="grid sm:grid-cols-2 gap-4 mt-4">
+                  <StatCard
+                    label="Costo de construcción Draw 1 a Draw 6 incluido"
+                    value={`${formatUSD(project.construction_cost)} + Steamwall (${formatUSD(5012)})`}
+                  />
+                  <StatCard
+                    label="Total Construcción + Steamwall"
+                    value={formatUSD((project.construction_cost || 0) + 5012)}
+                    accent="primary"
+                  />
+                </div>
+              )}
             </div>
 
             <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} />
