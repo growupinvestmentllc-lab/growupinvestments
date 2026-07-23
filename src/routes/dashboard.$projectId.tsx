@@ -124,7 +124,7 @@ function ProjectDetail() {
   const totalCost =
     constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
-  let pending = (is2446 || is2434 ? constructionTotal : constructionBase) - deposited;
+  let pending = constructionBase - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
