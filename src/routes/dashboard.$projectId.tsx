@@ -47,7 +47,7 @@ type Stage = {
   estimated_start_date?: string | null;
   estimated_end_date?: string | null;
 };
-type Comp = { id: string; address: string; sale_price: number; sqft_total: number | null; sqft_living: number | null; days_on_market: number | null; sale_date: string | null };
+
 type Image = { id: string; image_url: string; caption: string | null };
 
 function ProjectDetail() {
@@ -56,8 +56,8 @@ function ProjectDetail() {
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [stages, setStages] = useState<Stage[]>([]);
-  const [comps, setComps] = useState<Comp[]>([]);
   const [images, setImages] = useState<Image[]>([]);
+
   const [myLlc, setMyLlc] = useState<string | null>(null);
   
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
@@ -77,17 +77,16 @@ function ProjectDetail() {
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: c }, { data: i }, { data: prof }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: i }, { data: prof }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
-        supabase.from("comparables").select("*").eq("project_id", projectId).order("created_at"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
         supabase.from("profiles").select("llc_name").maybeSingle(),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
-      setComps((c ?? []) as Comp[]);
       const rawImgs = (i ?? []) as Image[];
+
       // Bucket is private → generate signed URLs from stored path
       const signed = await Promise.all(rawImgs.map(async (img) => {
         const url = img.image_url || "";
@@ -196,16 +195,11 @@ function ProjectDetail() {
         </div>
 
         {(() => null)()}
-        {/* hide comparables tab for specific projects */}
+        
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
             <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>
-            {!(
-              (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
-              (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
-              project.address?.toLowerCase().includes("jaguar")
-            ) && <TabsTrigger value="comparables">Comparables</TabsTrigger>}
             <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
@@ -340,17 +334,6 @@ function ProjectDetail() {
               </div>
             )}
           </TabsContent>
-
-          {/* COMPARABLES */}
-          {!(
-            (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
-            (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
-            project.address?.toLowerCase().includes("jaguar")
-          ) && (
-            <TabsContent value="comparables" className="mt-6 space-y-6">
-              <ComparablesTab />
-            </TabsContent>
-          )}
 
           {/* PORTFOLIO */}
           <TabsContent value="portfolio" className="mt-6 space-y-6">
@@ -608,148 +591,6 @@ function Spec({ label, value, icon }: { label: string; value: string; icon?: Rea
   );
 }
 
-const SALE_COMPS = [
-  { address: "2109 SW Embers Ter, Cape Coral FL", price: 368000, sqftTotal: 2210, sqftLiving: 1756, dom: 42, date: "Feb 2025" },
-  { address: "2341 SW 2nd Pl, Cape Coral FL", price: 345000, sqftTotal: 2004, sqftLiving: 1620, dom: 28, date: "Jan 2025" },
-  { address: "1812 SW Embers Ave, Cape Coral FL", price: 389000, sqftTotal: 2506, sqftLiving: 1904, dom: 55, date: "Mar 2025" },
-  { address: "2205 SW 4th Ter, Cape Coral FL", price: 359900, sqftTotal: 2150, sqftLiving: 1780, dom: 19, date: "Apr 2025" },
-];
-
-const RENT_COMPS = [
-  { address: "2318 SW Embers Ter, Cape Coral FL", rent: 2400, sqftLiving: 1820, beds: "4bd/3ba", date: "Mar 2025" },
-  { address: "1956 SW 3rd Ave, Cape Coral FL", rent: 2250, sqftLiving: 1650, beds: "3bd/2ba", date: "Feb 2025" },
-  { address: "2440 SW Embers Ave, Cape Coral FL", rent: 2600, sqftLiving: 2010, beds: "4bd/3ba", date: "Apr 2025" },
-  { address: "2102 SW 1st Pl, Cape Coral FL", rent: 2350, sqftLiving: 1904, beds: "4bd/3ba", date: "Jan 2025" },
-];
-
-function ComparablesTab() {
-  const avgPrice = SALE_COMPS.reduce((s, c) => s + c.price, 0) / SALE_COMPS.length;
-  const avgDom = SALE_COMPS.reduce((s, c) => s + c.dom, 0) / SALE_COMPS.length;
-  const avgPpsf = SALE_COMPS.reduce((s, c) => s + c.price / c.sqftLiving, 0) / SALE_COMPS.length;
-  const avgRent = RENT_COMPS.reduce((s, c) => s + c.rent, 0) / RENT_COMPS.length;
-  const annualRent = avgRent * 12;
-  const capRate = (annualRent / avgPrice) * 100;
-
-  return (
-    <div className="space-y-10">
-      {/* Section A — Sales */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-bold text-foreground">Ventas recientes en la zona</h2>
-          <p className="text-sm text-muted-foreground">Propiedades similares vendidas recientemente en Cape Coral, FL</p>
-        </div>
-        <div className="card-soft overflow-hidden">
-          <div className="overflow-x-auto hidden sm:block">
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs uppercase text-muted-foreground border-b border-border">
-                <tr>
-                  <th className="py-3 px-4">Dirección</th>
-                  <th>Precio venta</th>
-                  <th>Sqft total</th>
-                  <th>Sqft living</th>
-                  <th>Días en mercado</th>
-                  <th className="pr-4">Fecha venta</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SALE_COMPS.map((c) => (
-                  <tr key={c.address} className="border-b border-border/60 last:border-0">
-                    <td className="py-3 px-4 font-medium text-foreground">{c.address}</td>
-                    <td className="font-semibold text-primary">{formatUSD(c.price)}</td>
-                    <td>{c.sqftTotal.toLocaleString()} sqft</td>
-                    <td>{c.sqftLiving.toLocaleString()} sqft</td>
-                    <td>{c.dom} días</td>
-                    <td className="pr-4">{c.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {/* Mobile cards */}
-          <div className="sm:hidden divide-y divide-border">
-            {SALE_COMPS.map((c) => (
-              <div key={c.address} className="p-4">
-                <p className="font-medium text-foreground">{c.address}</p>
-                <p className="text-lg font-bold text-primary mt-1">{formatUSD(c.price)}</p>
-                <div className="grid grid-cols-2 gap-2 mt-2 text-xs text-muted-foreground">
-                  <span>Total: {c.sqftTotal.toLocaleString()} sqft</span>
-                  <span>Living: {c.sqftLiving.toLocaleString()} sqft</span>
-                  <span>{c.dom} días en mercado</span>
-                  <span>{c.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="card-soft p-6 bg-primary text-primary-foreground">
-          <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-primary-foreground/80">Resumen de ventas</h3>
-          <div className="grid sm:grid-cols-3 gap-4">
-            <Stat dark label="Precio promedio" value={formatUSD(Math.round(avgPrice))} />
-            <Stat dark label="Promedio días en mercado" value={`${Math.round(avgDom)} días`} />
-            <Stat dark label="Promedio por sqft living" value={`$${Math.round(avgPpsf)}/sqft`} />
-          </div>
-        </div>
-      </section>
-
-      <div className="border-t border-border" />
-
-      {/* Section B — Rentals */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-xl font-bold text-foreground">Rentas recientes en la zona</h2>
-          <p className="text-sm text-muted-foreground">Propiedades similares alquiladas recientemente en Cape Coral, FL</p>
-        </div>
-        <div className="card-soft overflow-hidden">
-          <div className="overflow-x-auto hidden sm:block">
-            <table className="w-full text-sm">
-              <thead className="text-left text-xs uppercase text-muted-foreground border-b border-border">
-                <tr>
-                  <th className="py-3 px-4">Dirección</th>
-                  <th>Renta mensual</th>
-                  <th>Sqft living</th>
-                  <th>Beds/Baths</th>
-                  <th className="pr-4">Fecha</th>
-                </tr>
-              </thead>
-              <tbody>
-                {RENT_COMPS.map((c) => (
-                  <tr key={c.address} className="border-b border-border/60 last:border-0">
-                    <td className="py-3 px-4 font-medium text-foreground">{c.address}</td>
-                    <td className="font-semibold text-primary">{formatUSD(c.rent)}/mes</td>
-                    <td>{c.sqftLiving.toLocaleString()} sqft</td>
-                    <td>{c.beds}</td>
-                    <td className="pr-4">{c.date}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="sm:hidden divide-y divide-border">
-            {RENT_COMPS.map((c) => (
-              <div key={c.address} className="p-4">
-                <p className="font-medium text-foreground">{c.address}</p>
-                <p className="text-lg font-bold text-primary mt-1">{formatUSD(c.rent)}/mes</p>
-                <div className="grid grid-cols-2 gap-2 mt-2 text-xs text-muted-foreground">
-                  <span>{c.sqftLiving.toLocaleString()} sqft</span>
-                  <span>{c.beds}</span>
-                  <span>{c.date}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="card-soft p-6 bg-primary text-primary-foreground">
-          <h3 className="text-sm font-semibold uppercase tracking-wider mb-4 text-primary-foreground/80">Resumen de rentas</h3>
-          <div className="grid sm:grid-cols-3 gap-4">
-            <Stat dark label="Renta promedio mensual" value={`${formatUSD(Math.round(avgRent))}/mes`} />
-            <Stat dark label="Renta promedio anual" value={`${formatUSD(Math.round(annualRent))}/año`} />
-            <Stat dark label="Cap rate estimado" value={`~${capRate.toFixed(1)}%`} />
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
 function DocsTab({ projectId }: { projectId: string }) {
   const [docs, setDocs] = useState<any[]>([]);
   useEffect(() => {
