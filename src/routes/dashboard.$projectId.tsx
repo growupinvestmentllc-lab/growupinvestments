@@ -271,7 +271,7 @@ function ProjectDetail() {
 
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-4">
                 <StatCard
                   label="Construcción"
                   value={
@@ -279,6 +279,7 @@ function ProjectDetail() {
                       ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall)}) = ${formatUSD(constructionTotal)}`
                       : formatUSD(project.construction_cost)
                   }
+                  className="min-h-[140px] py-6"
                 />
                 <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
                 <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
