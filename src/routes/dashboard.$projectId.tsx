@@ -551,10 +551,10 @@ function Timeline({ stages }: { stages: Stage[] }) {
   );
 }
 
-function StatCard({ label, value, accent, sub }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string }) {
+function StatCard({ label, value, accent, sub, className }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string; className?: string }) {
   const cls = accent === "primary" ? "bg-primary text-primary-foreground" : accent === "muted" ? "bg-secondary/40 text-foreground" : "bg-card text-foreground";
   return (
-    <div className={`card-soft p-5 ${cls}`}>
+    <div className={`card-soft p-5 ${cls} ${className || ""}`}>
       <p className={`text-xs uppercase tracking-wider ${accent === "primary" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{label}</p>
       <p className="text-2xl font-bold mt-2">{value}</p>
       {sub && (
