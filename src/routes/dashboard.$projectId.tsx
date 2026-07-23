@@ -47,7 +47,7 @@ type Stage = {
   estimated_start_date?: string | null;
   estimated_end_date?: string | null;
 };
-type Comp = { id: string; address: string; sale_price: number; sqft_total: number | null; sqft_living: number | null; days_on_market: number | null; sale_date: string | null };
+
 type Image = { id: string; image_url: string; caption: string | null };
 
 function ProjectDetail() {
@@ -56,8 +56,8 @@ function ProjectDetail() {
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [stages, setStages] = useState<Stage[]>([]);
-  const [comps, setComps] = useState<Comp[]>([]);
   const [images, setImages] = useState<Image[]>([]);
+
   const [myLlc, setMyLlc] = useState<string | null>(null);
   
   const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
@@ -77,17 +77,16 @@ function ProjectDetail() {
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: c }, { data: i }, { data: prof }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: i }, { data: prof }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
-        supabase.from("comparables").select("*").eq("project_id", projectId).order("created_at"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
         supabase.from("profiles").select("llc_name").maybeSingle(),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
-      setComps((c ?? []) as Comp[]);
       const rawImgs = (i ?? []) as Image[];
+
       // Bucket is private → generate signed URLs from stored path
       const signed = await Promise.all(rawImgs.map(async (img) => {
         const url = img.image_url || "";
