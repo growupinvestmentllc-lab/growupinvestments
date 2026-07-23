@@ -29,6 +29,9 @@ type Opportunity = {
   status: string;
   contact_url: string | null;
   image_url: string | null;
+  bedrooms: number | null;
+  bathrooms: number | null;
+  study: number | null;
 };
 
 function Dashboard() {
@@ -237,6 +240,13 @@ function Dashboard() {
                     <MapPin className="h-3 w-3" />
                     {o.location}
                   </p>
+                  {(o.bedrooms || o.bathrooms || o.study) && (
+                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+                      {o.bedrooms ? <span>{o.bedrooms} dormitorios</span> : null}
+                      {o.study ? <span>{o.study} estudio</span> : null}
+                      {o.bathrooms ? <span>{o.bathrooms} baños</span> : null}
+                    </div>
+                  )}
                   <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                     <div>
                       <p className="text-xs text-muted-foreground">ROI esperado</p>
