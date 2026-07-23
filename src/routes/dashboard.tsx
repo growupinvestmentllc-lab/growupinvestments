@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES } from "@/lib/stages";
-import { MapPin, ArrowRight, Home, ExternalLink } from "lucide-react";
+import { MapPin, ArrowRight, Home } from "lucide-react";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
 
@@ -250,9 +250,12 @@ function Dashboard() {
                     </div>
                   </div>
                   <Button asChild className="mt-5">
-                    <a href={o.contact_url || "#"} target="_blank" rel="noreferrer">
-                      Quiero saber más <ExternalLink className="h-3 w-3" />
-                    </a>
+                    <Link
+                      to="/contact"
+                      search={{ opportunity_id: o.id, opportunity_name: o.name }}
+                    >
+                      Quiero saber más <ArrowRight className="h-3 w-3" />
+                    </Link>
                   </Button>
                 </div>
               </div>
