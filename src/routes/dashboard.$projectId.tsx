@@ -117,8 +117,11 @@ function ProjectDetail() {
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const steamwall2446 = 5006;
+  const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
-  const totalCost = (is2446 ? constructionBase + steamwall2446 : constructionBase) + (Number(project?.lot_cost) || 0)
+  const steamwall = is2446 ? steamwall2446 : is2434 ? steamwall2434 : 0;
+  const constructionTotal = constructionBase + steamwall;
+  const totalCost = constructionTotal + (Number(project?.lot_cost) || 0);
     || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   let pending = totalCost - deposited;
@@ -269,31 +272,17 @@ function ProjectDetail() {
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
               <div className="grid sm:grid-cols-3 gap-4">
-                <StatCard label="Construcción" value={formatUSD(project.construction_cost)} />
+                <StatCard
+                  label="Construcción"
+                  value={
+                    steamwall > 0
+                      ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall)}) = ${formatUSD(constructionTotal)}`
+                      : formatUSD(project.construction_cost)
+                  }
+                />
                 <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
                 <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
               </div>
-              {is2434 && (
-                <div className="grid sm:grid-cols-2 gap-4 mt-4">
-                  <StatCard
-                    label="Costo de construcción Draw 1 a Draw 6 incluido"
-                    value={`${formatUSD(project.construction_cost)} + Steamwall (${formatUSD(5012)})`}
-                  />
-                  <StatCard
-                    label="Total Construcción + Steamwall"
-                    value={formatUSD((project.construction_cost || 0) + 5012)}
-                    accent="primary"
-                  />
-                </div>
-              )}
-              {is2446 && (
-                <div className="mt-4">
-                  <StatCard
-                    label="Costo de construcción Draw 1 a Draw 6 incluido"
-                    value={`${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall2446)}) = ${formatUSD(constructionBase + steamwall2446)}`}
-                  />
-                </div>
-              )}
             </div>
 
             <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} />
