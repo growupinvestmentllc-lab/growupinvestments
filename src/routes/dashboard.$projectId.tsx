@@ -124,7 +124,7 @@ function ProjectDetail() {
   const totalCost =
     constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
-  let pending = constructionBase - deposited;
+  let pending = (is2446 || is2434 ? constructionTotal : constructionBase) - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
@@ -293,7 +293,8 @@ function ProjectDetail() {
               (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
               project.address?.toLowerCase().includes("710") ||
               (project.address?.toLowerCase().includes("2217") && project.address?.toLowerCase().includes("embers")) ||
-              (project.address?.toLowerCase().includes("472") && project.address?.toLowerCase().includes("rajah"))
+              (project.address?.toLowerCase().includes("472") && project.address?.toLowerCase().includes("rajah")) ||
+              is2446
             ) && (
               <div className="card-soft p-5 bg-secondary/30 border-secondary">
                 <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>

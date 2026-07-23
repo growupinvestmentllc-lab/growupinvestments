@@ -1,0 +1,1 @@
+UPDATE public.projects SET amount_deposited = 295706 WHERE id = 'f6705699-6576-4ecf-99eb-8d54b41d382e';
