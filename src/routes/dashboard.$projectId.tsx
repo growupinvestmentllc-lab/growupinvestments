@@ -195,7 +195,7 @@ function ProjectDetail() {
         </div>
 
         {(() => null)()}
-        {/* hide comparables tab for specific projects */}
+        
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
