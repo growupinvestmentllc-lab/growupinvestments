@@ -491,6 +491,11 @@ function DrawSchedule({
                       <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
                     )}
                   </p>
+                  {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
+                    <p className="text-xs text-foreground mt-0.5">
+                      en esta etapa se abonó el steamwall ({formatUSD(61200)} Draw 3 + {formatUSD(5006)} Steamwall)
+                    </p>
+                  )}
                 </div>
               </div>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge}`}>{label}</span>
