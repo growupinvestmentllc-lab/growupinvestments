@@ -428,11 +428,13 @@ function DrawSchedule({
   lotCost = 0,
   myPct,
   hasMultipleOwners,
+  projectId,
 }: {
   stages: Stage[];
   lotCost?: number;
   myPct?: number | null;
   hasMultipleOwners?: boolean;
+  projectId?: string;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
