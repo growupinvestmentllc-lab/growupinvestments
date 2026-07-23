@@ -273,7 +273,7 @@ function ProjectDetail() {
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
               <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-4">
                 <StatCard
-                  label="Construcción"
+                  label="Costo de construcción Draw 1 a Draw 6 incluido"
                   value={
                     steamwall > 0
                       ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall)}) = ${formatUSD(constructionTotal)}`
