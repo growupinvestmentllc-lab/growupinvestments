@@ -7,7 +7,6 @@ import { ALL_STAGES } from "@/lib/stages";
 import { MapPin, ArrowRight, Home, ExternalLink } from "lucide-react";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
-import { Simulator } from "@/components/Simulator";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
@@ -262,20 +261,6 @@ function Dashboard() {
         </section>
         )}
 
-        {/* Simulador */}
-        {profile?.full_name?.toUpperCase() !== "LAS TROPAS LLC" && (
-        <section className="mt-16">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Simulador de rentabilidad</h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              Estima ganancias y ROI según escenarios de venta
-            </p>
-          </div>
-          <div className="mt-6">
-            <Simulator />
-          </div>
-        </section>
-        )}
       </main>
     </div>
   );
