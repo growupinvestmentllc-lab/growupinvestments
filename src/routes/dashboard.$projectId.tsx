@@ -286,7 +286,7 @@ function ProjectDetail() {
               </div>
             </div>
 
-            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} />
+            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} />
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
@@ -428,11 +428,13 @@ function DrawSchedule({
   lotCost = 0,
   myPct,
   hasMultipleOwners,
+  projectId,
 }: {
   stages: Stage[];
   lotCost?: number;
   myPct?: number | null;
   hasMultipleOwners?: boolean;
+  projectId?: string;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
@@ -489,6 +491,11 @@ function DrawSchedule({
                       <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
                     )}
                   </p>
+                  {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
+                    <p className="text-xs text-foreground mt-0.5">
+                      en esta etapa se abonó el steamwall ({formatUSD(61200)} Draw 3 + {formatUSD(5006)} Steamwall)
+                    </p>
+                  )}
                 </div>
               </div>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${badge}`}>{label}</span>
