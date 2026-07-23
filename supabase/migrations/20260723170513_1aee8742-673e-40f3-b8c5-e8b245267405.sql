@@ -1,0 +1,1 @@
+UPDATE public.project_stages SET completed = true, active = false WHERE project_id = 'f6705699-6576-4ecf-99eb-8d54b41d382e' AND stage_group = 'CO (Certificate of Occupancy)';
