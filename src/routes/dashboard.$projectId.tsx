@@ -121,8 +121,8 @@ function ProjectDetail() {
   const constructionBase = Number(project?.construction_cost) || 0;
   const steamwall = is2446 ? steamwall2446 : is2434 ? steamwall2434 : 0;
   const constructionTotal = constructionBase + steamwall;
-  const totalCost = constructionTotal + (Number(project?.lot_cost) || 0);
-    || Number(project?.total_cost) || 0;
+  const totalCost =
+    constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   let pending = totalCost - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
