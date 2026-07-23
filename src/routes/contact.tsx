@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageCircle, Mail, Phone, MapPin, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
@@ -96,40 +96,6 @@ function ContactPage() {
               <p className="mt-3 text-sm text-primary font-medium">Consulta sobre: {opportunity_name}</p>
             )}
 
-            <ul className="mt-10 space-y-5 text-foreground">
-              <li className="flex items-center gap-3">
-                <span className="h-9 w-9 rounded-full bg-background flex items-center justify-center">
-                  <MessageCircle className="h-4 w-4 text-primary" />
-                </span>
-                <a href="https://wa.me/5493513000000" target="_blank" rel="noreferrer" className="hover:text-primary">
-                  WhatsApp directo
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-9 w-9 rounded-full bg-background flex items-center justify-center">
-                  <Mail className="h-4 w-4 text-primary" />
-                </span>
-                <a href="mailto:info@growupinvestments.com" className="hover:text-primary">
-                  info@growupinvestments.com
-                </a>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="h-9 w-9 rounded-full bg-background flex items-center justify-center">
-                  <Phone className="h-4 w-4 text-primary" />
-                </span>
-                <span>+1 (000) 000-0000</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="h-9 w-9 rounded-full bg-background flex items-center justify-center shrink-0">
-                  <MapPin className="h-4 w-4 text-primary" />
-                </span>
-                <span>
-                  Gay Lussac 6339, Córdoba, Argentina
-                  <br />
-                  Cape Coral, Florida — EE.UU.
-                </span>
-              </li>
-            </ul>
           </div>
 
           <div className="rounded-2xl bg-background p-6 sm:p-8 shadow-sm">
