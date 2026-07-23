@@ -104,6 +104,8 @@ export type Database = {
       }
       opportunities: {
         Row: {
+          bathrooms: number | null
+          bedrooms: number | null
           contact_url: string | null
           created_at: string
           expected_roi: number
@@ -112,9 +114,12 @@ export type Database = {
           location: string
           name: string
           status: string
+          study: number | null
           total_investment: number
         }
         Insert: {
+          bathrooms?: number | null
+          bedrooms?: number | null
           contact_url?: string | null
           created_at?: string
           expected_roi?: number
@@ -123,9 +128,12 @@ export type Database = {
           location: string
           name: string
           status?: string
+          study?: number | null
           total_investment?: number
         }
         Update: {
+          bathrooms?: number | null
+          bedrooms?: number | null
           contact_url?: string | null
           created_at?: string
           expected_roi?: number
@@ -134,6 +142,7 @@ export type Database = {
           location?: string
           name?: string
           status?: string
+          study?: number | null
           total_investment?: number
         }
         Relationships: []
