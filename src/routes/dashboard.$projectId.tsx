@@ -212,13 +212,11 @@ function ProjectDetail() {
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
             {is2446 ? (
-              <div className="card-soft p-6 flex flex-col items-stretch">
+              <div className="card-soft p-6 flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
-                <div className="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <div className="flex-1 flex justify-center sm:justify-start sm:pl-12">
-                    <ProgressCircle value={progress} />
-                  </div>
-                  <div className="flex-1 flex flex-col items-center sm:items-end sm:pr-12">
+                <div className="mt-2 flex flex-row items-center justify-center gap-6">
+                  <ProgressCircle value={progress} />
+                  <div className="flex flex-col items-center">
                     <p className="text-sm text-muted-foreground">Etapa actual</p>
                     <p className="text-base font-semibold text-foreground">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
                   </div>
