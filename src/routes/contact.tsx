@@ -78,56 +78,55 @@ function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#D5DAD0]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm text-[#3E4A3C] hover:text-[#2F3A2D]">
           <ArrowLeft className="h-4 w-4" /> Volver
         </Link>
       </div>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="rounded-3xl bg-primary/15 p-6 sm:p-10 lg:p-14 grid lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="rounded-3xl bg-[#D5DAD0] p-6 sm:p-10 lg:p-14 grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           <div>
-            <p className="text-xs font-semibold tracking-[0.2em] text-primary uppercase">Contacto</p>
-            <h1 className="mt-3 text-4xl sm:text-5xl font-bold text-foreground leading-tight">
+            <p className="text-xs font-semibold tracking-[0.2em] text-[#3E4A3C] uppercase">Contacto</p>
+            <h1 className="mt-3 text-4xl sm:text-5xl font-bold text-[#1A1F18] leading-tight">
               Hablemos de tu<br />próxima inversión.
             </h1>
-            <p className="mt-4 text-muted-foreground">Respondemos en menos de 24 horas hábiles.</p>
+            <p className="mt-4 text-[#3E4A3C]">Respondemos en menos de 24 horas hábiles.</p>
             {opportunity_name && (
-              <p className="mt-3 text-sm text-primary font-medium">Consulta sobre: {opportunity_name}</p>
+              <p className="mt-3 text-sm text-[#2F4F3F] font-medium">Consulta sobre: {opportunity_name}</p>
             )}
-
           </div>
 
-          <div className="rounded-2xl bg-background p-6 sm:p-8 shadow-sm">
+          <div className="rounded-2xl bg-[#F9FAF7] p-6 sm:p-8 shadow-sm">
             {sent ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-16">
-                <h2 className="text-2xl font-bold text-foreground">¡Gracias!</h2>
-                <p className="mt-2 text-muted-foreground max-w-sm">
+                <h2 className="text-2xl font-bold text-[#1A1F18]">¡Gracias!</h2>
+                <p className="mt-2 text-[#3E4A3C] max-w-sm">
                   Recibimos tu mensaje. Un asesor de GrowUp Investments te contactará a la brevedad.
                 </p>
-                <Button asChild className="mt-6">
+                <Button asChild className="mt-6 bg-[#2F4F3F] hover:bg-[#263F32] text-white">
                   <Link to="/dashboard">Volver al portal</Link>
                 </Button>
               </div>
             ) : (
               <form onSubmit={onSubmit} className="space-y-5">
                 <div>
-                  <Label htmlFor="name">Nombre</Label>
-                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} />
+                  <Label htmlFor="name" className="text-[#1A1F18]">Nombre</Label>
+                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required maxLength={100} className="bg-[#F9FAF7] border-[#C5CFC1] focus:border-[#2F4F3F] focus:ring-[#2F4F3F]" />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} />
+                  <Label htmlFor="email" className="text-[#1A1F18]">Email</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required maxLength={255} className="bg-[#F9FAF7] border-[#C5CFC1] focus:border-[#2F4F3F] focus:ring-[#2F4F3F]" />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Teléfono</Label>
-                  <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} />
+                  <Label htmlFor="phone" className="text-[#1A1F18]">Teléfono</Label>
+                  <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} className="bg-[#F9FAF7] border-[#C5CFC1] focus:border-[#2F4F3F] focus:ring-[#2F4F3F]" />
                 </div>
                 <div>
-                  <Label htmlFor="message">Mensaje</Label>
-                  <Textarea id="message" value={message} onChange={(e) => setMessage(e.target.value)} rows={5} maxLength={1000} />
+                  <Label htmlFor="message" className="text-[#1A1F18]">Mensaje</Label>
+                  <Textarea id="message" value={message} onChange={(e) => setMessage(e.target.value)} rows={5} maxLength={1000} className="bg-[#F9FAF7] border-[#C5CFC1] focus:border-[#2F4F3F] focus:ring-[#2F4F3F]" />
                 </div>
-                <Button type="submit" className="w-full" size="lg" disabled={submitting}>
+                <Button type="submit" className="w-full bg-[#2F4F3F] hover:bg-[#263F32] text-white" size="lg" disabled={submitting}>
                   {submitting ? "Enviando..." : "Enviar"}
                 </Button>
               </form>
