@@ -7,7 +7,6 @@ import { ALL_STAGES } from "@/lib/stages";
 import { MapPin, ArrowRight, Home, ExternalLink } from "lucide-react";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
-import { Simulator } from "@/components/Simulator";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
