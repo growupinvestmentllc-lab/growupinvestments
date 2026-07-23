@@ -335,17 +335,6 @@ function ProjectDetail() {
             )}
           </TabsContent>
 
-          {/* COMPARABLES */}
-          {!(
-            (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
-            (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
-            project.address?.toLowerCase().includes("jaguar")
-          ) && (
-            <TabsContent value="comparables" className="mt-6 space-y-6">
-              <ComparablesTab />
-            </TabsContent>
-          )}
-
           {/* PORTFOLIO */}
           <TabsContent value="portfolio" className="mt-6 space-y-6">
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
