@@ -271,7 +271,7 @@ function ProjectDetail() {
 
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
-              <div className="grid sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-4">
                 <StatCard
                   label="Construcción"
                   value={
@@ -279,6 +279,7 @@ function ProjectDetail() {
                       ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall)}) = ${formatUSD(constructionTotal)}`
                       : formatUSD(project.construction_cost)
                   }
+                  className="min-h-[140px] py-6"
                 />
                 <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
                 <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
@@ -550,10 +551,10 @@ function Timeline({ stages }: { stages: Stage[] }) {
   );
 }
 
-function StatCard({ label, value, accent, sub }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string }) {
+function StatCard({ label, value, accent, sub, className }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string; className?: string }) {
   const cls = accent === "primary" ? "bg-primary text-primary-foreground" : accent === "muted" ? "bg-secondary/40 text-foreground" : "bg-card text-foreground";
   return (
-    <div className={`card-soft p-5 ${cls}`}>
+    <div className={`card-soft p-5 ${cls} ${className || ""}`}>
       <p className={`text-xs uppercase tracking-wider ${accent === "primary" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{label}</p>
       <p className="text-2xl font-bold mt-2">{value}</p>
       {sub && (
