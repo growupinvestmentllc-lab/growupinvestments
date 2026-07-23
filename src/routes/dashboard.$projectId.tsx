@@ -124,7 +124,7 @@ function ProjectDetail() {
   const totalCost =
     constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
-  let pending = constructionBase - deposited;
+  let pending = (steamwall > 0 ? constructionTotal : constructionBase) - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
@@ -211,42 +211,53 @@ function ProjectDetail() {
 
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
-            <div className="grid lg:grid-cols-3 gap-5">
-              <div className="card-soft p-6 lg:col-span-1 flex flex-col items-center justify-center">
+            {is2446 ? (
+              <div className="card-soft p-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                 <ProgressCircle value={progress} />
-                <p className="mt-3 text-sm text-muted-foreground text-center">Etapa actual</p>
-                <p className="text-base font-semibold text-foreground text-center">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
+                <div className="text-center sm:text-left">
+                  <p className="text-sm text-muted-foreground">Etapa actual</p>
+                  <p className="text-base font-semibold text-foreground">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
+                </div>
               </div>
-              <div className="card-soft p-6 lg:col-span-2">
-                <GanttChart
-                  stages={stages}
-                  subtitle={
-                    normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
-                      ? "Tiempos reales"
-                      : undefined
-                  }
-                  plannedVsActual={
-                    normalizedAddress.includes("621") && normalizedAddress.includes("flamingo")
-                      ? ({
-                          "Hard Construction 1": { planned: { start: ym(2025, 11), end: ym(2026, 0) }, actual: { start: ym(2026, 2), end: ym(2026, 3) } },
-                          "Hard Construction 2": { planned: { start: ym(2026, 1), end: ym(2026, 2) }, actual: { start: ym(2026, 4), end: ym(2026, 5) } },
-                          "Hard Construction 3": { planned: { start: ym(2026, 4), end: ym(2026, 5) }, actual: { start: ym(2026, 6), end: ym(2026, 7) } },
-                          "Hard Construction 4": { planned: { start: ym(2026, 5), end: ym(2026, 5) }, actual: { start: ym(2026, 8), end: ym(2026, 8) } },
-                          "CO (Certificate of Occupancy)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2026, 9), end: ym(2026, 9) } },
-                        } satisfies PlannedVsActual)
-                      : normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
-                      ? ({
-                          "Hard Construction 1": { actual: { start: ym(2026, 3), end: ym(2026, 4) } },
-                          "Hard Construction 2": { actual: { start: ym(2026, 5), end: ym(2026, 6) } },
-                          "Hard Construction 3": { actual: { start: ym(2026, 7), end: ym(2026, 9) } },
-                          "Hard Construction 4": { actual: { start: ym(2026, 10), end: ym(2026, 10) } },
-                        } satisfies PlannedVsActual)
-                      : undefined
-                  }
-                />
+            ) : (
+              <div className="grid lg:grid-cols-3 gap-5">
+                <div className="card-soft p-6 lg:col-span-1 flex flex-col items-center justify-center">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
+                  <ProgressCircle value={progress} />
+                  <p className="mt-3 text-sm text-muted-foreground text-center">Etapa actual</p>
+                  <p className="text-base font-semibold text-foreground text-center">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
+                </div>
+                <div className="card-soft p-6 lg:col-span-2">
+                  <GanttChart
+                    stages={stages}
+                    subtitle={
+                      normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
+                        ? "Tiempos reales"
+                        : undefined
+                    }
+                    plannedVsActual={
+                      normalizedAddress.includes("621") && normalizedAddress.includes("flamingo")
+                        ? ({
+                            "Hard Construction 1": { planned: { start: ym(2025, 11), end: ym(2026, 0) }, actual: { start: ym(2026, 2), end: ym(2026, 3) } },
+                            "Hard Construction 2": { planned: { start: ym(2026, 1), end: ym(2026, 2) }, actual: { start: ym(2026, 4), end: ym(2026, 5) } },
+                            "Hard Construction 3": { planned: { start: ym(2026, 4), end: ym(2026, 5) }, actual: { start: ym(2026, 6), end: ym(2026, 7) } },
+                            "Hard Construction 4": { planned: { start: ym(2026, 5), end: ym(2026, 5) }, actual: { start: ym(2026, 8), end: ym(2026, 8) } },
+                            "CO (Certificate of Occupancy)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2026, 9), end: ym(2026, 9) } },
+                          } satisfies PlannedVsActual)
+                        : normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
+                        ? ({
+                            "Hard Construction 1": { actual: { start: ym(2026, 3), end: ym(2026, 4) } },
+                            "Hard Construction 2": { actual: { start: ym(2026, 5), end: ym(2026, 6) } },
+                            "Hard Construction 3": { actual: { start: ym(2026, 7), end: ym(2026, 9) } },
+                            "Hard Construction 4": { actual: { start: ym(2026, 10), end: ym(2026, 10) } },
+                          } satisfies PlannedVsActual)
+                        : undefined
+                    }
+                  />
+                </div>
               </div>
-            </div>
+            )}
 
             <ConstructionProgressBar stages={stages} />
 
