@@ -360,7 +360,7 @@ function ProjectDetail() {
                 <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
                 <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
                 <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "Sí" : "No"} />
-                <Spec label="Constructor" value="Total Smartors LLC" />
+                <Spec label="Constructor" value={is2446 ? "Growup Investments" : "Total Smartors LLC"} />
                 <Spec label="Arquitecto" value="Olympus Designs Group" />
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
