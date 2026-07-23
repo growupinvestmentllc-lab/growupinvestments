@@ -304,7 +304,7 @@ function ProjectDetail() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 text-sm">
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Precio de venta" : "Precio est. de venta"} value={formatUSD(project.expected_sale_price)} />
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
-                <Stat dark label="Costo construcción" value={formatUSD(project.construction_cost)} />
+                <Stat dark label="Costo construcción" value={formatUSD(is2446 || is2434 ? constructionTotal : project.construction_cost)} />
                 <Stat dark label="Costo lote" value={formatUSD(project.lot_cost)} />
                 {project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
                   <Stat dark label="NOI" value="6.34%" />
@@ -312,6 +312,8 @@ function ProjectDetail() {
                   <Stat dark label="ROI estimado" value="11%" />
                 ) : project.address?.toLowerCase().includes("7305") ? (
                   <Stat dark label="ROI" value="8%" />
+                ) : is2446 ? (
+                  <Stat dark label="ROI estimado" value={`${project.expected_sale_price ? (((project.expected_sale_price - (constructionTotal + (project.lot_cost || 0))) / project.expected_sale_price) * 100).toFixed(1) : 0}%`} />
                 ) : (
                   <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
                 )}
