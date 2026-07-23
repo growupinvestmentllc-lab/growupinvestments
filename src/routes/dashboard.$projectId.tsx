@@ -114,7 +114,11 @@ function ProjectDetail() {
   }, [stages]);
 
   const activeStage = stages.find((s) => s.active);
-  const totalCost = (Number(project?.construction_cost) || 0) + (Number(project?.lot_cost) || 0)
+  const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
+  const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
+  const steamwall2446 = 5006;
+  const constructionBase = Number(project?.construction_cost) || 0;
+  const totalCost = (is2446 ? constructionBase + steamwall2446 : constructionBase) + (Number(project?.lot_cost) || 0)
     || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   let pending = totalCost - deposited;
@@ -269,7 +273,7 @@ function ProjectDetail() {
                 <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
                 <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
               </div>
-              {project.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb" && (
+              {is2434 && (
                 <div className="grid sm:grid-cols-2 gap-4 mt-4">
                   <StatCard
                     label="Costo de construcción Draw 1 a Draw 6 incluido"
@@ -279,6 +283,14 @@ function ProjectDetail() {
                     label="Total Construcción + Steamwall"
                     value={formatUSD((project.construction_cost || 0) + 5012)}
                     accent="primary"
+                  />
+                </div>
+              )}
+              {is2446 && (
+                <div className="mt-4">
+                  <StatCard
+                    label="Costo de construcción Draw 1 a Draw 6 incluido"
+                    value={`${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall2446)}) = ${formatUSD(constructionBase + steamwall2446)}`}
                   />
                 </div>
               )}
