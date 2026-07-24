@@ -4,8 +4,11 @@ import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next, request }: any) => {
-  if (request && new URL(request.url).pathname.startsWith("/lovable/")) {
-    return await next();
+  if (request) {
+    const p = new URL(request.url).pathname;
+    if (p.startsWith("/lovable/") || p === "/email/unsubscribe") {
+      return await next();
+    }
   }
   try {
     return await next();
