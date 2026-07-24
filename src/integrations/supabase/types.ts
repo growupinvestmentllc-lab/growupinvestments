@@ -194,7 +194,7 @@ export type Database = {
           architect: string | null
           bathrooms: number | null
           bedrooms: number | null
-          constructor: string | null
+          builder: string | null
           contact_url: string | null
           created_at: string
           expected_roi: number
@@ -214,7 +214,7 @@ export type Database = {
           architect?: string | null
           bathrooms?: number | null
           bedrooms?: number | null
-          constructor?: string | null
+          builder?: string | null
           contact_url?: string | null
           created_at?: string
           expected_roi?: number
@@ -234,7 +234,7 @@ export type Database = {
           architect?: string | null
           bathrooms?: number | null
           bedrooms?: number | null
-          constructor?: string | null
+          builder?: string | null
           contact_url?: string | null
           created_at?: string
           expected_roi?: number
