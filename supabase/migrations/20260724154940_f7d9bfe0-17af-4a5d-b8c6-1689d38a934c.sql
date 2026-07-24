@@ -1,0 +1,1 @@
+UPDATE projects SET hero_image_url = '/__l5e/assets-v1/2fd7629b-94f4-463e-af85-3eb778898e85/621-flamingo-hero-2026-07-24.jpeg' WHERE id = 'b525d962-242f-4d8b-b632-c0f061c67dd2';
