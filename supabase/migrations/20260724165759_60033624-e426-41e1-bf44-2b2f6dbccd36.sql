@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url = '/__l5e/assets-v1/e1b979a3-9dfe-4565-b102-144b7f299712/621-flamingo-hero-2026-07-24-v3.jpeg' WHERE id = 'b525d962-242f-4d8b-b632-c0f061c67dd2';
