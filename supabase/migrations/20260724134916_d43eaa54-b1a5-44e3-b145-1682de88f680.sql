@@ -1,0 +1,1 @@
+ALTER TABLE public.opportunities RENAME COLUMN constructor TO builder;
