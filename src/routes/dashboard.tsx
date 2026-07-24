@@ -32,6 +32,12 @@ type Opportunity = {
   bedrooms: number | null;
   bathrooms: number | null;
   study: number | null;
+  model: string | null;
+  sqft_total: number | null;
+  sqft_living: number | null;
+  garage: string | null;
+  builder: string | null;
+  architect: string | null;
 };
 
 function Dashboard() {
@@ -240,11 +246,19 @@ function Dashboard() {
                     <MapPin className="h-3 w-3" />
                     {o.location}
                   </p>
-                  {(o.bedrooms || o.bathrooms || o.study) && (
-                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                      {o.bedrooms ? <span>{o.bedrooms} dormitorios</span> : null}
-                      {o.study ? <span>{o.study} estudio</span> : null}
-                      {o.bathrooms ? <span>{o.bathrooms} baños</span> : null}
+                  {(o.model || o.sqft_total || o.sqft_living || o.bedrooms || o.bathrooms || o.garage || o.builder || o.architect) && (
+                    <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
+                      <p className="text-xs font-semibold text-foreground mb-2">Especificaciones</p>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        {o.model && <SpecItem label="Modelo" value={o.model} />}
+                        {o.sqft_total && <SpecItem label="Sqft total" value={`${o.sqft_total.toLocaleString()} sqft`} />}
+                        {o.sqft_living && <SpecItem label="Sqft living" value={`${o.sqft_living.toLocaleString()} sqft`} />}
+                        {o.bedrooms != null && <SpecItem label="Habitaciones" value={String(o.bedrooms)} />}
+                        {o.bathrooms != null && <SpecItem label="Baños" value={String(o.bathrooms)} />}
+                        {o.garage && <SpecItem label="Garage" value={o.garage} />}
+                        {o.builder && <SpecItem label="Constructor" value={o.builder} />}
+                        {o.architect && <SpecItem label="Arquitecto" value={o.architect} />}
+                      </div>
                     </div>
                   )}
                   <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
