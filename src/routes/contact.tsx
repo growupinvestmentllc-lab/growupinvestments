@@ -1,8 +1,6 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,7 +34,6 @@ const formSchema = z.object({
 });
 
 function ContactPage() {
-  const { user } = useAuth();
   const { opportunity_id, opportunity_name } = useSearch({ from: "/contact" });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -54,25 +51,30 @@ function ContactPage() {
       toast.error(parsed.error.issues[0]?.message ?? "Datos inválidos");
       return;
     }
-    if (!user) {
-      toast.error("Iniciá sesión para enviar el formulario.");
-      return;
-    }
     setSubmitting(true);
-    const { error } = await supabase.from("contact_requests").insert({
-      user_id: user.id,
-      opportunity_id: opportunity_id ?? null,
-      opportunity_name: opportunity_name ?? null,
-      name: parsed.data.name,
-      email: parsed.data.email,
-      phone: parsed.data.phone || null,
-      message: parsed.data.message || null,
-    });
-    setSubmitting(false);
-    if (error) {
-      toast.error(error.message);
+    try {
+      const res = await fetch("/api/public/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: parsed.data.name,
+          email: parsed.data.email,
+          phone: parsed.data.phone || null,
+          message: parsed.data.message || null,
+          opportunity_id: opportunity_id ?? null,
+          opportunity_name: opportunity_name ?? null,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error ?? "No se pudo enviar el mensaje");
+      }
+    } catch (err: any) {
+      setSubmitting(false);
+      toast.error(err?.message ?? "No se pudo enviar el mensaje");
       return;
     }
+    setSubmitting(false);
     setSent(true);
     toast.success("Mensaje enviado. Te contactamos pronto.");
   }
