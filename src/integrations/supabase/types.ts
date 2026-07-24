@@ -191,43 +191,61 @@ export type Database = {
       }
       opportunities: {
         Row: {
+          architect: string | null
           bathrooms: number | null
           bedrooms: number | null
+          constructor: string | null
           contact_url: string | null
           created_at: string
           expected_roi: number
+          garage: string | null
           id: string
           image_url: string | null
           location: string
+          model: string | null
           name: string
+          sqft_living: number | null
+          sqft_total: number | null
           status: string
           study: number | null
           total_investment: number
         }
         Insert: {
+          architect?: string | null
           bathrooms?: number | null
           bedrooms?: number | null
+          constructor?: string | null
           contact_url?: string | null
           created_at?: string
           expected_roi?: number
+          garage?: string | null
           id?: string
           image_url?: string | null
           location: string
+          model?: string | null
           name: string
+          sqft_living?: number | null
+          sqft_total?: number | null
           status?: string
           study?: number | null
           total_investment?: number
         }
         Update: {
+          architect?: string | null
           bathrooms?: number | null
           bedrooms?: number | null
+          constructor?: string | null
           contact_url?: string | null
           created_at?: string
           expected_roi?: number
+          garage?: string | null
           id?: string
           image_url?: string | null
           location?: string
+          model?: string | null
           name?: string
+          sqft_living?: number | null
+          sqft_total?: number | null
           status?: string
           study?: number | null
           total_investment?: number
