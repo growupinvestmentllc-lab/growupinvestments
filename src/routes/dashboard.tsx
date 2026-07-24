@@ -257,16 +257,16 @@ function Dashboard() {
                   </p>
                   {(o.model || o.sqft_total || o.sqft_living || o.bedrooms || o.bathrooms || o.garage || o.builder || o.architect) && (
                     <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
-                      <p className="text-xs font-semibold text-foreground mb-2">Specifications</p>
+                      <p className="text-xs font-semibold text-foreground mb-2">Especificaciones</p>
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        {o.model && <SpecItem label="Model" value={o.model} />}
+                        {o.model && <SpecItem label="Modelo" value={o.model} />}
                         {o.sqft_total && <SpecItem label="Sqft total" value={`${o.sqft_total.toLocaleString()} sqft`} />}
                         {o.sqft_living && <SpecItem label="Sqft living" value={`${o.sqft_living.toLocaleString()} sqft`} />}
-                        {o.bedrooms != null && <SpecItem label="Bedrooms" value={String(o.bedrooms)} />}
-                        {o.bathrooms != null && <SpecItem label="Bathroom" value={String(o.bathrooms)} />}
-                        {o.garage && <SpecItem label="Garage" value={o.garage} />}
+                        {o.bedrooms != null && <SpecItem label="Habitaciones" value={String(o.bedrooms)} />}
+                        {o.bathrooms != null && <SpecItem label="Baños" value={String(o.bathrooms)} />}
+                        {o.garage && <SpecItem label="Garage" value={o.garage === "Yes" ? "SI" : o.garage} />}
                         {o.builder && <SpecItem label="Constructor" value={o.builder} />}
-                        {o.architect && <SpecItem label="Architecture" value={o.architect} />}
+                        {o.architect && <SpecItem label="Arquitecto" value={o.architect} />}
                       </div>
                     </div>
                   )}

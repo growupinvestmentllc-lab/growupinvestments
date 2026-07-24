@@ -352,16 +352,16 @@ function ProjectDetail() {
               ))}
             </div>
             <div className="card-soft p-6">
-              <h3 className="font-semibold text-foreground mb-4">Specifications</h3>
+              <h3 className="font-semibold text-foreground mb-4">Especificaciones</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                <Spec icon={<Home className="h-4 w-4" />} label="Model" value={project.model_name ?? "—"} />
+                <Spec icon={<Home className="h-4 w-4" />} label="Modelo" value={project.model_name ?? "—"} />
                 <Spec label="Sqft total" value={project.sqft_total ? `${project.sqft_total.toLocaleString()} sqft` : "—"} />
                 <Spec label="Sqft living" value={project.sqft_living ? `${project.sqft_living.toLocaleString()} sqft` : "—"} />
-                <Spec icon={<Bed className="h-4 w-4" />} label="Bedrooms" value={String(project.bedrooms ?? "—")} />
-                <Spec icon={<Bath className="h-4 w-4" />} label="Bathroom" value={String(project.bathrooms ?? "—")} />
-                <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "Yes" : "No"} />
+                <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
+                <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
+                <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "SI" : "No"} />
                 <Spec label="Constructor" value={is2446 ? "Growup Investments" : "Total Smartors LLC"} />
-                <Spec label="Architecture" value="Olympus Designs Group" />
+                <Spec label="Arquitecto" value="Olympus Designs Group" />
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
             </div>
