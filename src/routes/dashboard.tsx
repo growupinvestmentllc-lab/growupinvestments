@@ -10,6 +10,15 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard });
 
+function SpecItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md bg-card border border-border/60 px-2 py-1.5">
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
+      <p className="text-xs font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
 type Project = {
   id: string;
   address: string;
