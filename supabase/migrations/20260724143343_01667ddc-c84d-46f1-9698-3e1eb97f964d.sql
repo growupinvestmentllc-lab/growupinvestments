@@ -1,0 +1,1 @@
+ALTER TABLE public.opportunities ALTER COLUMN sqft_total TYPE numeric, ALTER COLUMN sqft_living TYPE numeric;
