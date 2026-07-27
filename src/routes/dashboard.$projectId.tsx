@@ -126,14 +126,10 @@ function ProjectDetail() {
   const totalCost =
     constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
-  let pending = (steamwall > 0 ? constructionTotal : constructionBase) - deposited;
+  let pending = totalCost - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
-    pending = 0;
-  }
-  const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
-  if (is1405Cortez) {
     pending = 0;
   }
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
