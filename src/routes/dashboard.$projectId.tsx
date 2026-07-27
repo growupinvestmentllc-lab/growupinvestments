@@ -297,6 +297,9 @@ function ProjectDetail() {
                       ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall)}) = ${formatUSD(constructionTotal)}`
                       : formatUSD(project.construction_cost)
                   }
+                  sub={hasMultipleOwners && myPct != null
+                    ? `Tu participación ${myPct}% = ${formatUSD((steamwall > 0 ? constructionTotal : Number(project.construction_cost) || 0) * (myPct / 100))}`
+                    : undefined}
                   className="min-h-[140px] py-6"
                 />
                 <StatCard
