@@ -114,6 +114,8 @@ function ProjectDetail() {
 
   const activeStage = stages.find((s) => s.active);
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
+  const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
+  const simpleProgress = is2446 || is448Rajah;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
@@ -205,7 +207,7 @@ function ProjectDetail() {
 
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
-            {is2446 ? (
+            {simpleProgress ? (
               <div className="card-soft p-6 flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                 <div className="mt-2 flex flex-row items-center justify-center gap-6">
