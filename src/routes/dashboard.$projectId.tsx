@@ -118,6 +118,7 @@ function ProjectDetail() {
   const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
   const simpleProgress = is2446 || is448Rajah || is7305SunNLake;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
+  const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
@@ -363,7 +364,7 @@ function ProjectDetail() {
                 <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
                 <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
                 <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "SI" : "No"} />
-                <Spec label="Constructor" value={is2446 ? "Growup Investments" : "Total Smartors LLC"} />
+                <Spec label="Constructor" value={is2446 || is1405Cortez ? "Grow Up Investment" : "Total Smartors LLC"} />
                 <Spec label="Arquitecto" value="Olympus Designs Group" />
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
