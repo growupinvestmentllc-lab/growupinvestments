@@ -465,7 +465,7 @@ function DrawSchedule({
     };
   });
   const list = [
-    { num: 0, group: "Compra Lote", amount: lotCost, completed: lotCost > 0, active: false },
+    { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
     ...groupRows,
   ];
   if (!list.length) return null;
