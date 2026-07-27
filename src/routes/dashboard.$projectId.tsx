@@ -132,6 +132,10 @@ function ProjectDetail() {
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
     pending = 0;
   }
+  const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
+  if (is1405Cortez) {
+    pending = 0;
+  }
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
