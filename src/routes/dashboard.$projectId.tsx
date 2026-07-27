@@ -133,6 +133,8 @@ function ProjectDetail() {
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
     pending = 0;
   }
+  const overDeposited = deposited > totalCost && totalCost > 0;
+  if (pending < 0) pending = 0;
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
@@ -279,6 +281,11 @@ function ProjectDetail() {
                   : undefined}
               />
             </div>
+            {overDeposited && (
+              <div role="alert" className="rounded-md border border-amber-400 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
+                Atención: el total depositado ({formatUSD(deposited)}) supera el costo total ({formatUSD(totalCost)}).
+              </div>
+            )}
 
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
@@ -292,8 +299,21 @@ function ProjectDetail() {
                   }
                   className="min-h-[140px] py-6"
                 />
-                <StatCard label="Lote" value={formatUSD(project.lot_cost)} />
-                <StatCard label="Costo Total" value={formatUSD(totalCost)} accent="muted" />
+                <StatCard
+                  label="Lote"
+                  value={formatUSD(project.lot_cost)}
+                  sub={hasMultipleOwners && myPct != null
+                    ? `Tu participación ${myPct}% = ${formatUSD((Number(project.lot_cost) || 0) * (myPct / 100))}`
+                    : undefined}
+                />
+                <StatCard
+                  label="Costo Total"
+                  value={formatUSD(totalCost)}
+                  accent="muted"
+                  sub={hasMultipleOwners && myPct != null
+                    ? `Tu participación ${myPct}% = ${formatUSD(totalCost * (myPct / 100))}`
+                    : undefined}
+                />
               </div>
             </div>
 
@@ -364,7 +384,7 @@ function ProjectDetail() {
                 <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
                 <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
                 <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "SI" : "No"} />
-                <Spec label="Constructor" value={is2446 || is1405Cortez ? "Grow Up Investment" : "Total Smartors LLC"} />
+                <Spec label="Constructor" value="Grow Up Investment" />
                 <Spec label="Arquitecto" value="Olympus Designs Group" />
               </div>
               {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
