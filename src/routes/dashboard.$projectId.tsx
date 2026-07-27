@@ -115,7 +115,8 @@ function ProjectDetail() {
   const activeStage = stages.find((s) => s.active);
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
-  const simpleProgress = is2446 || is448Rajah;
+  const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
+  const simpleProgress = is2446 || is448Rajah || is7305SunNLake;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
