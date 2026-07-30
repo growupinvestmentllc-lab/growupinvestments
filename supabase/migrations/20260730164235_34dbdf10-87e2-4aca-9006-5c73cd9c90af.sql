@@ -1,0 +1,1 @@
+UPDATE public.project_documents SET file_path='710/structural_plan/710_ARCHITECTURAL_PLAN.pdf', file_name='710_ARCHITECTURAL_PLAN.pdf', uploaded_at=now() WHERE id='42b5519d-2ef2-47de-90fb-80efd396fd2b';
