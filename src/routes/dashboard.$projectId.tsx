@@ -174,7 +174,6 @@ function ProjectDetail() {
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
-            <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>
             <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
@@ -603,17 +602,6 @@ function Stat({ label, value, dark }: { label: string; value: string; dark?: boo
   );
 }
 
-function Spec({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/40">
-      {icon && <div className="text-primary">{icon}</div>}
-      <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-sm font-semibold text-foreground">{value}</p>
-      </div>
-    </div>
-  );
-}
 
 function DocsTab({ projectId }: { projectId: string }) {
   const [docs, setDocs] = useState<any[]>([]);
