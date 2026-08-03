@@ -120,6 +120,7 @@ function ProjectDetail() {
   const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
+  const is127 = (project?.address?.toLowerCase() ?? "").includes("127 nw 24th");
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
@@ -212,7 +213,7 @@ function ProjectDetail() {
 
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
-            {simpleProgress ? (
+            {is127 ? null : simpleProgress ? (
               <div className="card-soft p-6 flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                 <div className="mt-2 flex flex-row items-center justify-center gap-6">
@@ -262,8 +263,9 @@ function ProjectDetail() {
               </div>
             )}
 
-            <ConstructionProgressBar stages={stages} />
+            {!is127 && <ConstructionProgressBar stages={stages} />}
 
+            {!is127 && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label="Total depositado"
@@ -282,6 +284,7 @@ function ProjectDetail() {
                   : undefined}
               />
             </div>
+            )}
             {overDeposited && (
               <div role="alert" className="rounded-md border border-amber-400 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
                 Atención: el total depositado ({formatUSD(deposited)}) supera el costo total ({formatUSD(totalCost)}).
@@ -290,6 +293,12 @@ function ProjectDetail() {
 
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
+              {is127 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <StatCard label="Lote + Permiso" value={formatUSD(project.lot_cost)} />
+                  <StatCard label="Precio de venta" value={formatUSD(57000)} accent="muted" />
+                </div>
+              ) : (
               <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-4">
                 <StatCard
                   label="Costo de construcción Draw 1 a Draw 6 incluido"
@@ -319,9 +328,10 @@ function ProjectDetail() {
                     : undefined}
                 />
               </div>
+              )}
             </div>
 
-            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} />
+            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} />
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
@@ -465,12 +475,14 @@ function DrawSchedule({
   myPct,
   hasMultipleOwners,
   projectId,
+  maxDraw,
 }: {
   stages: Stage[];
   lotCost?: number;
   myPct?: number | null;
   hasMultipleOwners?: boolean;
   projectId?: string;
+  maxDraw?: number;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
@@ -497,10 +509,11 @@ function DrawSchedule({
       active: anyActive || (anyCompleted && !allCompleted),
     };
   });
-  const list = [
+  let list = [
     { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
     ...groupRows,
   ];
+  if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
