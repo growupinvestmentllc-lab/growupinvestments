@@ -275,7 +275,7 @@ function ProjectDetail() {
                 value={formatUSD(deposited)}
                 accent="primary"
                 sub={hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
+                  ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100) + (is2812 ? 33150 : 0))}`
                   : undefined}
               />
               <StatCard
@@ -283,7 +283,7 @@ function ProjectDetail() {
                 value={formatUSD(pending)}
                 accent="muted"
                 sub={hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(pending * (myPct / 100))}`
+                  ? `Tu participación ${myPct}% = ${formatUSD(Math.max(0, pending * (myPct / 100) - (is2812 ? 33150 : 0)))}`
                   : undefined}
               />
             </div>
