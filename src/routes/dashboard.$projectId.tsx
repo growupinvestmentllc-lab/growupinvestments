@@ -360,8 +360,7 @@ function ProjectDetail() {
                 <Stat
                   dark
                   label={
-                    project.address?.toLowerCase().includes("127 nw 24th") ||
-                    project.address?.toLowerCase().includes("35 sw 19th")
+                    project.address?.toLowerCase().includes("127 nw 24th")
                       ? "Costo lote + permiso"
                       : "Costo lote"
                   }
