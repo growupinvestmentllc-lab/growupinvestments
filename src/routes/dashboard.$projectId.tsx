@@ -298,7 +298,7 @@ function ProjectDetail() {
               {is35SW ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <StatCard label="Costo lote" value={formatUSD(project.lot_cost)} />
-                  <StatCard label="Precio de venta" value={formatUSD(project.expected_sale_price)} accent="muted" />
+                  <StatCard label="Precio de venta (estimado)" value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
               ) : is127 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
