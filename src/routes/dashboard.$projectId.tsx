@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
+import { ArrowLeft, Check, MapPin, FileText, Download } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 
@@ -48,59 +48,26 @@ type Stage = {
   estimated_end_date?: string | null;
 };
 
-type Image = { id: string; image_url: string; caption: string | null };
-
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [stages, setStages] = useState<Stage[]>([]);
-  const [images, setImages] = useState<Image[]>([]);
 
   const [myLlc, setMyLlc] = useState<string | null>(null);
-  
-  const [lightboxIdx, setLightboxIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (lightboxIdx === null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setLightboxIdx(null);
-      else if (e.key === "ArrowRight") setLightboxIdx((i) => (i === null ? null : (i + 1) % images.length));
-      else if (e.key === "ArrowLeft") setLightboxIdx((i) => (i === null ? null : (i - 1 + images.length) % images.length));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [lightboxIdx, images.length]);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [user, loading, navigate]);
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: i }, { data: prof }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: prof }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
-        supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
         supabase.from("profiles").select("llc_name").maybeSingle(),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
-      const rawImgs = (i ?? []) as Image[];
-
-      // Bucket is private → generate signed URLs from stored path
-      const signed = await Promise.all(rawImgs.map(async (img) => {
-        const url = img.image_url || "";
-        const marker = "/portfolio/";
-        const idx = url.indexOf(marker);
-        const path = idx >= 0 ? url.slice(idx + marker.length).split("?")[0] : url;
-        try {
-          const { data } = await supabase.storage.from("portfolio").createSignedUrl(path, 60 * 60);
-          return { ...img, image_url: data?.signedUrl || img.image_url };
-        } catch {
-          return img;
-        }
-      }));
-      setImages(signed);
       setMyLlc((prof as { llc_name: string | null } | null)?.llc_name ?? null);
     })();
   }, [projectId]);
@@ -207,7 +174,6 @@ function ProjectDetail() {
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
-            <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>
             <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
@@ -389,89 +355,12 @@ function ProjectDetail() {
             )}
           </TabsContent>
 
-          {/* PORTFOLIO */}
-          <TabsContent value="portfolio" className="mt-6 space-y-6">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {images.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">Sin fotos aún.</p>}
-              {images.map((img) => (
-                <div key={img.id} className="card-soft overflow-hidden">
-                  <img
-                    src={img.image_url}
-                    alt={img.caption ?? "Portafolio"}
-                    className="w-full h-56 object-cover cursor-zoom-in"
-                    onClick={() => setLightboxIdx(images.findIndex((x) => x.id === img.id))}
-                  />
-                  {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
-                </div>
-              ))}
-            </div>
-            <div className="card-soft p-6">
-              <h3 className="font-semibold text-foreground mb-4">Especificaciones</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                <Spec icon={<Home className="h-4 w-4" />} label="Modelo" value={project.model_name ?? "—"} />
-                <Spec label="Sqft total" value={project.sqft_total ? `${project.sqft_total.toLocaleString()} sqft` : "—"} />
-                <Spec label="Sqft living" value={project.sqft_living ? `${project.sqft_living.toLocaleString()} sqft` : "—"} />
-                <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
-                <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
-                <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "SI" : "No"} />
-                <Spec label="Constructor" value="Grow Up Investment" />
-                <Spec label="Arquitecto" value="Olympus Designs Group" />
-              </div>
-              {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
-            </div>
-          </TabsContent>
-
           {/* DOCS */}
           <TabsContent value="docs" className="mt-6">
             <DocsTab projectId={project.id} />
           </TabsContent>
         </Tabs>
       </main>
-      {lightboxIdx !== null && images[lightboxIdx] && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-          onClick={() => setLightboxIdx(null)}
-        >
-          <img
-            src={images[lightboxIdx].image_url}
-            alt=""
-            className="max-w-[95vw] max-h-[95vh] object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <button
-            type="button"
-            aria-label="Anterior"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightboxIdx((i) => (i === null ? null : (i - 1 + images.length) % images.length));
-            }}
-            className="absolute left-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white select-none"
-            style={{ fontSize: "6rem", lineHeight: 1, fontFamily: "serif" }}
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            aria-label="Siguiente"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightboxIdx((i) => (i === null ? null : (i + 1) % images.length));
-            }}
-            className="absolute right-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white select-none"
-            style={{ fontSize: "6rem", lineHeight: 1, fontFamily: "serif" }}
-          >
-            ›
-          </button>
-          <button
-            type="button"
-            aria-label="Cerrar"
-            onClick={(e) => { e.stopPropagation(); setLightboxIdx(null); }}
-            className="absolute top-4 right-4 text-white/90 hover:text-white text-3xl leading-none"
-          >
-            ×
-          </button>
-        </div>
-      )}
     </div>
   );
 }
@@ -636,17 +525,6 @@ function Stat({ label, value, dark }: { label: string; value: string; dark?: boo
   );
 }
 
-function Spec({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
-  return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/40">
-      {icon && <div className="text-primary">{icon}</div>}
-      <div>
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-sm font-semibold text-foreground">{value}</p>
-      </div>
-    </div>
-  );
-}
 
 function DocsTab({ projectId }: { projectId: string }) {
   const [docs, setDocs] = useState<any[]>([]);
