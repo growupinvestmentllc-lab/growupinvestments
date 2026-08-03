@@ -119,7 +119,9 @@ function ProjectDetail() {
   const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
-  const is127 = (project?.address?.toLowerCase() ?? "").includes("127 nw 24th");
+  const is127 =
+    (project?.address?.toLowerCase() ?? "").includes("127 nw 24th") ||
+    (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
@@ -295,7 +297,7 @@ function ProjectDetail() {
               {is127 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <StatCard label="Lote + Permiso" value={formatUSD(project.lot_cost)} />
-                  <StatCard label="Precio de venta" value={formatUSD(57000)} accent="muted" />
+                  <StatCard label="Precio de venta" value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
               ) : (
               <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr] gap-4">
