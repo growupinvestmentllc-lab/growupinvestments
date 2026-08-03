@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, FileText, Download } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 
@@ -47,6 +47,7 @@ type Stage = {
   estimated_start_date?: string | null;
   estimated_end_date?: string | null;
 };
+type Image = { id: string; image_url: string; caption: string | null };
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
