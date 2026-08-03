@@ -116,7 +116,8 @@ function ProjectDetail() {
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
   const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
   const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39";
-  const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers;
+  const is2812 = (project?.address?.toLowerCase() ?? "").includes("2812 nw 27th");
+  const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers || is2812;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
   const is35SW = (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
