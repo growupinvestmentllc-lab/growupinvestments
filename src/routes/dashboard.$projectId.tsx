@@ -206,7 +206,7 @@ function ProjectDetail() {
         <Tabs defaultValue="overview" className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
-            <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>
+            {!is127 && <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>}
             <TabsTrigger value="docs">Documentación</TabsTrigger>
           </TabsList>
 
