@@ -275,7 +275,7 @@ function ProjectDetail() {
                 value={formatUSD(deposited)}
                 accent="primary"
                 sub={hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100) + (is2812 ? 33150 : 0))}`
+                  ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
                   : undefined}
               />
               <StatCard
