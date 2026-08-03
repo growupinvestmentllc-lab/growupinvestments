@@ -355,89 +355,12 @@ function ProjectDetail() {
             )}
           </TabsContent>
 
-          {/* PORTFOLIO */}
-          <TabsContent value="portfolio" className="mt-6 space-y-6">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {images.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">Sin fotos aún.</p>}
-              {images.map((img) => (
-                <div key={img.id} className="card-soft overflow-hidden">
-                  <img
-                    src={img.image_url}
-                    alt={img.caption ?? "Portafolio"}
-                    className="w-full h-56 object-cover cursor-zoom-in"
-                    onClick={() => setLightboxIdx(images.findIndex((x) => x.id === img.id))}
-                  />
-                  {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
-                </div>
-              ))}
-            </div>
-            <div className="card-soft p-6">
-              <h3 className="font-semibold text-foreground mb-4">Especificaciones</h3>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                <Spec icon={<Home className="h-4 w-4" />} label="Modelo" value={project.model_name ?? "—"} />
-                <Spec label="Sqft total" value={project.sqft_total ? `${project.sqft_total.toLocaleString()} sqft` : "—"} />
-                <Spec label="Sqft living" value={project.sqft_living ? `${project.sqft_living.toLocaleString()} sqft` : "—"} />
-                <Spec icon={<Bed className="h-4 w-4" />} label="Habitaciones" value={String(project.bedrooms ?? "—")} />
-                <Spec icon={<Bath className="h-4 w-4" />} label="Baños" value={String(project.bathrooms ?? "—")} />
-                <Spec icon={<Car className="h-4 w-4" />} label="Garage" value={project.garage ? "SI" : "No"} />
-                <Spec label="Constructor" value="Grow Up Investment" />
-                <Spec label="Arquitecto" value="Olympus Designs Group" />
-              </div>
-              {project.features && <p className="mt-4 text-sm text-muted-foreground"><strong>Adicional:</strong> {project.features}</p>}
-            </div>
-          </TabsContent>
-
           {/* DOCS */}
           <TabsContent value="docs" className="mt-6">
             <DocsTab projectId={project.id} />
           </TabsContent>
         </Tabs>
       </main>
-      {lightboxIdx !== null && images[lightboxIdx] && (
-        <div
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-          onClick={() => setLightboxIdx(null)}
-        >
-          <img
-            src={images[lightboxIdx].image_url}
-            alt=""
-            className="max-w-[95vw] max-h-[95vh] object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <button
-            type="button"
-            aria-label="Anterior"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightboxIdx((i) => (i === null ? null : (i - 1 + images.length) % images.length));
-            }}
-            className="absolute left-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white select-none"
-            style={{ fontSize: "6rem", lineHeight: 1, fontFamily: "serif" }}
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            aria-label="Siguiente"
-            onClick={(e) => {
-              e.stopPropagation();
-              setLightboxIdx((i) => (i === null ? null : (i + 1) % images.length));
-            }}
-            className="absolute right-6 top-1/2 -translate-y-1/2 text-white/90 hover:text-white select-none"
-            style={{ fontSize: "6rem", lineHeight: 1, fontFamily: "serif" }}
-          >
-            ›
-          </button>
-          <button
-            type="button"
-            aria-label="Cerrar"
-            onClick={(e) => { e.stopPropagation(); setLightboxIdx(null); }}
-            className="absolute top-4 right-4 text-white/90 hover:text-white text-3xl leading-none"
-          >
-            ×
-          </button>
-        </div>
-      )}
     </div>
   );
 }
