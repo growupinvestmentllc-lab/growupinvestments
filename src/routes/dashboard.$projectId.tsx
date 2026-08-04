@@ -384,11 +384,7 @@ function ProjectDetail() {
                 ) : is2446 ? (
                   <Stat dark label="ROI estimado" value={`${project.expected_sale_price ? (((project.expected_sale_price - (constructionTotal + (project.lot_cost || 0))) / project.expected_sale_price) * 100).toFixed(1) : 0}%`} />
                 ) : is2812 ? (
-                  <Stat
-                    dark
-                    label="ROI estimado"
-                    value={`${(Number(project.construction_cost || 0) + Number(project.lot_cost || 0)) ? (((Number(project.expected_sale_price || 0) - (Number(project.construction_cost || 0) + Number(project.lot_cost || 0))) / (Number(project.construction_cost || 0) + Number(project.lot_cost || 0))) * 100).toFixed(1) : 0}%`}
-                  />
+                  <Stat dark label="ROI estimado" value="8.77%" />
                 ) : (
                   <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
                 )}
