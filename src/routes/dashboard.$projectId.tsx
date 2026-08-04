@@ -450,12 +450,6 @@ function ProjectDetail() {
                       <Grid items={reales} />
                     </section>
                   )}
-                  {otras.length > 0 && (
-                    <section className="space-y-3">
-                      <h3 className="text-lg font-semibold text-foreground">Otras fotos</h3>
-                      <Grid items={otras} />
-                    </section>
-                  )}
                 </div>
               );
             })()}
