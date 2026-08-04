@@ -409,7 +409,6 @@ function ProjectDetail() {
               const isReal = (c: string | null) => (c ?? "").toUpperCase().includes("OBRA REAL");
               const finales = images.filter((i) => isFinal(i.caption));
               const reales = images.filter((i) => isReal(i.caption));
-              const otras = images.filter((i) => !isFinal(i.caption) && !isReal(i.caption));
               const clean = (c: string | null) =>
                 (c ?? "").replace(/^\s*(PROYECTO FINALIZADO|OBRA REAL)\s*[—-]?\s*/i, "").trim();
 
