@@ -404,20 +404,61 @@ function ProjectDetail() {
 
           {/* PORTFOLIO */}
           <TabsContent value="portfolio" className="mt-6 space-y-6">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {images.length === 0 && <p className="text-muted-foreground col-span-full text-center py-12">Sin fotos aún.</p>}
-              {images.map((img) => (
-                <div key={img.id} className="card-soft overflow-hidden">
-                  <img
-                    src={img.image_url}
-                    alt={img.caption ?? "Portafolio"}
-                    className="w-full h-56 object-cover cursor-zoom-in"
-                    onClick={() => setLightboxIdx(images.findIndex((x) => x.id === img.id))}
-                  />
-                  {img.caption && <p className="p-3 text-xs text-muted-foreground">{img.caption}</p>}
+            {(() => {
+              const isFinal = (c: string | null) => (c ?? "").toUpperCase().includes("PROYECTO FINALIZADO");
+              const isReal = (c: string | null) => (c ?? "").toUpperCase().includes("OBRA REAL");
+              const finales = images.filter((i) => isFinal(i.caption));
+              const reales = images.filter((i) => isReal(i.caption));
+              const otras = images.filter((i) => !isFinal(i.caption) && !isReal(i.caption));
+              const clean = (c: string | null) =>
+                (c ?? "").replace(/^\s*(PROYECTO FINALIZADO|OBRA REAL)\s*[—-]?\s*/i, "").trim();
+
+              const Grid = ({ items }: { items: Image[] }) => (
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {items.map((img) => (
+                    <div key={img.id} className="card-soft overflow-hidden">
+                      <img
+                        src={img.image_url}
+                        alt={img.caption ?? "Portafolio"}
+                        className="w-full h-56 object-cover cursor-zoom-in"
+                        onClick={() => setLightboxIdx(images.findIndex((x) => x.id === img.id))}
+                      />
+                      {clean(img.caption) && (
+                        <p className="p-3 text-xs text-muted-foreground">{clean(img.caption)}</p>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              );
+
+              if (images.length === 0)
+                return <p className="text-muted-foreground text-center py-12">Sin fotos aún.</p>;
+
+              if (finales.length === 0 && reales.length === 0) return <Grid items={images} />;
+
+              return (
+                <div className="space-y-8">
+                  {finales.length > 0 && (
+                    <section className="space-y-3">
+                      <h3 className="text-lg font-semibold text-foreground">Proyección final</h3>
+                      <Grid items={finales} />
+                    </section>
+                  )}
+                  {reales.length > 0 && (
+                    <section className="space-y-3">
+                      <h3 className="text-lg font-semibold text-foreground">Obra real</h3>
+                      <Grid items={reales} />
+                    </section>
+                  )}
+                  {otras.length > 0 && (
+                    <section className="space-y-3">
+                      <h3 className="text-lg font-semibold text-foreground">Otras fotos</h3>
+                      <Grid items={otras} />
+                    </section>
+                  )}
+                </div>
+              );
+            })()}
             <div className="card-soft p-6">
               <h3 className="font-semibold text-foreground mb-4">Especificaciones</h3>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
