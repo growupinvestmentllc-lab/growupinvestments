@@ -121,9 +121,11 @@ function ProjectDetail() {
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
   const is35SW = (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
+  const is477 = (project?.address?.toLowerCase() ?? "").includes("477 rayford");
   const is127 =
     (project?.address?.toLowerCase() ?? "").includes("127 nw 24th") ||
     (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
+
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
