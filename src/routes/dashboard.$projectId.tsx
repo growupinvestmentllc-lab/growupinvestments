@@ -131,6 +131,9 @@ function ProjectDetail() {
   const constructionBase = Number(project?.construction_cost) || 0;
   const steamwall = is2446 ? steamwall2446 : is2434 ? steamwall2434 : 0;
   const constructionTotal = constructionBase + steamwall;
+  // Solo etiqueta (no afecta totales ni pendiente)
+  const steamwallLabel = is2812 ? 5400 : steamwall;
+  const constructionLabelTotal = constructionBase + steamwallLabel;
   const totalCost =
     constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
@@ -313,8 +316,8 @@ function ProjectDetail() {
                 <StatCard
                   label="Costo de construcción Draw 1 a Draw 6 incluido"
                   value={
-                    steamwall > 0
-                      ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwall)}) = ${formatUSD(constructionTotal)}`
+                    steamwallLabel > 0
+                      ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwallLabel)}) = ${formatUSD(constructionLabelTotal)}`
                       : formatUSD(project.construction_cost)
                   }
                   sub={hasMultipleOwners && myPct != null
