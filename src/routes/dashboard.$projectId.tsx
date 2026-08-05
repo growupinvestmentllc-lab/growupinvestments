@@ -129,10 +129,10 @@ function ProjectDetail() {
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
-  const steamwall = is2446 ? steamwall2446 : is2434 ? steamwall2434 : 0;
+  const steamwall = is2446 ? steamwall2446 : is2434 ? steamwall2434 : is2812 ? 5400 : 0;
   const constructionTotal = constructionBase + steamwall;
   // Solo etiqueta (no afecta totales ni pendiente)
-  const steamwallLabel = is2812 ? 5400 : steamwall;
+  const steamwallLabel = steamwall;
   const constructionLabelTotal = constructionBase + steamwallLabel;
   const totalCost =
     constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
