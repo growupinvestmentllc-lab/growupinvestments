@@ -352,6 +352,7 @@ function ProjectDetail() {
               project.address?.toLowerCase().includes("710") ||
               (project.address?.toLowerCase().includes("2217") && project.address?.toLowerCase().includes("embers")) ||
               (project.address?.toLowerCase().includes("472") && project.address?.toLowerCase().includes("rajah")) ||
+              (project.address?.toLowerCase().includes("365") && project.address?.toLowerCase().includes("progress")) ||
               is127 ||
               is2446
             ) && (
