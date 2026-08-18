@@ -108,21 +108,14 @@ function Dashboard() {
           };
         }),
       );
-      const isLasTropas = (await supabase
-        .from("profiles")
-        .select("full_name")
-        .eq("id", user.id)
-        .single()).data?.full_name?.toUpperCase() === "LAS TROPAS LLC";
-      if (isLasTropas) {
-        const rank = (addr: string) => {
-          const a = addr.toLowerCase();
-          if (a.includes("7305")) return 0;
-          if (a.includes("2725")) return 1;
-          if (a.includes("365") && a.includes("progress")) return 99;
-          return 2;
-        };
-        enriched.sort((a, b) => rank(a.address) - rank(b.address));
-      }
+      const rank = (addr: string) => {
+        const a = addr.toLowerCase();
+        if (a.includes("7305")) return 0;
+        if (a.includes("2725")) return 1;
+        if (a.includes("365") && a.includes("progress")) return 99;
+        return 2;
+      };
+      enriched.sort((a, b) => rank(a.address) - rank(b.address));
       setProjects(enriched);
       const { data: pr } = await supabase
         .from("profiles")
