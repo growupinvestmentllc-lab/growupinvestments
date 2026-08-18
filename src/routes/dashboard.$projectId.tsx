@@ -278,7 +278,7 @@ function ProjectDetail() {
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label="Total depositado"
-                value={formatUSD(deposited)}
+                value={is365Progress ? `${formatUSD(118260)} (${formatUSD(85400)} + ${formatUSD(32860)})` : formatUSD(deposited)}
                 accent="primary"
                 sub={hasMultipleOwners && myPct != null
                   ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
@@ -345,7 +345,7 @@ function ProjectDetail() {
               )}
             </div>
 
-            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} />
+            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} />
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
@@ -542,6 +542,7 @@ function DrawSchedule({
   hasMultipleOwners?: boolean;
   projectId?: string;
   maxDraw?: number;
+  is365Progress?: boolean;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
