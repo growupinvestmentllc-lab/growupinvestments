@@ -140,6 +140,7 @@ function ProjectDetail() {
   let pending = totalCost - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
+  const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
     pending = 0;
   }
@@ -277,7 +278,7 @@ function ProjectDetail() {
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label="Total depositado"
-                value={formatUSD(deposited)}
+                value={is365Progress ? `${formatUSD(118260)} (${formatUSD(85400)} + ${formatUSD(32860)})` : formatUSD(deposited)}
                 accent="primary"
                 sub={hasMultipleOwners && myPct != null
                   ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
@@ -344,7 +345,7 @@ function ProjectDetail() {
               )}
             </div>
 
-            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} />
+            <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} />
 
             {!(
               (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
@@ -534,6 +535,7 @@ function DrawSchedule({
   hasMultipleOwners,
   projectId,
   maxDraw,
+  is365Progress,
 }: {
   stages: Stage[];
   lotCost?: number;
@@ -541,6 +543,7 @@ function DrawSchedule({
   hasMultipleOwners?: boolean;
   projectId?: string;
   maxDraw?: number;
+  is365Progress?: boolean;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
@@ -594,6 +597,11 @@ function DrawSchedule({
                   <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatUSD(d.amount)}
+                    {is365Progress && d.num === 2 && (
+                      <span className="text-foreground ml-1">
+                        (ya abonado {formatUSD(32860)}) · Pendiente de abonar en este draw: {formatUSD(d.amount - 32860)}
+                      </span>
+                    )}
                     {hasMultipleOwners && myPct != null && (
                       <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
                     )}
