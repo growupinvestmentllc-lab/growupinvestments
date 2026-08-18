@@ -142,6 +142,12 @@ function ProjectDetail() {
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
+  const activeStageLabel =
+    is365Progress
+      ? "Colocando trusses"
+      : progress >= 100
+        ? "Finalizada"
+        : activeStage?.stage_name ?? "Finalizada";
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
@@ -225,7 +231,7 @@ function ProjectDetail() {
                   <ProgressCircle value={progress} />
                   <div className="flex flex-col items-center">
                     <p className="text-sm text-muted-foreground">Etapa actual</p>
-                    <p className="text-base font-semibold text-foreground">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
+                    <p className="text-base font-semibold text-foreground">{activeStageLabel}</p>
                   </div>
                 </div>
               </div>
@@ -235,7 +241,7 @@ function ProjectDetail() {
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                   <ProgressCircle value={progress} />
                   <p className="mt-3 text-sm text-muted-foreground text-center">Etapa actual</p>
-                  <p className="text-base font-semibold text-foreground text-center">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
+                  <p className="text-base font-semibold text-foreground text-center">{activeStageLabel}</p>
                 </div>
                 <div className="card-soft p-6 lg:col-span-2">
                   <GanttChart
