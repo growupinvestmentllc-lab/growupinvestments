@@ -231,7 +231,7 @@ function ProjectDetail() {
                   <ProgressCircle value={progress} />
                   <div className="flex flex-col items-center">
                     <p className="text-sm text-muted-foreground">Etapa actual</p>
-                    <p className="text-base font-semibold text-foreground">{progress >= 100 ? "Finalizada" : (activeStage?.stage_name ?? "Finalizada")}</p>
+                    <p className="text-base font-semibold text-foreground">{activeStageLabel}</p>
                   </div>
                 </div>
               </div>
