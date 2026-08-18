@@ -103,7 +103,7 @@ function Dashboard() {
           return {
             ...proj,
             progress: total ? Math.round((done / total) * 100) : 0,
-            activeStage: active?.stage_name ?? "Por iniciar",
+            activeStage,
             myPct,
           };
         }),
