@@ -274,7 +274,7 @@ function ProjectDetail() {
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label="Total depositado"
-                value={is365Progress ? `${formatUSD(118260)} (${formatUSD(85400)} + ${formatUSD(32860)})` : formatUSD(deposited)}
+                value={is365Progress ? `${formatUSD(195260)} (${formatUSD(85400)} + ${formatUSD(32860)} + ${formatUSD(77000)})` : formatUSD(deposited)}
                 accent="primary"
                 sub={hasMultipleOwners && myPct != null
                   ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
@@ -571,6 +571,8 @@ function DrawSchedule({
     ...groupRows,
   ];
   if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
+  // 365 Progress: draws 0 a 3 ya abonados
+  if (is365Progress) list = list.map((d) => (d.num <= 3 ? { ...d, completed: true, active: false } : d));
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
