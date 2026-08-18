@@ -112,12 +112,6 @@ function ProjectDetail() {
   }, [stages]);
 
   const activeStage = stages.find((s) => s.active);
-  const activeStageLabel =
-    is365Progress
-      ? "Colocando trusses"
-      : progress >= 100
-        ? "Finalizada"
-        : activeStage?.stage_name ?? "Finalizada";
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
   const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
