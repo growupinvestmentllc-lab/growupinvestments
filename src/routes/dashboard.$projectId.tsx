@@ -535,6 +535,7 @@ function DrawSchedule({
   hasMultipleOwners,
   projectId,
   maxDraw,
+  is365Progress,
 }: {
   stages: Stage[];
   lotCost?: number;
@@ -596,6 +597,11 @@ function DrawSchedule({
                   <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
                   <p className="text-xs text-muted-foreground">
                     {formatUSD(d.amount)}
+                    {is365Progress && d.num === 2 && (
+                      <span className="text-foreground ml-1">
+                        (ya abonado {formatUSD(32860)}) · Pendiente de abonar en este draw: {formatUSD(d.amount - 32860)}
+                      </span>
+                    )}
                     {hasMultipleOwners && myPct != null && (
                       <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
                     )}
