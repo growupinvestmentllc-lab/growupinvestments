@@ -87,6 +87,13 @@ function Dashboard() {
           const total = ALL_STAGES.length;
           const done = (stages ?? []).filter((s) => s.completed).length;
           const active = (stages ?? []).find((s) => s.active);
+          let activeStage = active?.stage_name ?? "Por iniciar";
+          if (
+            proj.address.toLowerCase().includes("365") &&
+            proj.address.toLowerCase().includes("progress")
+          ) {
+            activeStage = "Colocando trusses";
+          }
           let myPct: number | null = null;
           if (userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
             myPct = Number(proj.owner_pct_1) || null;
