@@ -140,6 +140,7 @@ function ProjectDetail() {
   let pending = totalCost - deposited;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
+  const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
   if (is472Rajah && myLlc && myLlc.trim().toUpperCase().includes("TIFEMO")) {
     pending = 0;
   }
