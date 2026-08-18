@@ -142,6 +142,12 @@ function ProjectDetail() {
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
+  const activeStageLabel =
+    is365Progress
+      ? "Colocando trusses"
+      : progress >= 100
+        ? "Finalizada"
+        : activeStage?.stage_name ?? "Finalizada";
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
