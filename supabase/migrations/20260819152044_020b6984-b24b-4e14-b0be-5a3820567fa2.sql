@@ -1,0 +1,1 @@
+UPDATE portfolio_images SET caption = 'OBRA REAL — Materiales en obra y solo slab' WHERE id = '1dd18d3a-b4ea-4786-9a8f-7b33126c1c7c';
