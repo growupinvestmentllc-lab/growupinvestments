@@ -118,6 +118,7 @@ function ProjectDetail() {
   const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39";
   const is2812 = (project?.address?.toLowerCase() ?? "").includes("2812 nw 27th");
   const is14Trout = (project?.address?.toLowerCase() ?? "").includes("14 trout");
+  const is5963Virtudes = (project?.address?.toLowerCase() ?? "").includes("5963") && (project?.address?.toLowerCase() ?? "").includes("virtudes");
   const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers || is2812 || is14Trout;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
@@ -378,13 +379,13 @@ function ProjectDetail() {
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
               <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Precio de venta" : is35SW || is477 ? "Precio de venta" : is127 ? "Precio de venta" : "Precio est. de venta"} value={formatUSD(project.expected_sale_price)} />
-                {!is127 && !is14Trout && (
+                {!is127 && !is14Trout && !is5963Virtudes && (
                   <>
                     <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
                     <Stat dark label="Costo construcción" value={formatUSD(is2446 || is2434 ? constructionTotal : project.construction_cost)} />
                   </>
                 )}
-                {!is14Trout && (
+                {!is14Trout && !is5963Virtudes && (
                   <Stat
                     dark
                     label={
