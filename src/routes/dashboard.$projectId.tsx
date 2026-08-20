@@ -282,7 +282,7 @@ function ProjectDetail() {
 
             {!is127 && <ConstructionProgressBar stages={stages} />}
 
-            {!is127 && !is14Trout && (
+            {!is127 && !is14Trout && !is5963Virtudes && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label="Total depositado"
