@@ -309,7 +309,7 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is14Trout && (
+            {!is14Trout && !is5963Virtudes && (
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
               {is35SW ? (
