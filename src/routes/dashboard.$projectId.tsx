@@ -294,7 +294,7 @@ function ProjectDetail() {
               />
               <StatCard
                 label="Total pendiente"
-                value={is621Flamingo ? formatUSD(23345) : formatUSD(pending)}
+                value={is621Flamingo ? formatUSD(87625) : formatUSD(pending)}
                 accent="muted"
                 sub={!is621Flamingo && hasMultipleOwners && myPct != null
                   ? `Tu participación ${myPct}% = ${formatUSD(Math.max(0, pending * (myPct / 100) - (is2812 ? 33150 : 0)))}`
