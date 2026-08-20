@@ -144,7 +144,9 @@ function ProjectDetail() {
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
+  const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
   const activeStageLabel =
+
     is365Progress
       ? "Colocando trusses"
       : progress >= 100
