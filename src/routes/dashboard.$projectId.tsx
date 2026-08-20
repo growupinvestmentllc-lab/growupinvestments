@@ -122,10 +122,10 @@ function ProjectDetail() {
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
   const is35SW = (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
   const is477 = (project?.address?.toLowerCase() ?? "").includes("477 rayford");
-  const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
   const is127 =
     (project?.address?.toLowerCase() ?? "").includes("127 nw 24th") ||
     (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
+
 
 
   const steamwall2446 = 5006;
