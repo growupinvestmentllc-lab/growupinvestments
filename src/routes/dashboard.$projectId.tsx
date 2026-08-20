@@ -126,6 +126,8 @@ function ProjectDetail() {
     (project?.address?.toLowerCase() ?? "").includes("127 nw 24th") ||
     (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
 
+
+
   const steamwall2446 = 5006;
   const steamwall2434 = 5012;
   const constructionBase = Number(project?.construction_cost) || 0;
@@ -142,7 +144,9 @@ function ProjectDetail() {
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
+  const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
   const activeStageLabel =
+
     is365Progress
       ? "Colocando trusses"
       : progress >= 100
@@ -282,20 +286,21 @@ function ProjectDetail() {
                 label="Total depositado"
                 value={formatUSD(deposited)}
                 accent="primary"
-                sub={hasMultipleOwners && myPct != null
+                sub={!is621Flamingo && hasMultipleOwners && myPct != null
                   ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
                   : undefined}
               />
               <StatCard
                 label="Total pendiente"
-                value={formatUSD(pending)}
+                value={is621Flamingo ? formatUSD(23345) : formatUSD(pending)}
                 accent="muted"
-                sub={hasMultipleOwners && myPct != null
+                sub={!is621Flamingo && hasMultipleOwners && myPct != null
                   ? `Tu participación ${myPct}% = ${formatUSD(Math.max(0, pending * (myPct / 100) - (is2812 ? 33150 : 0)))}`
                   : undefined}
               />
             </div>
             )}
+
             {overDeposited && (
               <div role="alert" className="rounded-md border border-amber-400 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
                 Atención: el total depositado ({formatUSD(deposited)}) supera el costo total ({formatUSD(totalCost)}).
