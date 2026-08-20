@@ -119,7 +119,7 @@ function ProjectDetail() {
   const is2812 = (project?.address?.toLowerCase() ?? "").includes("2812 nw 27th");
   const is14Trout = (project?.address?.toLowerCase() ?? "").includes("14 trout");
   const is5963Virtudes = (project?.address?.toLowerCase() ?? "").includes("5963") && (project?.address?.toLowerCase() ?? "").includes("virtudes");
-  const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers || is2812 || is14Trout;
+  const simpleProgress = is2446 || is448Rajah || is7305SunNLake || is2725Embers || is2812 || is14Trout || is5963Virtudes;
   const is2434 = project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb";
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
   const is35SW = (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
@@ -282,7 +282,7 @@ function ProjectDetail() {
 
             {!is127 && <ConstructionProgressBar stages={stages} />}
 
-            {!is127 && !is14Trout && (
+            {!is127 && !is14Trout && !is5963Virtudes && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label="Total depositado"
@@ -309,7 +309,7 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is14Trout && (
+            {!is14Trout && !is5963Virtudes && (
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
               {is35SW ? (
@@ -356,7 +356,7 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} />
             )}
 
