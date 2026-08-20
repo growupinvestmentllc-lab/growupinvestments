@@ -356,7 +356,7 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} />
             )}
 
