@@ -378,21 +378,23 @@ function ProjectDetail() {
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
               <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Precio de venta" : is35SW || is477 ? "Precio de venta" : is127 ? "Precio de venta" : "Precio est. de venta"} value={formatUSD(project.expected_sale_price)} />
-                {!is127 && (
+                {!is127 && !is14Trout && (
                   <>
                     <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
                     <Stat dark label="Costo construcción" value={formatUSD(is2446 || is2434 ? constructionTotal : project.construction_cost)} />
                   </>
                 )}
-                <Stat
-                  dark
-                  label={
-                    project.address?.toLowerCase().includes("127 nw 24th")
-                      ? "Costo lote + permiso"
-                      : "Costo lote"
-                  }
-                  value={formatUSD(project.lot_cost)}
-                />
+                {!is14Trout && (
+                  <Stat
+                    dark
+                    label={
+                      project.address?.toLowerCase().includes("127 nw 24th")
+                        ? "Costo lote + permiso"
+                        : "Costo lote"
+                    }
+                    value={formatUSD(project.lot_cost)}
+                  />
+                )}
                 {is127 ? (
                   <Stat dark label="ROI estimado" value={`${project.lot_cost ? (((Number(project.expected_sale_price || 0) - Number(project.lot_cost)) / Number(project.lot_cost)) * 100).toFixed(1) : 0}%`} />
                 ) : project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
