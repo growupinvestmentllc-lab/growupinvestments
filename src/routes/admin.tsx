@@ -321,6 +321,10 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             <p className="text-xs text-muted-foreground mt-2">El inversor verá la propiedad si su LLC coincide con Propietario 1 o Propietario 2.</p>
           </section>
 
+          {/* Inversiones por propietario */}
+          <InvestmentsSection projectId={p.id} />
+
+
           {/* Specs */}
           <section>
             <h4 className="font-semibold mb-2">Especificaciones (Portafolio)</h4>
