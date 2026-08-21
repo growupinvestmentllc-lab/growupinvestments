@@ -323,6 +323,24 @@ function ProjectDetail() {
             </div>
             )}
 
+            {myPayments.length > 0 && (
+              <div className="card-soft p-6">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Pagos realizados</h3>
+                <div className="space-y-1">
+                  {myPayments.map((pay) => (
+                    <div key={pay.id} className="flex items-center justify-between text-sm rounded-md bg-muted/50 px-3 py-2">
+                      <span className="text-muted-foreground">
+                        {pay.paid_on}{pay.description ? ` · ${pay.description}` : ""}
+                      </span>
+                      <span className="font-semibold text-foreground">{formatUSD(Number(pay.amount))}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
+
             {overDeposited && (
               <div role="alert" className="rounded-md border border-amber-400 bg-amber-50 text-amber-900 px-4 py-3 text-sm">
                 Atención: el total depositado ({formatUSD(deposited)}) supera el costo total ({formatUSD(totalCost)}).
