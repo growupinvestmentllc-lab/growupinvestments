@@ -81,14 +81,16 @@ function ProjectDetail() {
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: i }, { data: prof }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: i }, { data: prof }, { data: inv }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
         supabase.from("profiles").select("llc_name").maybeSingle(),
+        supabase.from("investments").select("*").eq("project_id", projectId),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
+      setInvestments((inv ?? []) as Investment[]);
       const rawImgs = (i ?? []) as Image[];
 
       // Bucket is private → generate signed URLs from stored path
