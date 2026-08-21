@@ -316,22 +316,46 @@ function ProjectDetail() {
             {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
-                label={hasMultipleOwners && myInvestment ? "Total depositado (tu inversión)" : "Total depositado"}
-                value={formatUSD(myInvestment ? Number(myInvestment.total_deposited) : deposited)}
+                label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total depositado (tu inversión)" : "Total depositado"}
+                value={formatUSD(
+                  is621Flamingo
+                    ? deposited
+                    : myInvestment
+                      ? Number(myInvestment.total_deposited)
+                      : deposited,
+                )}
                 accent="primary"
-                sub={hasMultipleOwners && myPct != null ? `Tu participación ${myPct}%` : undefined}
+                sub={
+                  hasMultipleOwners && myPct != null
+                    ? `Tu participación ${myPct}% = ${formatUSD(
+                        is621Flamingo
+                          ? (Number(myInvestment?.total_deposited) || 0)
+                          : (Number(myInvestment?.total_deposited) || 0),
+                      )}`
+                    : undefined
+                }
               />
               <StatCard
-                label={hasMultipleOwners && myInvestment ? "Total pendiente (tu inversión)" : "Total pendiente"}
+                label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total pendiente (tu inversión)" : "Total pendiente"}
                 value={formatUSD(
-                  myInvestment
-                    ? Number(myInvestment.total_pending)
-                    : is621Flamingo
-                      ? 23345
-                      : pending,
+                  is621Flamingo
+                    ? 23345
+                    : myInvestment
+                      ? Number(myInvestment.total_pending)
+                      : is621Flamingo
+                        ? 23345
+                        : pending,
                 )}
                 accent="muted"
-                sub={hasMultipleOwners && myPct != null ? `Tu participación ${myPct}%` : undefined}
+                sub={
+                  hasMultipleOwners && myPct != null
+                    ? `Tu participación ${myPct}% = ${formatUSD(
+                        is621Flamingo
+                          ? (Number(myInvestment?.total_pending) || 0)
+                          : (Number(myInvestment?.total_pending) || 0),
+                      )}`
+                    : undefined
+                }
               />
             </div>
             )}
