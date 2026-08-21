@@ -303,20 +303,22 @@ function ProjectDetail() {
             {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
-                label="Total depositado"
-                value={formatUSD(deposited)}
+                label={hasMultipleOwners && myInvestment ? "Total depositado (tu inversión)" : "Total depositado"}
+                value={formatUSD(myInvestment ? Number(myInvestment.total_deposited) : deposited)}
                 accent="primary"
-                sub={!is621Flamingo && hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
-                  : undefined}
+                sub={hasMultipleOwners && myPct != null ? `Tu participación ${myPct}%` : undefined}
               />
               <StatCard
-                label="Total pendiente"
-                value={is621Flamingo ? formatUSD(23345) : formatUSD(pending)}
+                label={hasMultipleOwners && myInvestment ? "Total pendiente (tu inversión)" : "Total pendiente"}
+                value={formatUSD(
+                  myInvestment
+                    ? Number(myInvestment.total_pending)
+                    : is621Flamingo
+                      ? 23345
+                      : pending,
+                )}
                 accent="muted"
-                sub={!is621Flamingo && hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(Math.max(0, pending * (myPct / 100) - (is2812 ? 33150 : 0)))}`
-                  : undefined}
+                sub={hasMultipleOwners && myPct != null ? `Tu participación ${myPct}%` : undefined}
               />
             </div>
             )}
