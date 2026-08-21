@@ -321,6 +321,10 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
             <p className="text-xs text-muted-foreground mt-2">El inversor verá la propiedad si su LLC coincide con Propietario 1 o Propietario 2.</p>
           </section>
 
+          {/* Inversiones por propietario */}
+          <InvestmentsSection projectId={p.id} />
+
+
           {/* Specs */}
           <section>
             <h4 className="font-semibold mb-2">Especificaciones (Portafolio)</h4>
@@ -780,6 +784,170 @@ function DrawAmountRow({
         onChange={(e) => setV(Number(e.target.value))}
         onBlur={() => onSave(v)}
       />
+    </div>
+  );
+}
+type InvestmentRow = {
+  id: string;
+  project_id: string;
+  owner_llc: string;
+  percentage: number;
+  total_deposited: number;
+  total_pending: number;
+};
+type PaymentRow = { id: string; investment_id: string; paid_on: string; amount: number; description: string | null };
+
+function InvestmentsSection({ projectId }: { projectId: string }) {
+  const [rows, setRows] = useState<InvestmentRow[]>([]);
+  const [payments, setPayments] = useState<PaymentRow[]>([]);
+  const [newLlc, setNewLlc] = useState("");
+
+  const load = async () => {
+    const { data } = await supabase.from("investments").select("*").eq("project_id", projectId).order("created_at");
+    const list = (data ?? []) as InvestmentRow[];
+    setRows(list);
+    if (list.length) {
+      const { data: pays } = await supabase
+        .from("investment_payments")
+        .select("*")
+        .in("investment_id", list.map((r) => r.id))
+        .order("paid_on", { ascending: false });
+      setPayments((pays ?? []) as PaymentRow[]);
+    } else setPayments([]);
+  };
+
+  useEffect(() => { load(); }, [projectId]);
+
+  const saveRow = async (row: InvestmentRow) => {
+    const { error } = await supabase
+      .from("investments")
+      .update({
+        owner_llc: row.owner_llc,
+        percentage: row.percentage,
+        total_deposited: row.total_deposited,
+        total_pending: row.total_pending,
+      })
+      .eq("id", row.id);
+    if (error) return toast.error(error.message);
+    toast.success("Inversión guardada");
+  };
+
+  const addRow = async () => {
+    if (!newLlc.trim()) return;
+    const { error } = await supabase.from("investments").insert({ project_id: projectId, owner_llc: newLlc.trim().toUpperCase() });
+    if (error) return toast.error(error.message);
+    setNewLlc("");
+    load();
+  };
+
+  const removeRow = async (id: string) => {
+    const { error } = await supabase.from("investments").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    load();
+  };
+
+  const addPayment = async (investmentId: string, paidOn: string, amount: number, description: string) => {
+    const { error } = await supabase
+      .from("investment_payments")
+      .insert({ investment_id: investmentId, paid_on: paidOn, amount, description: description || null });
+    if (error) return toast.error(error.message);
+    load();
+  };
+
+  const removePayment = async (id: string) => {
+    const { error } = await supabase.from("investment_payments").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    load();
+  };
+
+  return (
+    <section>
+      <h4 className="font-semibold mb-2">Inversiones por propietario</h4>
+      <p className="text-xs text-muted-foreground mb-3">
+        Cada propietario ve únicamente su propio registro (participación, depositado, pendiente y pagos).
+      </p>
+      <div className="space-y-4">
+        {rows.length === 0 && <p className="text-sm text-muted-foreground">Sin inversiones cargadas.</p>}
+        {rows.map((row) => (
+          <InvestmentEditor
+            key={row.id}
+            row={row}
+            payments={payments.filter((p) => p.investment_id === row.id)}
+            onSave={saveRow}
+            onDelete={() => removeRow(row.id)}
+            onAddPayment={addPayment}
+            onRemovePayment={removePayment}
+          />
+        ))}
+        <div className="flex items-end gap-2">
+          <div className="flex-1">
+            <Label>Agregar propietario (LLC)</Label>
+            <Input value={newLlc} placeholder="EJ: DAVI LLC" onChange={(e) => setNewLlc(e.target.value)} />
+          </div>
+          <Button type="button" onClick={addRow}><Plus className="h-4 w-4" /> Agregar</Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function InvestmentEditor({
+  row,
+  payments,
+  onSave,
+  onDelete,
+  onAddPayment,
+  onRemovePayment,
+}: {
+  row: InvestmentRow;
+  payments: PaymentRow[];
+  onSave: (r: InvestmentRow) => void;
+  onDelete: () => void;
+  onAddPayment: (investmentId: string, paidOn: string, amount: number, description: string) => void;
+  onRemovePayment: (id: string) => void;
+}) {
+  const [r, setR] = useState(row);
+  const [paidOn, setPaidOn] = useState(new Date().toISOString().slice(0, 10));
+  const [amount, setAmount] = useState<number>(0);
+  const [description, setDescription] = useState("");
+
+  useEffect(() => setR(row), [row]);
+
+  return (
+    <div className="rounded-lg border border-border p-4 space-y-3">
+      <div className="grid sm:grid-cols-4 gap-3">
+        <div><Label>Propietario (LLC)</Label><Input value={r.owner_llc} onChange={(e) => setR({ ...r, owner_llc: e.target.value })} /></div>
+        <div><Label>Participación (%)</Label><Input type="number" step="0.01" value={r.percentage} onChange={(e) => setR({ ...r, percentage: Number(e.target.value) })} /></div>
+        <div><Label>Total depositado</Label><Input type="number" step="0.01" value={r.total_deposited} onChange={(e) => setR({ ...r, total_deposited: Number(e.target.value) })} /></div>
+        <div><Label>Total pendiente</Label><Input type="number" step="0.01" value={r.total_pending} onChange={(e) => setR({ ...r, total_pending: Number(e.target.value) })} /></div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button type="button" size="sm" onClick={() => onSave(r)}>Guardar</Button>
+        <Button type="button" size="sm" variant="outline" onClick={onDelete}><Trash2 className="h-4 w-4" /> Eliminar</Button>
+      </div>
+
+      <div>
+        <p className="text-sm font-medium mb-2">Pagos realizados</p>
+        <div className="space-y-1">
+          {payments.length === 0 && <p className="text-xs text-muted-foreground">Sin pagos cargados.</p>}
+          {payments.map((p) => (
+            <div key={p.id} className="flex items-center justify-between text-sm rounded-md bg-muted/50 px-3 py-1.5">
+              <span>{p.paid_on} · {formatUSD(Number(p.amount))}{p.description ? ` · ${p.description}` : ""}</span>
+              <button type="button" aria-label="Eliminar pago" onClick={() => onRemovePayment(p.id)}>
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="mt-2 grid sm:grid-cols-4 gap-2 items-end">
+          <div><Label>Fecha</Label><Input type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} /></div>
+          <div><Label>Monto</Label><Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(Number(e.target.value))} /></div>
+          <div><Label>Descripción</Label><Input value={description} onChange={(e) => setDescription(e.target.value)} /></div>
+          <Button type="button" onClick={() => { onAddPayment(row.id, paidOn, amount, description); setAmount(0); setDescription(""); }}>
+            <Plus className="h-4 w-4" /> Pago
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

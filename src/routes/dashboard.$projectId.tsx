@@ -48,6 +48,10 @@ type Stage = {
   estimated_end_date?: string | null;
 };
 type Image = { id: string; image_url: string; caption: string | null };
+type Investment = {
+  id: string; project_id: string; owner_llc: string; percentage: number;
+  total_deposited: number; total_pending: number;
+};
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
@@ -56,6 +60,8 @@ function ProjectDetail() {
   const [project, setProject] = useState<Project | null>(null);
   const [stages, setStages] = useState<Stage[]>([]);
   const [images, setImages] = useState<Image[]>([]);
+  const [investments, setInvestments] = useState<Investment[]>([]);
+  const [myPayments, setMyPayments] = useState<{ id: string; paid_on: string; amount: number; description: string | null }[]>([]);
 
   const [myLlc, setMyLlc] = useState<string | null>(null);
   
@@ -76,14 +82,16 @@ function ProjectDetail() {
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: i }, { data: prof }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: i }, { data: prof }, { data: inv }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
         supabase.from("profiles").select("llc_name").maybeSingle(),
+        supabase.from("investments").select("*").eq("project_id", projectId),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
+      setInvestments((inv ?? []) as Investment[]);
       const rawImgs = (i ?? []) as Image[];
 
       // Bucket is private → generate signed URLs from stored path
@@ -158,8 +166,19 @@ function ProjectDetail() {
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
 
+  // Investment record of the signed-in owner (per-owner financials)
+  const myInvestment = useMemo(() => {
+    if (!investments.length) return null;
+    if (myLlc) {
+      const match = investments.find((i) => i.owner_llc.trim() === myLlc.trim());
+      if (match) return match;
+    }
+    return investments.length === 1 ? investments[0] : null;
+  }, [investments, myLlc]);
+
   // Determine current investor share (%)
   const myPct = useMemo(() => {
+    if (myInvestment) return Number(myInvestment.percentage) || null;
     if (!project) return null;
     if (myLlc && project.owner_llc && project.owner_llc.trim() === myLlc.trim()) {
       return Number(project.owner_pct_1) || null;
@@ -168,8 +187,20 @@ function ProjectDetail() {
       return Number(project.owner_pct_2) || null;
     }
     return null;
-  }, [project, myLlc]);
+  }, [project, myLlc, myInvestment]);
   const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
+
+  useEffect(() => {
+    if (!myInvestment) { setMyPayments([]); return; }
+    (async () => {
+      const { data } = await supabase
+        .from("investment_payments")
+        .select("id,paid_on,amount,description")
+        .eq("investment_id", myInvestment.id)
+        .order("paid_on", { ascending: false });
+      setMyPayments(data ?? []);
+    })();
+  }, [myInvestment]);
 
 
   if (!project) return <div className="min-h-screen bg-background"><AppHeader /><div className="p-12 text-center text-muted-foreground">Cargando...</div></div>;
@@ -285,23 +316,43 @@ function ProjectDetail() {
             {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
-                label="Total depositado"
-                value={formatUSD(deposited)}
+                label={hasMultipleOwners && myInvestment ? "Total depositado (tu inversión)" : "Total depositado"}
+                value={formatUSD(myInvestment ? Number(myInvestment.total_deposited) : deposited)}
                 accent="primary"
-                sub={!is621Flamingo && hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(deposited * (myPct / 100))}`
-                  : undefined}
+                sub={hasMultipleOwners && myPct != null ? `Tu participación ${myPct}%` : undefined}
               />
               <StatCard
-                label="Total pendiente"
-                value={is621Flamingo ? formatUSD(23345) : formatUSD(pending)}
+                label={hasMultipleOwners && myInvestment ? "Total pendiente (tu inversión)" : "Total pendiente"}
+                value={formatUSD(
+                  myInvestment
+                    ? Number(myInvestment.total_pending)
+                    : is621Flamingo
+                      ? 23345
+                      : pending,
+                )}
                 accent="muted"
-                sub={!is621Flamingo && hasMultipleOwners && myPct != null
-                  ? `Tu participación ${myPct}% = ${formatUSD(Math.max(0, pending * (myPct / 100) - (is2812 ? 33150 : 0)))}`
-                  : undefined}
+                sub={hasMultipleOwners && myPct != null ? `Tu participación ${myPct}%` : undefined}
               />
             </div>
             )}
+
+            {myPayments.length > 0 && (
+              <div className="card-soft p-6">
+                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Pagos realizados</h3>
+                <div className="space-y-1">
+                  {myPayments.map((pay) => (
+                    <div key={pay.id} className="flex items-center justify-between text-sm rounded-md bg-muted/50 px-3 py-2">
+                      <span className="text-muted-foreground">
+                        {pay.paid_on}{pay.description ? ` · ${pay.description}` : ""}
+                      </span>
+                      <span className="font-semibold text-foreground">{formatUSD(Number(pay.amount))}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+
 
             {overDeposited && (
               <div role="alert" className="rounded-md border border-amber-400 bg-amber-50 text-amber-900 px-4 py-3 text-sm">

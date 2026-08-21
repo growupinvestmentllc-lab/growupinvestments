@@ -189,6 +189,85 @@ export type Database = {
         }
         Relationships: []
       }
+      investment_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          investment_id: string
+          paid_on: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          investment_id: string
+          paid_on?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          investment_id?: string
+          paid_on?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_payments_investment_id_fkey"
+            columns: ["investment_id"]
+            isOneToOne: false
+            referencedRelation: "investments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investments: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          owner_llc: string
+          percentage: number
+          project_id: string
+          total_deposited: number
+          total_pending: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          owner_llc: string
+          percentage?: number
+          project_id: string
+          total_deposited?: number
+          total_pending?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          owner_llc?: string
+          percentage?: number
+          project_id?: string
+          total_deposited?: number
+          total_pending?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunities: {
         Row: {
           architect: string | null
