@@ -190,6 +190,18 @@ function ProjectDetail() {
   }, [project, myLlc, myInvestment]);
   const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
 
+  useEffect(() => {
+    if (!myInvestment) { setMyPayments([]); return; }
+    (async () => {
+      const { data } = await supabase
+        .from("investment_payments")
+        .select("id,paid_on,amount,description")
+        .eq("investment_id", myInvestment.id)
+        .order("paid_on", { ascending: false });
+      setMyPayments(data ?? []);
+    })();
+  }, [myInvestment]);
+
 
   if (!project) return <div className="min-h-screen bg-background"><AppHeader /><div className="p-12 text-center text-muted-foreground">Cargando...</div></div>;
 
