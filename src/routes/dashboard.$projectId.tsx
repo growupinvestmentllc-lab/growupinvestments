@@ -165,8 +165,19 @@ function ProjectDetail() {
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
 
+  // Investment record of the signed-in owner (per-owner financials)
+  const myInvestment = useMemo(() => {
+    if (!investments.length) return null;
+    if (myLlc) {
+      const match = investments.find((i) => i.owner_llc.trim() === myLlc.trim());
+      if (match) return match;
+    }
+    return investments.length === 1 ? investments[0] : null;
+  }, [investments, myLlc]);
+
   // Determine current investor share (%)
   const myPct = useMemo(() => {
+    if (myInvestment) return Number(myInvestment.percentage) || null;
     if (!project) return null;
     if (myLlc && project.owner_llc && project.owner_llc.trim() === myLlc.trim()) {
       return Number(project.owner_pct_1) || null;
@@ -175,7 +186,7 @@ function ProjectDetail() {
       return Number(project.owner_pct_2) || null;
     }
     return null;
-  }, [project, myLlc]);
+  }, [project, myLlc, myInvestment]);
   const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
 
 
