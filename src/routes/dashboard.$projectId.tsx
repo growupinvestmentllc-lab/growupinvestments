@@ -61,6 +61,7 @@ function ProjectDetail() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [images, setImages] = useState<Image[]>([]);
   const [investments, setInvestments] = useState<Investment[]>([]);
+  const [myPayments, setMyPayments] = useState<{ id: string; paid_on: string; amount: number; description: string | null }[]>([]);
 
   const [myLlc, setMyLlc] = useState<string | null>(null);
   
