@@ -48,6 +48,10 @@ type Stage = {
   estimated_end_date?: string | null;
 };
 type Image = { id: string; image_url: string; caption: string | null };
+type Investment = {
+  id: string; project_id: string; owner_llc: string; percentage: number;
+  total_deposited: number; total_pending: number;
+};
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
@@ -56,6 +60,7 @@ function ProjectDetail() {
   const [project, setProject] = useState<Project | null>(null);
   const [stages, setStages] = useState<Stage[]>([]);
   const [images, setImages] = useState<Image[]>([]);
+  const [investments, setInvestments] = useState<Investment[]>([]);
 
   const [myLlc, setMyLlc] = useState<string | null>(null);
   
