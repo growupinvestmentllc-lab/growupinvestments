@@ -78,6 +78,15 @@ function Dashboard() {
         .select("llc_name")
         .eq("id", user.id)
         .single()).data?.llc_name ?? null;
+      // Per-owner financials live in `investments` (RLS returns only mine)
+      const { data: myInvestments } = await supabase
+        .from("investments")
+        .select("project_id,owner_llc,percentage,total_deposited,total_pending");
+      const invByProject = new Map(
+        (myInvestments ?? [])
+          .filter((i) => !userLlc || i.owner_llc.trim() === userLlc.trim())
+          .map((i) => [i.project_id, i]),
+      );
       const enriched = await Promise.all(
         list.map(async (proj) => {
           const { data: stages } = await supabase
@@ -94,10 +103,11 @@ function Dashboard() {
           ) {
             activeStage = "Colocando trusses";
           }
-          let myPct: number | null = null;
-          if (userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
+          const inv = invByProject.get(proj.id);
+          let myPct: number | null = inv ? Number(inv.percentage) || null : null;
+          if (myPct == null && userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
             myPct = Number(proj.owner_pct_1) || null;
-          } else if (userLlc && proj.owner_llc_2 && proj.owner_llc_2.trim() === userLlc.trim()) {
+          } else if (myPct == null && userLlc && proj.owner_llc_2 && proj.owner_llc_2.trim() === userLlc.trim()) {
             myPct = Number(proj.owner_pct_2) || null;
           }
           return {
