@@ -146,15 +146,15 @@ function ProjectDetail() {
   // Solo etiqueta (no afecta totales ni pendiente)
   const steamwallLabel = steamwall;
   const constructionLabelTotal = constructionBase + steamwallLabel;
-  const totalCost =
-    constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
-  const deposited = Number(project?.amount_deposited) || 0;
-  const pending = totalCost - deposited;
-  const overDeposited = deposited > totalCost && totalCost > 0;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
   const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
+  const totalCost =
+    constructionTotal + (Number(project?.lot_cost) || 0) + (is621Flamingo ? 3500 : 0) || Number(project?.total_cost) || 0;
+  const deposited = Number(project?.amount_deposited) || 0;
+  const pending = totalCost - deposited;
+  const overDeposited = deposited > totalCost && totalCost > 0;
   const activeStageLabel =
 
     is365Progress
