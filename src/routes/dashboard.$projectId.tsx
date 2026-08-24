@@ -775,7 +775,7 @@ function Timeline({ stages }: { stages: Stage[] }) {
   );
 }
 
-function StatCard({ label, value, accent, sub, className }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string; className?: string }) {
+function StatCard({ label, value, accent, sub, className, children }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string; className?: string; children?: React.ReactNode }) {
   const cls = accent === "primary" ? "bg-primary text-primary-foreground" : accent === "muted" ? "bg-secondary/40 text-foreground" : "bg-card text-foreground";
   return (
     <div className={`card-soft p-5 ${cls} ${className || ""}`}>
@@ -784,6 +784,7 @@ function StatCard({ label, value, accent, sub, className }: { label: string; val
       {sub && (
         <p className={`text-xs mt-2 ${accent === "primary" ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{sub}</p>
       )}
+      {children}
     </div>
   );
 }
