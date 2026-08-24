@@ -424,7 +424,13 @@ function ProjectDetail() {
                   sub={hasMultipleOwners && myPct != null
                     ? `Tu participación ${myPct}% = ${formatUSD(2500 * (myPct / 100))}`
                     : undefined}
-                />
+                >
+                  <p className="text-sm font-semibold mt-3 text-foreground">Contingency</p>
+                  <p className="text-lg font-bold text-foreground">{formatUSD(1000)}</p>
+                  {hasMultipleOwners && myPct != null && (
+                    <p className="text-xs mt-1 text-muted-foreground">Tu participación {myPct}% = {formatUSD(1000 * (myPct / 100))}</p>
+                  )}
+                </StatCard>
                 <StatCard
                   label="Costo Total"
                   value={formatUSD(totalCost)}
@@ -775,7 +781,7 @@ function Timeline({ stages }: { stages: Stage[] }) {
   );
 }
 
-function StatCard({ label, value, accent, sub, className }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string; className?: string }) {
+function StatCard({ label, value, accent, sub, className, children }: { label: string; value: string; accent?: "primary" | "muted"; sub?: string; className?: string; children?: React.ReactNode }) {
   const cls = accent === "primary" ? "bg-primary text-primary-foreground" : accent === "muted" ? "bg-secondary/40 text-foreground" : "bg-card text-foreground";
   return (
     <div className={`card-soft p-5 ${cls} ${className || ""}`}>
@@ -784,6 +790,7 @@ function StatCard({ label, value, accent, sub, className }: { label: string; val
       {sub && (
         <p className={`text-xs mt-2 ${accent === "primary" ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{sub}</p>
       )}
+      {children}
     </div>
   );
 }
