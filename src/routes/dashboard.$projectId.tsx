@@ -326,7 +326,7 @@ function ProjectDetail() {
                 )}
                 accent="primary"
                 sub={
-                  hasMultipleOwners && myPct != null
+                  hasMultipleOwners && myPct != null && !is621Flamingo
                     ? `Tu participación ${myPct}% = ${formatUSD(
                         is621Flamingo
                           ? (Number(myInvestment?.total_deposited) || 0)
@@ -348,7 +348,7 @@ function ProjectDetail() {
                 )}
                 accent="muted"
                 sub={
-                  hasMultipleOwners && myPct != null
+                  hasMultipleOwners && myPct != null && !is621Flamingo
                     ? `Tu participación ${myPct}% = ${formatUSD(
                         is621Flamingo
                           ? (Number(myInvestment?.total_pending) || 0)
