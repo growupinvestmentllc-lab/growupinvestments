@@ -432,7 +432,7 @@ function ProjectDetail() {
             )}
 
             {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && (
-              <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} />
+              <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
             {!(
@@ -631,6 +631,7 @@ function DrawSchedule({
   projectId,
   maxDraw,
   is365Progress,
+  is621Flamingo,
 }: {
   stages: Stage[];
   lotCost?: number;
@@ -639,6 +640,7 @@ function DrawSchedule({
   projectId?: string;
   maxDraw?: number;
   is365Progress?: boolean;
+  is621Flamingo?: boolean;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
@@ -672,6 +674,7 @@ function DrawSchedule({
   if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
   // 365 Progress: draws 0 a 3 ya abonados
   if (is365Progress) list = list.map((d) => (d.num <= 3 ? { ...d, completed: true, active: false } : d));
+  if (is621Flamingo) list = list.map((d) => (d.num === 5 ? { ...d, completed: false, active: false } : d));
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
