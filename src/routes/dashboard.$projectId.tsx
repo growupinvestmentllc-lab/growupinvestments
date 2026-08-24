@@ -146,8 +146,9 @@ function ProjectDetail() {
   // Solo etiqueta (no afecta totales ni pendiente)
   const steamwallLabel = steamwall;
   const constructionLabelTotal = constructionBase + steamwallLabel;
+  const dueDiligenceAndContingency = is621Flamingo ? 3500 : 0;
   const totalCost =
-    constructionTotal + (Number(project?.lot_cost) || 0) || Number(project?.total_cost) || 0;
+    constructionTotal + (Number(project?.lot_cost) || 0) + dueDiligenceAndContingency || Number(project?.total_cost) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   const pending = totalCost - deposited;
   const overDeposited = deposited > totalCost && totalCost > 0;
