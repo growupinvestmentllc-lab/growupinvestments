@@ -339,12 +339,10 @@ function ProjectDetail() {
                 label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total pendiente (tu inversión)" : "Total pendiente"}
                 value={formatUSD(
                   is621Flamingo
-                    ? 23345
+                    ? pending
                     : myInvestment
                       ? Number(myInvestment.total_pending)
-                      : is621Flamingo
-                        ? 23345
-                        : pending,
+                      : pending,
                 )}
                 accent="muted"
                 sub={
