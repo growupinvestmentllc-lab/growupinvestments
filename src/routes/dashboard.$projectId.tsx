@@ -421,15 +421,9 @@ function ProjectDetail() {
                 <StatCard
                   label="Fee due diligence"
                   value={formatUSD(2500)}
-                  sub={hasMultipleOwners && myPct != null
-                    ? `Tu participación ${myPct}% = ${formatUSD(2500 * (myPct / 100))}`
-                    : undefined}
                 >
                   <p className="text-sm font-semibold mt-3 text-foreground">Contingency</p>
                   <p className="text-lg font-bold text-foreground">{formatUSD(1000)}</p>
-                  {hasMultipleOwners && myPct != null && (
-                    <p className="text-xs mt-1 text-muted-foreground">Tu participación {myPct}% = {formatUSD(1000 * (myPct / 100))}</p>
-                  )}
                 </StatCard>
                 <StatCard
                   label="Costo Total"
