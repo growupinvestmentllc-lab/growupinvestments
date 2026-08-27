@@ -396,7 +396,7 @@ function ProjectDetail() {
                   <StatCard label="Precio de venta" value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
               ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-[2fr_1fr_1fr_1fr] gap-4">
+              <div className={`grid grid-cols-1 gap-4 ${is621Flamingo ? "sm:grid-cols-[2fr_1fr_1fr_1fr]" : "sm:grid-cols-[2fr_1fr_1fr]"}`}>
                 <StatCard
                   label="Costo de construcción Draw 1 a Draw 6 incluido"
                   value={
@@ -416,13 +416,15 @@ function ProjectDetail() {
                     ? `Tu participación ${myPct}% = ${formatUSD((Number(project.lot_cost) || 0) * (myPct / 100))}`
                     : undefined}
                 />
-                <StatCard
-                  label="Fee due diligence"
-                  value={formatUSD(2500)}
-                >
-                  <p className="text-sm font-semibold mt-3 text-foreground">Contingency</p>
-                  <p className="text-lg font-bold text-foreground">{formatUSD(1000)}</p>
-                </StatCard>
+                {is621Flamingo && (
+                  <StatCard
+                    label="Fee due diligence"
+                    value={formatUSD(2500)}
+                  >
+                    <p className="text-sm font-semibold mt-3 text-foreground">Contingency</p>
+                    <p className="text-lg font-bold text-foreground">{formatUSD(1000)}</p>
+                  </StatCard>
+                )}
                 <StatCard
                   label="Costo Total"
                   value={formatUSD(totalCost)}
