@@ -352,14 +352,18 @@ function PlannedVsActualGantt({ data, subtitle, mode = "both" }: { data: Planned
 
       {/* Legend */}
       <div className="mt-5 pt-4 border-t border-border/50 flex flex-wrap items-center justify-center gap-6 text-[10px]">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-2 rounded-full bg-primary/25" />
-          <span className="text-muted-foreground">Proyectado</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-2 rounded-full bg-primary" />
-          <span className="text-foreground font-semibold">Real</span>
-        </div>
+        {showPlanned && (
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-2 rounded-full bg-primary/25" />
+            <span className="text-muted-foreground">Proyectado</span>
+          </div>
+        )}
+        {showActual && (
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-2 rounded-full bg-primary" />
+            <span className="text-foreground font-semibold">Real</span>
+          </div>
+        )}
       </div>
     </div>
   );
