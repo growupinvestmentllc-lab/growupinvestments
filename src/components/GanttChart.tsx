@@ -232,12 +232,15 @@ export function GanttChart({
   );
 }
 
-function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subtitle?: string }) {
+function PlannedVsActualGantt({ data, subtitle, mode = "both" }: { data: PlannedVsActual; subtitle?: string; mode?: "both" | "planned" | "actual" }) {
+  const showPlanned = mode === "both" || mode === "planned";
+  const showActual = mode === "both" || mode === "actual";
+
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT[g.group] ?? g.group,
-    planned: data[g.group]?.planned,
-    actual: data[g.group]?.actual,
+    planned: showPlanned ? data[g.group]?.planned : undefined,
+    actual: showActual ? data[g.group]?.actual : undefined,
   })).filter((g) => g.planned || g.actual);
 
   const months = groups.flatMap((g) => [
