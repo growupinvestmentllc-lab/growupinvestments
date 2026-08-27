@@ -56,10 +56,12 @@ export function GanttChart({
   stages,
   plannedVsActual,
   subtitle,
+  mode = "both",
 }: {
   stages: Stage[];
   plannedVsActual?: PlannedVsActual;
   subtitle?: string;
+  mode?: "both" | "planned" | "actual";
 }) {
   if (plannedVsActual) {
     return <PlannedVsActualGantt data={plannedVsActual} subtitle={subtitle} />;
