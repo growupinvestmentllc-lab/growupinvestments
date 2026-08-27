@@ -286,23 +286,23 @@ function PlannedVsActualGantt({ data, subtitle, mode = "both" }: { data: Planned
             <span className="text-[11px] font-bold text-foreground truncate">{g.label}</span>
             <div className="space-y-1.5">
               {/* Planned bar */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="grid relative flex-1"
-                  style={{
-                    gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
-                    height: "10px",
-                  }}
-                >
+              {g.planned && (
+                <div className="flex items-center gap-2">
                   <div
-                    className="absolute inset-0 grid pointer-events-none"
-                    style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                    className="grid relative flex-1"
+                    style={{
+                      gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
+                      height: "10px",
+                    }}
                   >
-                    {Array.from({ length: totalMonths }).map((_, i) => (
-                      <div key={i} className="border-l border-border/40 first:border-l-0" />
-                    ))}
-                  </div>
-                  {g.planned && (
+                    <div
+                      className="absolute inset-0 grid pointer-events-none"
+                      style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                    >
+                      {Array.from({ length: totalMonths }).map((_, i) => (
+                        <div key={i} className="border-l border-border/40 first:border-l-0" />
+                      ))}
+                    </div>
                     <div
                       className="h-full rounded-full bg-primary/25"
                       style={{
@@ -311,28 +311,28 @@ function PlannedVsActualGantt({ data, subtitle, mode = "both" }: { data: Planned
                         }`,
                       }}
                     />
-                  )}
-                </div>
-                <span className="text-[9px] text-muted-foreground w-14 shrink-0">Proyectado</span>
-              </div>
-              {/* Actual bar */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="grid relative flex-1"
-                  style={{
-                    gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
-                    height: "10px",
-                  }}
-                >
-                  <div
-                    className="absolute inset-0 grid pointer-events-none"
-                    style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
-                  >
-                    {Array.from({ length: totalMonths }).map((_, i) => (
-                      <div key={i} className="border-l border-border/40 first:border-l-0" />
-                    ))}
                   </div>
-                  {g.actual && (
+                  <span className="text-[9px] text-muted-foreground w-14 shrink-0">Proyectado</span>
+                </div>
+              )}
+              {/* Actual bar */}
+              {g.actual && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="grid relative flex-1"
+                    style={{
+                      gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
+                      height: "10px",
+                    }}
+                  >
+                    <div
+                      className="absolute inset-0 grid pointer-events-none"
+                      style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                    >
+                      {Array.from({ length: totalMonths }).map((_, i) => (
+                        <div key={i} className="border-l border-border/40 first:border-l-0" />
+                      ))}
+                    </div>
                     <div
                       className="h-full rounded-full bg-primary shadow-md"
                       style={{
@@ -341,10 +341,10 @@ function PlannedVsActualGantt({ data, subtitle, mode = "both" }: { data: Planned
                         }`,
                       }}
                     />
-                  )}
+                  </div>
+                  <span className="text-[9px] text-foreground font-semibold w-14 shrink-0">Real</span>
                 </div>
-                <span className="text-[9px] text-foreground font-semibold w-14 shrink-0">Real</span>
-              </div>
+              )}
             </div>
           </div>
         ))}
