@@ -64,7 +64,7 @@ export function GanttChart({
   mode?: "both" | "planned" | "actual";
 }) {
   if (plannedVsActual) {
-    return <PlannedVsActualGantt data={plannedVsActual} subtitle={subtitle} />;
+    return <PlannedVsActualGantt data={plannedVsActual} subtitle={subtitle} mode={mode} />;
   }
   if (!stages.length) return null;
 
