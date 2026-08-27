@@ -283,6 +283,11 @@ function ProjectDetail() {
                 <div className="card-soft p-6 lg:col-span-2">
                   <GanttChart
                     stages={stages}
+                    mode={
+                      normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
+                        ? "actual"
+                        : "both"
+                    }
                     subtitle={
                       normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
                         ? "Tiempos reales"

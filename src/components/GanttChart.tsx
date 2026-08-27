@@ -56,13 +56,15 @@ export function GanttChart({
   stages,
   plannedVsActual,
   subtitle,
+  mode = "both",
 }: {
   stages: Stage[];
   plannedVsActual?: PlannedVsActual;
   subtitle?: string;
+  mode?: "both" | "planned" | "actual";
 }) {
   if (plannedVsActual) {
-    return <PlannedVsActualGantt data={plannedVsActual} subtitle={subtitle} />;
+    return <PlannedVsActualGantt data={plannedVsActual} subtitle={subtitle} mode={mode} />;
   }
   if (!stages.length) return null;
 
@@ -230,12 +232,15 @@ export function GanttChart({
   );
 }
 
-function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subtitle?: string }) {
+function PlannedVsActualGantt({ data, subtitle, mode = "both" }: { data: PlannedVsActual; subtitle?: string; mode?: "both" | "planned" | "actual" }) {
+  const showPlanned = mode === "both" || mode === "planned";
+  const showActual = mode === "both" || mode === "actual";
+
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT[g.group] ?? g.group,
-    planned: data[g.group]?.planned,
-    actual: data[g.group]?.actual,
+    planned: showPlanned ? data[g.group]?.planned : undefined,
+    actual: showActual ? data[g.group]?.actual : undefined,
   })).filter((g) => g.planned || g.actual);
 
   const months = groups.flatMap((g) => [
@@ -281,23 +286,23 @@ function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subti
             <span className="text-[11px] font-bold text-foreground truncate">{g.label}</span>
             <div className="space-y-1.5">
               {/* Planned bar */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="grid relative flex-1"
-                  style={{
-                    gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
-                    height: "10px",
-                  }}
-                >
+              {g.planned && (
+                <div className="flex items-center gap-2">
                   <div
-                    className="absolute inset-0 grid pointer-events-none"
-                    style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                    className="grid relative flex-1"
+                    style={{
+                      gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
+                      height: "10px",
+                    }}
                   >
-                    {Array.from({ length: totalMonths }).map((_, i) => (
-                      <div key={i} className="border-l border-border/40 first:border-l-0" />
-                    ))}
-                  </div>
-                  {g.planned && (
+                    <div
+                      className="absolute inset-0 grid pointer-events-none"
+                      style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                    >
+                      {Array.from({ length: totalMonths }).map((_, i) => (
+                        <div key={i} className="border-l border-border/40 first:border-l-0" />
+                      ))}
+                    </div>
                     <div
                       className="h-full rounded-full bg-primary/25"
                       style={{
@@ -306,28 +311,28 @@ function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subti
                         }`,
                       }}
                     />
-                  )}
-                </div>
-                <span className="text-[9px] text-muted-foreground w-14 shrink-0">Proyectado</span>
-              </div>
-              {/* Actual bar */}
-              <div className="flex items-center gap-2">
-                <div
-                  className="grid relative flex-1"
-                  style={{
-                    gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
-                    height: "10px",
-                  }}
-                >
-                  <div
-                    className="absolute inset-0 grid pointer-events-none"
-                    style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
-                  >
-                    {Array.from({ length: totalMonths }).map((_, i) => (
-                      <div key={i} className="border-l border-border/40 first:border-l-0" />
-                    ))}
                   </div>
-                  {g.actual && (
+                  <span className="text-[9px] text-muted-foreground w-14 shrink-0">Proyectado</span>
+                </div>
+              )}
+              {/* Actual bar */}
+              {g.actual && (
+                <div className="flex items-center gap-2">
+                  <div
+                    className="grid relative flex-1"
+                    style={{
+                      gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))`,
+                      height: "10px",
+                    }}
+                  >
+                    <div
+                      className="absolute inset-0 grid pointer-events-none"
+                      style={{ gridTemplateColumns: `repeat(${totalMonths}, minmax(0, 1fr))` }}
+                    >
+                      {Array.from({ length: totalMonths }).map((_, i) => (
+                        <div key={i} className="border-l border-border/40 first:border-l-0" />
+                      ))}
+                    </div>
                     <div
                       className="h-full rounded-full bg-primary shadow-md"
                       style={{
@@ -336,10 +341,10 @@ function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subti
                         }`,
                       }}
                     />
-                  )}
+                  </div>
+                  <span className="text-[9px] text-foreground font-semibold w-14 shrink-0">Real</span>
                 </div>
-                <span className="text-[9px] text-foreground font-semibold w-14 shrink-0">Real</span>
-              </div>
+              )}
             </div>
           </div>
         ))}
@@ -347,14 +352,18 @@ function PlannedVsActualGantt({ data, subtitle }: { data: PlannedVsActual; subti
 
       {/* Legend */}
       <div className="mt-5 pt-4 border-t border-border/50 flex flex-wrap items-center justify-center gap-6 text-[10px]">
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-2 rounded-full bg-primary/25" />
-          <span className="text-muted-foreground">Proyectado</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="w-3 h-2 rounded-full bg-primary" />
-          <span className="text-foreground font-semibold">Real</span>
-        </div>
+        {showPlanned && (
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-2 rounded-full bg-primary/25" />
+            <span className="text-muted-foreground">Proyectado</span>
+          </div>
+        )}
+        {showActual && (
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-2 rounded-full bg-primary" />
+            <span className="text-foreground font-semibold">Real</span>
+          </div>
+        )}
       </div>
     </div>
   );
