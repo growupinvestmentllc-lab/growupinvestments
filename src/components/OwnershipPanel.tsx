@@ -109,7 +109,7 @@ export function OwnershipPanel({
       )}
 
       {history.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-border space-y-1">
+        <div className="mt-3 pt-3 border-t border-border space-y-2">
           <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Historial de titularidad</p>
           {history.map((o) => {
             const gain =
@@ -117,13 +117,17 @@ export function OwnershipPanel({
                 ? Number(o.exit_price) - Number(o.exit_cost_base)
                 : null;
             return (
-              <p key={o.id} className="text-xs text-muted-foreground">
-                {STAGE_LABELS[o.stage] ?? o.stage}: <span className="text-foreground font-medium">{o.llc_name}</span> {Number(o.percentage)}%
-                {o.exit_date ? ` · salida ${fmtDate(o.exit_date)}` : ""}
-                {o.exit_price != null ? ` · venta ${formatUSD(o.exit_price)}` : ""}
-                {gain != null ? ` · resultado ${formatUSD(gain)}` : ""}
-                {o.notes ? ` · ${o.notes}` : ""}
-              </p>
+              <div key={o.id} className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <Badge variant={o.stage === "venta" ? "default" : "secondary"}>
+                  {STAGE_LABELS[o.stage] ?? o.stage}
+                </Badge>
+                <span className="text-foreground font-medium">{o.llc_name}</span>
+                <span>{Number(o.percentage)}%</span>
+                {o.exit_date ? <span>· salida {fmtDate(o.exit_date)}</span> : null}
+                {o.exit_price != null ? <span>· venta {formatUSD(o.exit_price)}</span> : null}
+                {gain != null ? <span>· resultado {formatUSD(gain)}</span> : null}
+                {o.notes ? <span>· {o.notes}</span> : null}
+              </div>
             );
           })}
         </div>
