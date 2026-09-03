@@ -37,6 +37,8 @@ type Ownership = {
 
 const normalizeLlc = (value: string | null | undefined) =>
   value?.trim().replace(/\s+/g, " ").toUpperCase() ?? "";
+const RAJAH_472_PROJECT_ID = "97dacb6f-4145-402a-941b-9fd4c4ff73ff";
+const RAJAH_472_SELLERS = new Set(["ALMERIA LLC", "DAVI LLC"]);
 type Opportunity = {
   id: string;
   name: string;
@@ -121,7 +123,9 @@ function Dashboard() {
               ownership.project_id === proj.id &&
               normalizeLlc(ownership.llc_name) === normalizeLlc(userLlc),
           );
-          const displayStatus = myOwnerships.some((ownership) => ownership.stage.trim().toLowerCase() === "venta")
+          const isRajahSeller =
+            proj.id === RAJAH_472_PROJECT_ID && RAJAH_472_SELLERS.has(normalizeLlc(userLlc));
+          const displayStatus = isRajahSeller || myOwnerships.some((ownership) => ownership.stage.trim().toLowerCase() === "venta")
             ? "VENDIDA"
             : proj.status;
           let myPct: number | null = inv ? Number(inv.percentage) || null : null;
