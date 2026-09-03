@@ -54,6 +54,9 @@ type Investment = {
 };
 type Ownership = { project_id: string; llc_name: string; stage: string };
 
+const normalizeLlc = (value: string | null | undefined) =>
+  value?.trim().replace(/\s+/g, " ").toUpperCase() ?? "";
+
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
   const { user, loading } = useAuth();
@@ -193,11 +196,12 @@ function ProjectDetail() {
     return null;
   }, [project, myLlc, myInvestment]);
   const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
-  const myOwnership = ownerships.find(
-    (ownership) =>
-      myLlc && ownership.llc_name.trim().toUpperCase() === myLlc.trim().toUpperCase(),
+  const myOwnerships = ownerships.filter(
+    (ownership) => normalizeLlc(ownership.llc_name) === normalizeLlc(myLlc),
   );
-  const displayStatus = myOwnership?.stage === "venta" ? "Vendida" : project?.status;
+  const displayStatus = myOwnerships.some((ownership) => ownership.stage.trim().toLowerCase() === "venta")
+    ? "Vendida"
+    : project?.status;
 
   useEffect(() => {
     if (!myInvestment) { setMyPayments([]); return; }
