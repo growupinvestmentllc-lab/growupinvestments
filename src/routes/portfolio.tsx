@@ -146,9 +146,11 @@ function Box({ label, value, tone }: { label: string; value: string; tone?: "mut
 }
 
 function ConstructionTab() {
+  const { rows: ownerships, myLlc } = useOwnerships();
   const [rows, setRows] = useState<
     (Project & { progress: number; stage: string; deposited: number; pending: number })[]
   >([]);
+
 
   useEffect(() => {
     (async () => {
