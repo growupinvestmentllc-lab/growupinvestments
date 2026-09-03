@@ -1,0 +1,1 @@
+UPDATE public.projects SET status = 'Alquilada' WHERE status = 'Rentada';
