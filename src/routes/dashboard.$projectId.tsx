@@ -200,7 +200,7 @@ function ProjectDetail() {
     (ownership) => normalizeLlc(ownership.llc_name) === normalizeLlc(myLlc),
   );
   const displayStatus = myOwnerships.some((ownership) => ownership.stage.trim().toLowerCase() === "venta")
-    ? "Vendida"
+    ? "VENDIDA"
     : project?.status;
 
   useEffect(() => {
