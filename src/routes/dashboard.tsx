@@ -122,7 +122,7 @@ function Dashboard() {
               normalizeLlc(ownership.llc_name) === normalizeLlc(userLlc),
           );
           const displayStatus = myOwnerships.some((ownership) => ownership.stage.trim().toLowerCase() === "venta")
-            ? "Vendida"
+            ? "VENDIDA"
             : proj.status;
           let myPct: number | null = inv ? Number(inv.percentage) || null : null;
           if (myPct == null && userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
