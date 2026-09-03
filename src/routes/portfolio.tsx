@@ -418,6 +418,13 @@ function RentalTab() {
                   {p.lease_end ? ` · Vence: ${fmtDate(p.lease_end)}` : ""}
                 </p>
                 {p.owner_name && <p className="text-xs text-muted-foreground">Propietario: {p.owner_name}</p>}
+                {(p as any).notes && <p className="text-xs text-muted-foreground mt-0.5">{(p as any).notes}</p>}
+                {((p as any).property_tax_annual || (p as any).insurance_annual || (p as any).management_annual) && (
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Anual: impuestos {formatUSD((p as any).property_tax_annual)} · seguro {formatUSD((p as any).insurance_annual)} · administración {formatUSD((p as any).management_annual)}
+                    {(p as any).cap_rate ? ` · Cap rate ${Number((p as any).cap_rate)}%` : ""}
+                  </p>
+                )}
               </div>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${meta.cls}`}>
                 {meta.dot} {meta.label}
