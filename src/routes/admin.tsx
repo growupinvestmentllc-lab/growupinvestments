@@ -62,9 +62,11 @@ function AdminPage() {
           <TabsList className="bg-muted/60">
             <TabsTrigger value="projects">Proyectos</TabsTrigger>
             <TabsTrigger value="opps">Oportunidades</TabsTrigger>
+            <TabsTrigger value="portfolio">Portafolio</TabsTrigger>
           </TabsList>
           <TabsContent value="projects" className="mt-6"><ProjectsTab /></TabsContent>
           <TabsContent value="opps" className="mt-6"><OpportunitiesTab /></TabsContent>
+          <TabsContent value="portfolio" className="mt-6"><PortfolioAdmin /></TabsContent>
         </Tabs>
       </main>
     </div>
