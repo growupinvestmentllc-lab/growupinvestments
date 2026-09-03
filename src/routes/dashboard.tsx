@@ -34,6 +34,9 @@ type Ownership = {
   llc_name: string;
   stage: string;
 };
+
+const normalizeLlc = (value: string | null | undefined) =>
+  value?.trim().replace(/\s+/g, " ").toUpperCase() ?? "";
 type Opportunity = {
   id: string;
   name: string;
@@ -113,13 +116,14 @@ function Dashboard() {
             activeStage = "Colocando trusses";
           }
           const inv = invByProject.get(proj.id);
-          const myOwnership = ownerships.find(
+          const myOwnerships = ownerships.filter(
             (ownership) =>
               ownership.project_id === proj.id &&
-              userLlc &&
-              ownership.llc_name.trim().toUpperCase() === userLlc.trim().toUpperCase(),
+              normalizeLlc(ownership.llc_name) === normalizeLlc(userLlc),
           );
-          const displayStatus = myOwnership?.stage === "venta" ? "Vendida" : proj.status;
+          const displayStatus = myOwnerships.some((ownership) => ownership.stage.trim().toLowerCase() === "venta")
+            ? "Vendida"
+            : proj.status;
           let myPct: number | null = inv ? Number(inv.percentage) || null : null;
           if (myPct == null && userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
             myPct = Number(proj.owner_pct_1) || null;
