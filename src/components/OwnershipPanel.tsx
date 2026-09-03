@@ -22,7 +22,7 @@ export type Ownership = {
 export const STAGE_LABELS: Record<string, string> = {
   construccion: "Construcción",
   alquiler: "Alquiler",
-  venta: "Venta",
+  venta: "Vendida",
 };
 
 /** Carga todas las participaciones visibles y la LLC del usuario actual. */
