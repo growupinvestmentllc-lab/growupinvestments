@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
+import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 
 const db = supabase as any;
