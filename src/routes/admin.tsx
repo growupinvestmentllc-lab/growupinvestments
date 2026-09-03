@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch";
 import { ALL_STAGES, STAGE_GROUPS, formatUSD } from "@/lib/stages";
 import { Plus, Trash2, Edit, X, ListChecks } from "lucide-react";
 import { toast } from "sonner";
+import { PortfolioAdmin } from "@/components/PortfolioAdmin";
 import { adminExists, bootstrapAdmin, createInvestor, deleteInvestor, updateInvestorPassword } from "@/lib/admin.functions";
 
 const DOC_LABELS: Record<string, string> = {
