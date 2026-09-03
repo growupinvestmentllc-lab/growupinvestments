@@ -268,6 +268,19 @@ function ConstructionTab() {
               <Box label="Precio estimado de venta" value={formatUSD(sale)} tone="muted" />
             </div>
 
+            <OwnershipPanel
+              ownerships={ownerships.filter((o) => o.project_id === r.id)}
+              myLlc={myLlc}
+              stage="construccion"
+              amounts={[
+                { label: "Total depositado", value: r.deposited },
+                { label: "Pendiente", value: r.pending },
+                { label: "Total construcción", value: contract },
+                { label: "Ganancia estimada", value: gain },
+              ]}
+            />
+
+
             <div className="mt-4 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <p className="text-[10px] uppercase tracking-wide opacity-80">Ganancia estimada</p>
