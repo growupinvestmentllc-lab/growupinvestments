@@ -32,13 +32,16 @@ export function PortfolioAdmin() {
         <TabsTrigger value="forsale">A la venta</TabsTrigger>
         <TabsTrigger value="sold">Vendidas</TabsTrigger>
         <TabsTrigger value="draws">Draws</TabsTrigger>
+        <TabsTrigger value="ownership">Titularidad</TabsTrigger>
       </TabsList>
       <TabsContent value="rentals" className="mt-6"><RentalsAdmin /></TabsContent>
       <TabsContent value="construction" className="mt-6"><ConstructionAdmin /></TabsContent>
       <TabsContent value="forsale" className="mt-6"><SimpleTableAdmin table="portfolio_for_sale" /></TabsContent>
       <TabsContent value="sold" className="mt-6"><SimpleTableAdmin table="portfolio_sold" /></TabsContent>
       <TabsContent value="draws" className="mt-6"><DrawsAdmin /></TabsContent>
+      <TabsContent value="ownership" className="mt-6"><OwnershipAdmin /></TabsContent>
     </Tabs>
+
   );
 }
 
@@ -531,6 +534,163 @@ function DrawsAdmin() {
       <p className="text-xs text-muted-foreground">
         Al guardar, el total depositado del proyecto se recalcula como la suma de los draws marcados como pagados, y el total pendiente se actualiza automáticamente en toda la app.
       </p>
+    </div>
+  );
+}
+
+/* ------------------------------ TITULARIDAD ------------------------------ */
+
+const STAGE_OPTS = [
+  { value: "construccion", label: "Construcción" },
+  { value: "alquiler", label: "Alquiler" },
+  { value: "venta", label: "Venta" },
+];
+
+const EMPTY_OWN: any = {
+  llc_name: "", percentage: 0, stage: "construccion",
+  from_date: "", to_date: "", exit_date: "", exit_price: "", exit_cost_base: "", notes: "",
+};
+
+function OwnershipAdmin() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [projectId, setProjectId] = useState<string>("");
+  const [rows, setRows] = useState<any[]>([]);
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState<any>(EMPTY_OWN);
+  const [editing, setEditing] = useState<string | null>(null);
+
+  useEffect(() => {
+    db.from("projects").select("id,address").order("address").then(({ data }: any) => {
+      const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
+      setProjects(list);
+      if (list.length) setProjectId((cur) => cur || list[0].id);
+    });
+  }, []);
+
+  const load = async (id: string) => {
+    const { data } = await db.from("property_ownerships").select("*").eq("project_id", id).order("stage").order("llc_name");
+    setRows(data ?? []);
+  };
+  useEffect(() => { if (projectId) load(projectId); }, [projectId]);
+
+  const save = async () => {
+    const payload = {
+      project_id: projectId,
+      llc_name: form.llc_name.trim(),
+      percentage: Number(form.percentage) || 0,
+      stage: form.stage,
+      from_date: form.from_date || null,
+      to_date: form.to_date || null,
+      exit_date: form.exit_date || null,
+      exit_price: form.exit_price === "" ? null : Number(form.exit_price),
+      exit_cost_base: form.exit_cost_base === "" ? null : Number(form.exit_cost_base),
+      notes: form.notes || null,
+    };
+    if (!payload.llc_name) return toast.error("Ingresá el nombre de la LLC");
+    const { error } = editing
+      ? await db.from("property_ownerships").update(payload).eq("id", editing)
+      : await db.from("property_ownerships").insert(payload);
+    if (error) return toast.error(error.message);
+    toast.success("Titularidad guardada");
+    setOpen(false); setEditing(null); setForm(EMPTY_OWN); load(projectId);
+  };
+
+  const remove = async (id: string) => {
+    const { error } = await db.from("property_ownerships").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    toast.success("Eliminado"); load(projectId);
+  };
+
+  const byStage = (s: string) => rows.filter((r) => r.stage === s);
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Cada casa se identifica por su dirección y puede tener varios dueños con distintos porcentajes. La titularidad se registra por etapa y por período, de modo que el historial se conserva cuando una LLC le vende su parte a otra.
+      </p>
+
+      <div>
+        <Label>Propiedad</Label>
+        <select className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={projectId} onChange={(e) => setProjectId(e.target.value)}>
+          {projects.map((p) => <option key={p.id} value={p.id}>{p.address}</option>)}
+        </select>
+      </div>
+
+      {STAGE_OPTS.map((s) => {
+        const list = byStage(s.value);
+        const total = list.reduce((acc, r) => acc + Number(r.percentage || 0), 0);
+        if (list.length === 0) return null;
+        return (
+          <div key={s.value} className="space-y-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-semibold text-foreground">{s.label}</h4>
+              <span className={`text-xs font-semibold ${total === 100 ? "text-muted-foreground" : "text-destructive"}`}>
+                Suma: {total}%
+              </span>
+            </div>
+            {list.map((r) => (
+              <div key={r.id} className="card-soft p-4 flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                  <p className="font-semibold text-foreground">{r.llc_name} · {Number(r.percentage)}%</p>
+                  <p className="text-xs text-muted-foreground">
+                    {r.from_date ? `Desde ${r.from_date}` : "Sin fecha de inicio"}
+                    {r.to_date ? ` · Hasta ${r.to_date}` : " · Vigente"}
+                    {r.exit_price != null ? ` · Venta ${formatUSD(r.exit_price)}` : ""}
+                    {r.exit_price != null && r.exit_cost_base != null
+                      ? ` · Resultado ${formatUSD(Number(r.exit_price) - Number(r.exit_cost_base))}`
+                      : ""}
+                  </p>
+                  {r.notes && <p className="text-xs text-muted-foreground">{r.notes}</p>}
+                </div>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => {
+                    setForm({
+                      ...EMPTY_OWN, ...r,
+                      from_date: r.from_date ?? "", to_date: r.to_date ?? "", exit_date: r.exit_date ?? "",
+                      exit_price: r.exit_price ?? "", exit_cost_base: r.exit_cost_base ?? "", notes: r.notes ?? "",
+                    });
+                    setEditing(r.id); setOpen(true);
+                  }}><Edit className="h-4 w-4" /></Button>
+                  <Button size="sm" variant="ghost" onClick={() => remove(r.id)}><Trash2 className="h-4 w-4" /></Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      })}
+      {rows.length === 0 && <p className="text-muted-foreground text-sm">Esta propiedad no tiene titularidad cargada.</p>}
+
+      <Button size="sm" onClick={() => { setForm(EMPTY_OWN); setEditing(null); setOpen(true); }}>
+        <Plus className="h-4 w-4" /> Agregar participación
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto">
+          <DialogHeader><DialogTitle>{editing ? "Editar" : "Nueva"} participación</DialogTitle></DialogHeader>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <Field label="LLC / dueño" value={form.llc_name} onChange={(v) => setForm({ ...form, llc_name: v })} />
+            <Field label="Porcentaje" type="number" value={form.percentage} onChange={(v) => setForm({ ...form, percentage: v })} />
+            <div>
+              <Label>Etapa</Label>
+              <select className="mt-1 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                value={form.stage} onChange={(e) => setForm({ ...form, stage: e.target.value })}>
+                {STAGE_OPTS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+              </select>
+            </div>
+            <Field label="Vigente desde" type="date" value={form.from_date} onChange={(v) => setForm({ ...form, from_date: v })} />
+            <Field label="Vigente hasta (vacío = actual)" type="date" value={form.to_date} onChange={(v) => setForm({ ...form, to_date: v })} />
+            <Field label="Fecha de salida / venta" type="date" value={form.exit_date} onChange={(v) => setForm({ ...form, exit_date: v })} />
+            <Field label="Precio de venta de la parte" type="number" value={form.exit_price} onChange={(v) => setForm({ ...form, exit_price: v })} />
+            <Field label="Costo base de la parte" type="number" value={form.exit_cost_base} onChange={(v) => setForm({ ...form, exit_cost_base: v })} />
+            <div className="sm:col-span-2">
+              <Label>Notas</Label>
+              <Textarea className="mt-1" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            </div>
+          </div>
+          <DialogFooter><Button onClick={save}>Guardar</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

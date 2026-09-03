@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { ALL_STAGES, formatUSD } from "@/lib/stages";
 import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin } from "lucide-react";
+import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export const Route = createFileRoute("/portfolio")({
@@ -146,9 +147,11 @@ function Box({ label, value, tone }: { label: string; value: string; tone?: "mut
 }
 
 function ConstructionTab() {
+  const { rows: ownerships, myLlc } = useOwnerships();
   const [rows, setRows] = useState<
     (Project & { progress: number; stage: string; deposited: number; pending: number })[]
   >([]);
+
 
   useEffect(() => {
     (async () => {
@@ -266,6 +269,19 @@ function ConstructionTab() {
               <Box label="Precio estimado de venta" value={formatUSD(sale)} tone="muted" />
             </div>
 
+            <OwnershipPanel
+              ownerships={ownerships.filter((o) => o.project_id === r.id)}
+              myLlc={myLlc}
+              stage="construccion"
+              amounts={[
+                { label: "Total depositado", value: r.deposited },
+                { label: "Pendiente", value: r.pending },
+                { label: "Total construcción", value: contract },
+                { label: "Ganancia estimada", value: gain },
+              ]}
+            />
+
+
             <div className="mt-4 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between flex-wrap gap-3">
               <div>
                 <p className="text-[10px] uppercase tracking-wide opacity-80">Ganancia estimada</p>
@@ -330,6 +346,7 @@ function entryNoi(e: Entry) {
 }
 
 function RentalTab() {
+  const { rows: ownerships, myLlc } = useOwnerships();
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
@@ -438,6 +455,21 @@ function RentalTab() {
               <Box label="NOI anual estimado" value={formatUSD(noi * 12)} />
               <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
             </div>
+
+            {p.project_id && (
+              <OwnershipPanel
+                ownerships={ownerships.filter((o) => o.project_id === p.project_id)}
+                myLlc={myLlc}
+                stage="alquiler"
+                amounts={[
+                  { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
+                  { label: "NOI mensual", value: noi },
+                  { label: "NOI anual estimado", value: noi * 12 },
+                  { label: "NOI del período", value: income - expenses },
+                ]}
+              />
+            )}
+
 
             <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
               <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
