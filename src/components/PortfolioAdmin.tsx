@@ -37,6 +37,7 @@ export function PortfolioAdmin() {
       <TabsContent value="construction" className="mt-6"><ConstructionAdmin /></TabsContent>
       <TabsContent value="forsale" className="mt-6"><SimpleTableAdmin table="portfolio_for_sale" /></TabsContent>
       <TabsContent value="sold" className="mt-6"><SimpleTableAdmin table="portfolio_sold" /></TabsContent>
+      <TabsContent value="draws" className="mt-6"><DrawsAdmin /></TabsContent>
     </Tabs>
   );
 }
