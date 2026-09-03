@@ -516,6 +516,50 @@ export type Database = {
           },
         ]
       }
+      project_draws: {
+        Row: {
+          amount: number
+          created_at: string
+          draw_number: number
+          id: string
+          label: string | null
+          paid: boolean
+          paid_date: string | null
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          draw_number: number
+          id?: string
+          label?: string | null
+          paid?: boolean
+          paid_date?: string | null
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          draw_number?: number
+          id?: string
+          label?: string | null
+          paid?: boolean
+          paid_date?: string | null
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_draws_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_stages: {
         Row: {
           active: boolean
@@ -715,17 +759,23 @@ export type Database = {
       rental_properties: {
         Row: {
           address: string
+          annual_rent: number | null
+          cap_rate: number | null
           created_at: string
           estimated_sale_price: number | null
           id: string
+          insurance_annual: number | null
           investor_id: string | null
           lease_end: string | null
           lease_start: string | null
+          management_annual: number | null
           monthly_expenses: number
           monthly_rent: number
+          notes: string | null
           owner_name: string | null
           ownership_pct: number
           project_id: string | null
+          property_tax_annual: number | null
           purchase_price: number | null
           sort_order: number
           status: string
@@ -734,17 +784,23 @@ export type Database = {
         }
         Insert: {
           address: string
+          annual_rent?: number | null
+          cap_rate?: number | null
           created_at?: string
           estimated_sale_price?: number | null
           id?: string
+          insurance_annual?: number | null
           investor_id?: string | null
           lease_end?: string | null
           lease_start?: string | null
+          management_annual?: number | null
           monthly_expenses?: number
           monthly_rent?: number
+          notes?: string | null
           owner_name?: string | null
           ownership_pct?: number
           project_id?: string | null
+          property_tax_annual?: number | null
           purchase_price?: number | null
           sort_order?: number
           status?: string
@@ -753,17 +809,23 @@ export type Database = {
         }
         Update: {
           address?: string
+          annual_rent?: number | null
+          cap_rate?: number | null
           created_at?: string
           estimated_sale_price?: number | null
           id?: string
+          insurance_annual?: number | null
           investor_id?: string | null
           lease_end?: string | null
           lease_start?: string | null
+          management_annual?: number | null
           monthly_expenses?: number
           monthly_rent?: number
+          notes?: string | null
           owner_name?: string | null
           ownership_pct?: number
           project_id?: string | null
+          property_tax_annual?: number | null
           purchase_price?: number | null
           sort_order?: number
           status?: string
