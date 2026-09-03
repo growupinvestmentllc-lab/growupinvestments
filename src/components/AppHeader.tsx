@@ -13,6 +13,25 @@ export function AppHeader({ name }: { name?: string }) {
           <Logo className="h-20" />
         </Link>
         <div className="flex items-center gap-3">
+          {role !== "admin" && (
+            <nav className="flex items-center gap-1">
+              <Link
+                to="/dashboard"
+                className="text-sm px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition"
+                activeProps={{ className: "text-sm px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground font-medium" }}
+                activeOptions={{ exact: true }}
+              >
+                Mis Proyectos
+              </Link>
+              <Link
+                to="/portfolio"
+                className="text-sm px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition"
+                activeProps={{ className: "text-sm px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground font-medium" }}
+              >
+                Mi Portafolio
+              </Link>
+            </nav>
+          )}
           {name && <span className="hidden sm:inline text-sm text-muted-foreground">{name}</span>}
           <Button variant="ghost" size="sm" onClick={() => signOut()}>
             <LogOut className="h-4 w-4" />
