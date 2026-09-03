@@ -163,6 +163,11 @@ function ConstructionTab() {
         .select("project_id,stage_name,completed,active,draw_number,draw_amount")
         .in("project_id", list.map((p) => p.id));
       const stages: Stage[] = stagesData ?? [];
+      const { data: drawsData } = await db
+        .from("project_draws")
+        .select("project_id,amount,paid")
+        .in("project_id", list.map((p) => p.id));
+      const allDraws: any[] = drawsData ?? [];
 
       const enriched = list.map((p) => {
         const ps = stages.filter((s) => s.project_id === p.id);
@@ -180,10 +185,18 @@ function ConstructionTab() {
         });
         let deposited = 0;
         let pending = 0;
-        draws.forEach((d) => {
-          if (d.completed) deposited += d.amount;
-          else pending += d.amount;
-        });
+        const pd = allDraws.filter((d) => d.project_id === p.id);
+        if (pd.length > 0) {
+          pd.forEach((d) => {
+            if (d.paid) deposited += Number(d.amount || 0);
+            else pending += Number(d.amount || 0);
+          });
+        } else {
+          draws.forEach((d) => {
+            if (d.completed) deposited += d.amount;
+            else pending += d.amount;
+          });
+        }
         return { ...p, progress, stage, deposited, pending };
       });
       enriched.sort((a, b) => a.address.localeCompare(b.address));
