@@ -52,6 +52,7 @@ type Investment = {
   id: string; project_id: string; owner_llc: string; percentage: number;
   total_deposited: number; total_pending: number;
 };
+type Ownership = { project_id: string; llc_name: string; stage: string };
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
@@ -61,6 +62,7 @@ function ProjectDetail() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [images, setImages] = useState<Image[]>([]);
   const [investments, setInvestments] = useState<Investment[]>([]);
+  const [ownerships, setOwnerships] = useState<Ownership[]>([]);
   const [myPayments, setMyPayments] = useState<{ id: string; paid_on: string; amount: number; description: string | null }[]>([]);
 
   const [myLlc, setMyLlc] = useState<string | null>(null);
@@ -82,16 +84,18 @@ function ProjectDetail() {
 
   useEffect(() => {
     (async () => {
-      const [{ data: p }, { data: s }, { data: i }, { data: prof }, { data: inv }] = await Promise.all([
+      const [{ data: p }, { data: s }, { data: i }, { data: prof }, { data: inv }, { data: ownershipRows }] = await Promise.all([
         supabase.from("projects").select("*").eq("id", projectId).single(),
         supabase.from("project_stages").select("*").eq("project_id", projectId).order("stage_order"),
         supabase.from("portfolio_images").select("*").eq("project_id", projectId).order("sort_order"),
         supabase.from("profiles").select("llc_name").maybeSingle(),
         supabase.from("investments").select("*").eq("project_id", projectId),
+        (supabase as any).from("property_ownerships").select("project_id,llc_name,stage").eq("project_id", projectId),
       ]);
       setProject(p as Project);
       setStages((s ?? []) as Stage[]);
       setInvestments((inv ?? []) as Investment[]);
+      setOwnerships((ownershipRows ?? []) as Ownership[]);
       const rawImgs = (i ?? []) as Image[];
 
       // Bucket is private → generate signed URLs from stored path
@@ -189,6 +193,11 @@ function ProjectDetail() {
     return null;
   }, [project, myLlc, myInvestment]);
   const hasMultipleOwners = !!(project?.owner_llc_2 && project.owner_llc_2.trim());
+  const myOwnership = ownerships.find(
+    (ownership) =>
+      myLlc && ownership.llc_name.trim().toUpperCase() === myLlc.trim().toUpperCase(),
+  );
+  const displayStatus = myOwnership?.stage === "venta" ? "Vendida" : project?.status;
 
   useEffect(() => {
     if (!myInvestment) { setMyPayments([]); return; }
@@ -241,7 +250,7 @@ function ProjectDetail() {
             <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-4 w-4" /> Florida, USA</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">{project.status}</span>
+            <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground">{displayStatus}</span>
             {myPct != null && (
               <span className="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-full bg-orange-100 text-orange-800">
                 Tu participación: {myPct}%

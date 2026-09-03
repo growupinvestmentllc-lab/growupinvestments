@@ -29,6 +29,11 @@ type Project = {
   owner_pct_1: number | null;
   owner_pct_2: number | null;
 };
+type Ownership = {
+  project_id: string;
+  llc_name: string;
+  stage: string;
+};
 type Opportunity = {
   id: string;
   name: string;
@@ -78,6 +83,10 @@ function Dashboard() {
         .select("llc_name")
         .eq("id", user.id)
         .single()).data?.llc_name ?? null;
+      const { data: ownershipRows } = await (supabase as any)
+        .from("property_ownerships")
+        .select("project_id,llc_name,stage");
+      const ownerships = (ownershipRows ?? []) as Ownership[];
       // Per-owner financials live in `investments` (RLS returns only mine)
       const { data: myInvestments } = await supabase
         .from("investments")
@@ -104,6 +113,13 @@ function Dashboard() {
             activeStage = "Colocando trusses";
           }
           const inv = invByProject.get(proj.id);
+          const myOwnership = ownerships.find(
+            (ownership) =>
+              ownership.project_id === proj.id &&
+              userLlc &&
+              ownership.llc_name.trim().toUpperCase() === userLlc.trim().toUpperCase(),
+          );
+          const displayStatus = myOwnership?.stage === "venta" ? "Vendida" : proj.status;
           let myPct: number | null = inv ? Number(inv.percentage) || null : null;
           if (myPct == null && userLlc && proj.owner_llc && proj.owner_llc.trim() === userLlc.trim()) {
             myPct = Number(proj.owner_pct_1) || null;
@@ -112,6 +128,7 @@ function Dashboard() {
           }
           return {
             ...proj,
+            status: displayStatus,
             progress: total ? Math.round((done / total) * 100) : 0,
             activeStage,
             myPct,
