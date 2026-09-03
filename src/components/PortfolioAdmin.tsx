@@ -31,11 +31,13 @@ export function PortfolioAdmin() {
         <TabsTrigger value="construction">Construcción</TabsTrigger>
         <TabsTrigger value="forsale">A la venta</TabsTrigger>
         <TabsTrigger value="sold">Vendidas</TabsTrigger>
+        <TabsTrigger value="draws">Draws</TabsTrigger>
       </TabsList>
       <TabsContent value="rentals" className="mt-6"><RentalsAdmin /></TabsContent>
       <TabsContent value="construction" className="mt-6"><ConstructionAdmin /></TabsContent>
       <TabsContent value="forsale" className="mt-6"><SimpleTableAdmin table="portfolio_for_sale" /></TabsContent>
       <TabsContent value="sold" className="mt-6"><SimpleTableAdmin table="portfolio_sold" /></TabsContent>
+      <TabsContent value="draws" className="mt-6"><DrawsAdmin /></TabsContent>
     </Tabs>
   );
 }
@@ -400,6 +402,135 @@ function Field({ label, value, onChange, type = "text", className }: {
     <div className={className}>
       <Label>{label}</Label>
       <Input className="mt-1" type={type} value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+/* -------------------------------- DRAWS --------------------------------- */
+
+function DrawsAdmin() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [projectId, setProjectId] = useState<string>("");
+  const [draws, setDraws] = useState<any[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    db.from("projects").select("id,address,total_cost,construction_cost,lot_cost,amount_deposited")
+      .order("address")
+      .then(({ data }: any) => {
+        const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
+        setProjects(list);
+        if (list.length && !projectId) setProjectId(list[0].id);
+      });
+  }, []);
+
+  const loadDraws = async (id: string) => {
+    const { data } = await db.from("project_draws").select("*").eq("project_id", id).order("draw_number");
+    setDraws(data ?? []);
+  };
+  useEffect(() => { if (projectId) loadDraws(projectId); }, [projectId]);
+
+  const project = projects.find((p) => p.id === projectId);
+  const totalCost = Number(project?.total_cost || 0) ||
+    Number(project?.construction_cost || 0) + Number(project?.lot_cost || 0);
+  const deposited = draws.filter((d) => d.paid).reduce((s, d) => s + Number(d.amount || 0), 0);
+  const pending = totalCost - deposited;
+
+  const setDraw = (id: string, patch: any) =>
+    setDraws(draws.map((d) => (d.id === id ? { ...d, ...patch } : d)));
+
+  const addDraw = async () => {
+    const next = draws.length ? Math.max(...draws.map((d) => d.draw_number)) + 1 : 0;
+    const { error } = await db.from("project_draws").insert({ project_id: projectId, draw_number: next, amount: 0, paid: false });
+    if (error) return toast.error(error.message);
+    loadDraws(projectId);
+  };
+
+  const removeDraw = async (id: string) => {
+    const { error } = await db.from("project_draws").delete().eq("id", id);
+    if (error) return toast.error(error.message);
+    loadDraws(projectId);
+  };
+
+  const saveAll = async () => {
+    setSaving(true);
+    try {
+      for (const d of draws) {
+        const { error } = await db.from("project_draws").update({
+          draw_number: Number(d.draw_number) || 0,
+          label: d.label || null,
+          amount: Number(d.amount) || 0,
+          paid: !!d.paid,
+          paid_date: d.paid_date || null,
+          updated_at: new Date().toISOString(),
+        }).eq("id", d.id);
+        if (error) throw error;
+      }
+      const { data } = await db.from("projects").select("amount_deposited").eq("id", projectId).single();
+      setProjects(projects.map((p) => (p.id === projectId ? { ...p, amount_deposited: data?.amount_deposited } : p)));
+      toast.success("Draws guardados · total depositado actualizado");
+      loadDraws(projectId);
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div>
+        <Label>Proyecto</Label>
+        <select
+          className="mt-1 w-full h-10 rounded-md border border-input bg-background px-3 text-sm"
+          value={projectId}
+          onChange={(e) => setProjectId(e.target.value)}
+        >
+          {projects.map((p) => <option key={p.id} value={p.id}>{p.address}</option>)}
+        </select>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <div className="card-soft p-4">
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Costo total</p>
+          <p className="font-bold text-foreground">{formatUSD(totalCost)}</p>
+        </div>
+        <div className="card-soft p-4">
+          <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total depositado</p>
+          <p className="font-bold text-foreground">{formatUSD(deposited)}</p>
+        </div>
+        <div className="card-soft p-4 bg-primary text-primary-foreground">
+          <p className="text-[10px] uppercase tracking-wide opacity-80">Total pendiente</p>
+          <p className="font-bold">{formatUSD(pending)}</p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {draws.map((d) => (
+          <div key={d.id} className="card-soft p-3 grid grid-cols-2 sm:grid-cols-6 gap-3 items-end">
+            <Field label="Draw #" type="number" value={d.draw_number} onChange={(v) => setDraw(d.id, { draw_number: v })} />
+            <Field className="sm:col-span-2" label="Etapa" value={d.label ?? ""} onChange={(v) => setDraw(d.id, { label: v })} />
+            <Field label="Monto" type="number" value={d.amount} onChange={(v) => setDraw(d.id, { amount: v })} />
+            <Field label="Fecha de pago" type="date" value={d.paid_date ?? ""} onChange={(v) => setDraw(d.id, { paid_date: v })} />
+            <div className="flex items-center gap-3">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={!!d.paid} onChange={(e) => setDraw(d.id, { paid: e.target.checked })} />
+                Pagado
+              </label>
+              <Button size="sm" variant="ghost" onClick={() => removeDraw(d.id)}><Trash2 className="h-4 w-4" /></Button>
+            </div>
+          </div>
+        ))}
+        {draws.length === 0 && <p className="text-sm text-muted-foreground">Este proyecto no tiene draws cargados.</p>}
+      </div>
+
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={addDraw}><Plus className="h-4 w-4" /> Agregar draw</Button>
+        <Button size="sm" onClick={saveAll} disabled={saving}>{saving ? "Guardando..." : "Guardar draws"}</Button>
+      </div>
+      <p className="text-xs text-muted-foreground">
+        Al guardar, el total depositado del proyecto se recalcula como la suma de los draws marcados como pagados, y el total pendiente se actualiza automáticamente en toda la app.
+      </p>
     </div>
   );
 }
