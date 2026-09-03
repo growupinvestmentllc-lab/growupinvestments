@@ -31,6 +31,7 @@ export function PortfolioAdmin() {
         <TabsTrigger value="construction">Construcción</TabsTrigger>
         <TabsTrigger value="forsale">A la venta</TabsTrigger>
         <TabsTrigger value="sold">Vendidas</TabsTrigger>
+        <TabsTrigger value="draws">Draws</TabsTrigger>
       </TabsList>
       <TabsContent value="rentals" className="mt-6"><RentalsAdmin /></TabsContent>
       <TabsContent value="construction" className="mt-6"><ConstructionAdmin /></TabsContent>
