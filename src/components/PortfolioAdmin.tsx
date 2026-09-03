@@ -32,13 +32,16 @@ export function PortfolioAdmin() {
         <TabsTrigger value="forsale">A la venta</TabsTrigger>
         <TabsTrigger value="sold">Vendidas</TabsTrigger>
         <TabsTrigger value="draws">Draws</TabsTrigger>
+        <TabsTrigger value="ownership">Titularidad</TabsTrigger>
       </TabsList>
       <TabsContent value="rentals" className="mt-6"><RentalsAdmin /></TabsContent>
       <TabsContent value="construction" className="mt-6"><ConstructionAdmin /></TabsContent>
       <TabsContent value="forsale" className="mt-6"><SimpleTableAdmin table="portfolio_for_sale" /></TabsContent>
       <TabsContent value="sold" className="mt-6"><SimpleTableAdmin table="portfolio_sold" /></TabsContent>
       <TabsContent value="draws" className="mt-6"><DrawsAdmin /></TabsContent>
+      <TabsContent value="ownership" className="mt-6"><OwnershipAdmin /></TabsContent>
     </Tabs>
+
   );
 }
 
