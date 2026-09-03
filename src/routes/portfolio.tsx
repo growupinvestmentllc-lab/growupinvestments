@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { ALL_STAGES, formatUSD } from "@/lib/stages";
 import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin } from "lucide-react";
+import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export const Route = createFileRoute("/portfolio")({
@@ -345,6 +346,7 @@ function entryNoi(e: Entry) {
 }
 
 function RentalTab() {
+  const { rows: ownerships, myLlc } = useOwnerships();
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
