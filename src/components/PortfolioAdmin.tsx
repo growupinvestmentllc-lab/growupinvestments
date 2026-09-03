@@ -543,7 +543,7 @@ function DrawsAdmin() {
 const STAGE_OPTS = [
   { value: "construccion", label: "Construcción" },
   { value: "alquiler", label: "Alquiler" },
-  { value: "venta", label: "Venta" },
+  { value: "venta", label: "Vendida" },
 ];
 
 const EMPTY_OWN: any = {
