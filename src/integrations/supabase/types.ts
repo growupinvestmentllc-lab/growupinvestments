@@ -331,6 +331,47 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_for_sale: {
+        Row: {
+          address: string
+          cost_base: number
+          created_at: string
+          id: string
+          investor_id: string | null
+          listing_price: number
+          notes: string | null
+          project_id: string | null
+        }
+        Insert: {
+          address: string
+          cost_base?: number
+          created_at?: string
+          id?: string
+          investor_id?: string | null
+          listing_price?: number
+          notes?: string | null
+          project_id?: string | null
+        }
+        Update: {
+          address?: string
+          cost_base?: number
+          created_at?: string
+          id?: string
+          investor_id?: string | null
+          listing_price?: number
+          notes?: string | null
+          project_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_for_sale_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portfolio_images: {
         Row: {
           caption: string | null
@@ -359,6 +400,47 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "portfolio_images_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolio_sold: {
+        Row: {
+          address: string
+          cost_base: number | null
+          created_at: string
+          id: string
+          investor_id: string | null
+          project_id: string | null
+          sale_date: string | null
+          sale_price: number
+        }
+        Insert: {
+          address: string
+          cost_base?: number | null
+          created_at?: string
+          id?: string
+          investor_id?: string | null
+          project_id?: string | null
+          sale_date?: string | null
+          sale_price?: number
+        }
+        Update: {
+          address?: string
+          cost_base?: number | null
+          created_at?: string
+          id?: string
+          investor_id?: string | null
+          project_id?: string | null
+          sale_date?: string | null
+          sale_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_sold_project_id_fkey"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
@@ -498,6 +580,7 @@ export type Database = {
           bedrooms: number | null
           construction_cost: number | null
           created_at: string
+          estimated_sale_price: number | null
           expected_rent_price: number | null
           expected_sale_price: number | null
           features: string | null
@@ -515,6 +598,7 @@ export type Database = {
           sqft_living: number | null
           sqft_total: number | null
           status: string
+          total_contract_value: number | null
           total_cost: number | null
           total_value: number
           updated_at: string
@@ -526,6 +610,7 @@ export type Database = {
           bedrooms?: number | null
           construction_cost?: number | null
           created_at?: string
+          estimated_sale_price?: number | null
           expected_rent_price?: number | null
           expected_sale_price?: number | null
           features?: string | null
@@ -543,6 +628,7 @@ export type Database = {
           sqft_living?: number | null
           sqft_total?: number | null
           status?: string
+          total_contract_value?: number | null
           total_cost?: number | null
           total_value?: number
           updated_at?: string
@@ -554,6 +640,7 @@ export type Database = {
           bedrooms?: number | null
           construction_cost?: number | null
           created_at?: string
+          estimated_sale_price?: number | null
           expected_rent_price?: number | null
           expected_sale_price?: number | null
           features?: string | null
@@ -571,11 +658,127 @@ export type Database = {
           sqft_living?: number | null
           sqft_total?: number | null
           status?: string
+          total_contract_value?: number | null
           total_cost?: number | null
           total_value?: number
           updated_at?: string
         }
         Relationships: []
+      }
+      rental_monthly_entries: {
+        Row: {
+          created_at: string
+          expense_admin: number
+          expense_other: number
+          expense_repairs: number
+          id: string
+          income_other: number
+          income_rent: number
+          month: number
+          property_id: string
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          expense_admin?: number
+          expense_other?: number
+          expense_repairs?: number
+          id?: string
+          income_other?: number
+          income_rent?: number
+          month: number
+          property_id: string
+          year: number
+        }
+        Update: {
+          created_at?: string
+          expense_admin?: number
+          expense_other?: number
+          expense_repairs?: number
+          id?: string
+          income_other?: number
+          income_rent?: number
+          month?: number
+          property_id?: string
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_monthly_entries_property_id_fkey"
+            columns: ["property_id"]
+            isOneToOne: false
+            referencedRelation: "rental_properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_properties: {
+        Row: {
+          address: string
+          created_at: string
+          estimated_sale_price: number | null
+          id: string
+          investor_id: string | null
+          lease_end: string | null
+          lease_start: string | null
+          monthly_expenses: number
+          monthly_rent: number
+          owner_name: string | null
+          ownership_pct: number
+          project_id: string | null
+          purchase_price: number | null
+          sort_order: number
+          status: string
+          tenant_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          estimated_sale_price?: number | null
+          id?: string
+          investor_id?: string | null
+          lease_end?: string | null
+          lease_start?: string | null
+          monthly_expenses?: number
+          monthly_rent?: number
+          owner_name?: string | null
+          ownership_pct?: number
+          project_id?: string | null
+          purchase_price?: number | null
+          sort_order?: number
+          status?: string
+          tenant_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          estimated_sale_price?: number | null
+          id?: string
+          investor_id?: string | null
+          lease_end?: string | null
+          lease_start?: string | null
+          monthly_expenses?: number
+          monthly_rent?: number
+          owner_name?: string | null
+          ownership_pct?: number
+          project_id?: string | null
+          purchase_price?: number | null
+          sort_order?: number
+          status?: string
+          tenant_name?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_properties_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       suppressed_emails: {
         Row: {
