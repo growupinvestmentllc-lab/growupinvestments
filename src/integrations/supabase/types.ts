@@ -709,6 +709,62 @@ export type Database = {
         }
         Relationships: []
       }
+      property_ownerships: {
+        Row: {
+          created_at: string
+          exit_cost_base: number | null
+          exit_date: string | null
+          exit_price: number | null
+          from_date: string | null
+          id: string
+          llc_name: string
+          notes: string | null
+          percentage: number
+          project_id: string
+          stage: string
+          to_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          exit_cost_base?: number | null
+          exit_date?: string | null
+          exit_price?: number | null
+          from_date?: string | null
+          id?: string
+          llc_name: string
+          notes?: string | null
+          percentage?: number
+          project_id: string
+          stage?: string
+          to_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          exit_cost_base?: number | null
+          exit_date?: string | null
+          exit_price?: number | null
+          from_date?: string | null
+          id?: string
+          llc_name?: string
+          notes?: string | null
+          percentage?: number
+          project_id?: string
+          stage?: string
+          to_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_ownerships_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_monthly_entries: {
         Row: {
           created_at: string
