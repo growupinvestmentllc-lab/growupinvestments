@@ -453,7 +453,7 @@ function RentalTab() {
 
   const chartData = MONTHS.map((m, i) => ({
     mes: m.slice(0, 3),
-    noi: visibleEntries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + entryNoi(e), 0),
+    total: visibleEntries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + ownerIncomeForEntry(e), 0),
   }));
 
   return (
