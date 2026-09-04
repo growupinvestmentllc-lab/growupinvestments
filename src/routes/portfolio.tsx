@@ -47,6 +47,7 @@ type Project = {
 type Stage = {
   project_id: string;
   stage_name: string;
+  stage_group: string | null;
   completed: boolean;
   active: boolean;
   draw_number: number | null;
