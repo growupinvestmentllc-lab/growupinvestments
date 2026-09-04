@@ -489,7 +489,12 @@ function RentalTab() {
                     <InfoRow label="Inquilino" value={p.tenant_name || "Sin inquilino"} />
                     {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
                     {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
-                    {p.owner_name && <InfoRow label="Propietarios" value={p.owner_name} />}
+                    {(() => {
+                      const mine = ownerships
+                        .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
+                        .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
+                      return mine ? <InfoRow label="Tu participación" value={`${mine.llc_name} (${mine.percentage}%)`} /> : null;
+                    })()}
                   </dl>
                 </div>
                 <div className="p-4">
