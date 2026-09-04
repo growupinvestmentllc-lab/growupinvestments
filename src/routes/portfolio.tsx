@@ -440,9 +440,9 @@ function RentalTab() {
   };
 
   const ownerIncomeForEntry = (e: Entry) => {
-    const income = Number(e.income_rent || 0) + Number(e.income_other || 0);
+    const noi = entryNoi(e);
     const pct = rentalPct(propProjectId[e.property_id]);
-    return (income * pct) / 100;
+    return (noi * pct) / 100;
   };
 
   const periodEntries = visibleEntries.filter((e) => e.month === month && e.year === year);
@@ -589,8 +589,8 @@ function RentalTab() {
       <div className="card-soft p-6 bg-secondary/30 border-secondary">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Consolidado</h3>
         <div className="mt-4 grid sm:grid-cols-2 gap-3">
-          <Box label={`Ingreso total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
-          <Box label={`Total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
+          <Box label={`Total ingreso propietario 50% ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
+          <Box label={`Total ingreso propietario 50% acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
         </div>
       </div>
 
