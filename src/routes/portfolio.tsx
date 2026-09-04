@@ -458,6 +458,10 @@ function RentalTab() {
 
       {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
+        const mine = ownerships
+          .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
+          .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
+        const pct = mine ? Number(mine.percentage) : 100;
         const e = periodEntries.find((x) => x.property_id === p.id);
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
@@ -486,12 +490,7 @@ function RentalTab() {
                     <InfoRow label="Inquilino" value={p.tenant_name || "Sin inquilino"} />
                     {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
                     {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
-                    {(() => {
-                      const mine = ownerships
-                        .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
-                        .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
-                      return mine ? <InfoRow label="Tu participación" value={`${mine.llc_name} (${mine.percentage}%)`} /> : null;
-                    })()}
+                    {mine && <InfoRow label="Tu participación" value={`${mine.llc_name} (${pct}%)`} />}
                   </dl>
                 </div>
                 <div className="p-4">
@@ -529,7 +528,7 @@ function RentalTab() {
               <div className="mt-3 grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Ingresos</p>
-                  <Row label="Ingreso alquiler" value={e ? Number(e.income_rent || 0) : 0} />
+                  <Row label="Ingreso alquiler mensual" value={e ? Number(e.income_rent || 0) : 0} />
                   <Row label="Otros ingresos" value={e ? Number(e.income_other || 0) : 0} />
                   <Row label="Total ingresos" value={income} strong />
                 </div>
@@ -541,9 +540,15 @@ function RentalTab() {
                   <Row label="Total egresos" value={expenses} strong />
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
-                <span className="text-sm font-semibold text-foreground">Resultado neto del período</span>
-                <span className="text-lg font-bold text-primary">{formatUSD(income - expenses)}</span>
+              <div className="mt-3 pt-3 border-t border-border space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-foreground">Resultado neto total del período</span>
+                  <span className="text-lg font-bold text-primary">{formatUSD(income - expenses)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-foreground">Total ingreso propietario {pct}%</span>
+                  <span className="text-lg font-bold text-primary">{formatUSD(((income - expenses) * pct) / 100)}</span>
+                </div>
               </div>
             </div>
 
