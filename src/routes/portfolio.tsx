@@ -413,8 +413,6 @@ function RentalTab() {
   }, [entries]);
 
   const active = visibleProps.filter((p) => p.status !== "vacante");
-  const grossMonthly = active.reduce((s, p) => s + Number(p.monthly_rent || 0), 0);
-  const noiMonthly = active.reduce((s, p) => s + (Number(p.monthly_rent || 0) - Number(p.monthly_expenses || 0)), 0);
 
   const visibleEntries = useMemo(
     () => entries.filter((e) => visibleProps.some((p) => p.id === e.property_id)),
