@@ -590,7 +590,7 @@ function RentalTab() {
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Consolidado</h3>
         <div className="mt-4 grid sm:grid-cols-2 gap-3">
           <Box label={`Ingreso total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
-          <Box label={`Ingreso total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
+          <Box label={`Total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
         </div>
       </div>
 
