@@ -605,7 +605,7 @@ function RentalTab() {
               <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip formatter={(v: any) => formatUSD(Number(v))} />
-              <Bar dataKey="noi" fill="#1B4332" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="total" fill="#1B4332" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
