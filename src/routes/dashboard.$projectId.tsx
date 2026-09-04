@@ -467,6 +467,19 @@ function ProjectDetail() {
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
+            {is127Cape ? (
+              <div className="card-soft p-6 bg-primary text-primary-foreground">
+                <h3 className="font-semibold mb-1">Resultado de la venta</h3>
+                <p className="text-xs opacity-80 mb-4">Lote (sin construcción) · Vendida el 2 de julio de 2026</p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price (lote)</span><span className="font-semibold">{formatUSD(62000)}</span></div>
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (7,83%)</span><span className="font-semibold">({formatUSD(4854.58)})</span></div>
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(57145.42)}</span></div>
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost (costo original)</span><span className="font-semibold">{formatUSD(50000)}</span></div>
+                  <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">14,29%</span></div>
+                </div>
+              </div>
+            ) : (
             <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
               <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
