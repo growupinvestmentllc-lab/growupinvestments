@@ -440,9 +440,9 @@ function RentalTab() {
   };
 
   const ownerIncomeForEntry = (e: Entry) => {
-    const income = Number(e.income_rent || 0) + Number(e.income_other || 0);
+    const noi = entryNoi(e);
     const pct = rentalPct(propProjectId[e.property_id]);
-    return (income * pct) / 100;
+    return (noi * pct) / 100;
   };
 
   const periodEntries = visibleEntries.filter((e) => e.month === month && e.year === year);
