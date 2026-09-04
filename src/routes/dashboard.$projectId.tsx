@@ -462,6 +462,7 @@ function ProjectDetail() {
                     <p className="text-lg font-bold text-foreground">{formatUSD(1000)}</p>
                   </StatCard>
                 )}
+                {!is568Cypress && (
                 <StatCard
                   label="Costo Total"
                   value={formatUSD(totalCost)}
