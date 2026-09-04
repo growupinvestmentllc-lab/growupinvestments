@@ -163,7 +163,7 @@ function ConstructionTab() {
       if (list.length === 0) return setRows([]);
       const { data: stagesData } = await db
         .from("project_stages")
-        .select("project_id,stage_name,completed,active,draw_number,draw_amount")
+        .select("project_id,stage_name,stage_group,completed,active,draw_number,draw_amount")
         .in("project_id", list.map((p) => p.id));
       const stages: Stage[] = stagesData ?? [];
       const { data: drawsData } = await db
@@ -176,7 +176,8 @@ function ConstructionTab() {
         const ps = stages.filter((s) => s.project_id === p.id);
         const done = ps.filter((s) => s.completed).length;
         const progress = ALL_STAGES.length ? Math.round((done / ALL_STAGES.length) * 100) : 0;
-        const stage = ps.find((s) => s.active)?.stage_name ?? (progress >= 100 ? "Finalizada" : "Por iniciar");
+        const activeSt = ps.find((s) => s.active);
+        const stage = (activeSt?.stage_group?.startsWith("CO") ? activeSt.stage_group : activeSt?.stage_name) ?? (progress >= 100 ? "Finalizada" : "Por iniciar");
 
         const draws = new Map<number, { amount: number; completed: boolean }>();
         ps.forEach((s) => {
