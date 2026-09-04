@@ -528,7 +528,7 @@ function RentalTab() {
               <div className="mt-3 grid sm:grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Ingresos</p>
-                  <Row label="Ingreso alquiler" value={e ? Number(e.income_rent || 0) : 0} />
+                  <Row label="Ingreso alquiler mensual" value={e ? Number(e.income_rent || 0) : 0} />
                   <Row label="Otros ingresos" value={e ? Number(e.income_other || 0) : 0} />
                   <Row label="Total ingresos" value={income} strong />
                 </div>
