@@ -466,21 +466,6 @@ function ProjectDetail() {
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
-            {!(
-              (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ||
-              (project.address?.toLowerCase().includes("sun") && project.address?.toLowerCase().includes("lake")) ||
-              project.address?.toLowerCase().includes("710") ||
-              (project.address?.toLowerCase().includes("2217") && project.address?.toLowerCase().includes("embers")) ||
-              (project.address?.toLowerCase().includes("472") && project.address?.toLowerCase().includes("rajah")) ||
-              (project.address?.toLowerCase().includes("365") && project.address?.toLowerCase().includes("progress")) ||
-              (project.address?.toLowerCase().includes("621") && project.address?.toLowerCase().includes("flamingo")) ||
-              is127 ||
-              is2446
-            ) && (
-              <div className="card-soft p-5 bg-secondary/30 border-secondary">
-                <p className="text-sm text-foreground"><strong>Financiamiento bancario:</strong> Este proyecto puede calificarse para financiamiento bancario de hasta el 50% del valor de venta estimado (~{formatUSD((project.expected_sale_price || 0) * 0.5)}), lo que permite recuperar capital para reinvertir.</p>
-              </div>
-            )}
             <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
               <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
