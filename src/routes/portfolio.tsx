@@ -512,56 +512,72 @@ function RentalTab() {
             </div>
 
 
-            <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-              <Box label="Participación" value={`${Number(p.ownership_pct)}%`} />
-              <Box label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
-              <Box label="NOI anual estimado" value={formatUSD(noi * 12)} />
-              <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
-            </div>
+            {(() => {
+              const e = entriesByProject[p.project_id || ""]?.find((x) => x.year === year && x.month === month);
+              const income = (e ? Number(e.income_rent || 0) : 0) + (e ? Number(e.income_other || 0) : 0);
+              const expenses =
+                (e ? Number(e.expense_admin || 0) : 0) +
+                (e ? Number(e.expense_repairs || 0) : 0) +
+                (e ? Number(e.expense_other || 0) : 0);
+              const accum = entriesByProject[p.project_id || ""]
+                ?.filter((x) => x.year === year && x.month <= month)
+                .reduce((s, x) => s + Number(x.income_rent || 0) + Number(x.income_other || 0), 0) || 0;
 
-            {p.project_id && (
-              <OwnershipPanel
-                ownerships={ownerships.filter((o) => o.project_id === p.project_id)}
-                myLlc={myLlc}
-                stage="alquiler"
-                amounts={[
-                  { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
-                  { label: "NOI anual estimado", value: noi * 12 },
-                  { label: "NOI del período", value: income - expenses },
-                ]}
-              />
-            )}
+              return (
+                <>
+                  <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <Box label="Participación" value={`${Number(p.ownership_pct)}%`} />
+                    <Box label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
+                    <Box label={`Total ingreso alquiler ${MONTHS[month - 1]} ${year}`} value={formatUSD(income)} />
+                    <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
+                  </div>
+
+                  {p.project_id && (
+                    <OwnershipPanel
+                      ownerships={ownerships.filter((o) => o.project_id === p.project_id)}
+                      myLlc={myLlc}
+                      stage="alquiler"
+                      amounts={[
+                        { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
+                        { label: "NOI anual estimado", value: noi * 12 },
+                        { label: "Resultado neto del período", value: income - expenses },
+                      ]}
+                    />
+                  )}
 
 
-            <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Período: {MONTHS[month - 1]} {year}
-              </p>
-              <div className="mt-3 grid sm:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Ingresos</p>
-                  <Row label="Ingreso alquiler" value={e ? Number(e.income_rent || 0) : 0} />
-                  <Row label="Otros ingresos" value={e ? Number(e.income_other || 0) : 0} />
-                  <Row label="Total ingresos" value={income} strong />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Egresos</p>
-                  <Row label="Management fee" value={e ? Number(e.expense_admin || 0) : 0} />
-                  <Row label="Reparaciones" value={e ? Number(e.expense_repairs || 0) : 0} />
-                  <Row label="Otros" value={e ? Number(e.expense_other || 0) : 0} />
-                  <Row label="Total egresos" value={expenses} strong />
-                </div>
-              </div>
-              <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
-                <span className="text-sm font-semibold text-foreground">NOI del período</span>
-                <span className="text-lg font-bold text-primary">{formatUSD(income - expenses)}</span>
-              </div>
-            </div>
+                  <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Período: {MONTHS[month - 1]} {year}
+                    </p>
+                    <div className="mt-3 grid sm:grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Ingresos</p>
+                        <Row label="Ingreso alquiler" value={e ? Number(e.income_rent || 0) : 0} />
+                        <Row label="Otros ingresos" value={e ? Number(e.income_other || 0) : 0} />
+                        <Row label="Total ingresos" value={income} strong />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Egresos</p>
+                        <Row label="Management fee" value={e ? Number(e.expense_admin || 0) : 0} />
+                        <Row label="Reparaciones" value={e ? Number(e.expense_repairs || 0) : 0} />
+                        <Row label="Otros" value={e ? Number(e.expense_other || 0) : 0} />
+                        <Row label="Total egresos" value={expenses} strong />
+                      </div>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
+                      <span className="text-sm font-semibold text-foreground">Resultado neto del período</span>
+                      <span className="text-lg font-bold text-primary">{formatUSD(income - expenses)}</span>
+                    </div>
+                  </div>
 
-            <p className="mt-3 text-xs text-muted-foreground">
-              Total cobrado hasta {MONTHS[month - 1]} {year}:{" "}
-              <span className="font-semibold text-foreground">{formatUSD(accum)}</span>
-            </p>
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Total cobrado hasta {MONTHS[month - 1]} {year}:{" "}
+                    <span className="font-semibold text-foreground">{formatUSD(accum)}</span>
+                  </p>
+                </>
+              );
+            })()}
           </div>
         );
       })}
