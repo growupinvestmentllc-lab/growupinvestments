@@ -524,6 +524,7 @@ function ProjectDetail() {
                 )}
               </div>
             </div>
+            )}
             {project.notes && (
               <div className="card-soft p-6">
                 <h3 className="font-semibold text-foreground mb-2">Detalles del Proyecto</h3>
