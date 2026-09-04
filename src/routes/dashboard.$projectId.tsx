@@ -319,7 +319,7 @@ function ProjectDetail() {
                             "Hard Construction 2": { planned: { start: ym(2026, 1), end: ym(2026, 2) }, actual: { start: ym(2026, 4), end: ym(2026, 5) } },
                             "Hard Construction 3": { planned: { start: ym(2026, 4), end: ym(2026, 5) }, actual: { start: ym(2026, 6), end: ym(2026, 7) } },
                             "Hard Construction 4": { planned: { start: ym(2026, 5), end: ym(2026, 6) }, actual: { start: ym(2026, 7), end: ym(2026, 8) } },
-                            "CO (Certificate of Occupancy)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2026, 9), end: ym(2026, 9) } },
+                            "CO (Certificado de Ocupación)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2026, 9), end: ym(2026, 9) } },
                           } satisfies PlannedVsActual)
                         : normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
                         ? ({
@@ -679,10 +679,10 @@ function DrawSchedule({
     "Hard Construction 2",
     "Hard Construction 3",
     "Hard Construction 4",
-    "CO (Certificate of Occupancy)",
+    "CO (Certificado de Ocupación)",
   ];
   const LABELS: Record<string, string> = {
-    "CO (Certificate of Occupancy)": "C.O",
+    "CO (Certificado de Ocupación)": "C.O",
   };
   const groupRows = DRAW_GROUPS.map((group, idx) => {
     const groupStages = stages.filter((s) => (s.stage_group ?? "") === group);
