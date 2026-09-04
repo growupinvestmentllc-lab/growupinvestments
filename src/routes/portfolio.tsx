@@ -577,11 +577,6 @@ function RentalTab() {
                 </div>
               </div>
             </div>
-
-            <p className="mt-3 text-xs text-muted-foreground">
-              Total cobrado hasta {MONTHS[month - 1]} {year}:{" "}
-              <span className="font-semibold text-foreground">{formatUSD(accum)}</span>
-            </p>
           </div>
         );
       })}
