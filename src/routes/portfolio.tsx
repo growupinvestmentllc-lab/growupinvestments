@@ -512,10 +512,9 @@ function RentalTab() {
             </div>
 
 
-            <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-3">
               <Box label="Participación" value={`${Number(p.ownership_pct)}%`} />
               <Box label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
-              <Box label={`Total ingreso alquiler ${MONTHS[month - 1]} ${year}`} value={formatUSD(income)} />
               <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
             </div>
 
