@@ -589,8 +589,8 @@ function RentalTab() {
       <div className="card-soft p-6 bg-secondary/30 border-secondary">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Consolidado</h3>
         <div className="mt-4 grid sm:grid-cols-2 gap-3">
-          <Box label={`NOI total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodNoi)} />
-          <Box label={`NOI acumulado ${year}`} value={formatUSD(ytdNoi)} />
+          <Box label={`Ingreso total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
+          <Box label={`Ingreso total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
         </div>
       </div>
 
