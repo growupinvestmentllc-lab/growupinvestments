@@ -561,6 +561,38 @@ function ForSaleTab() {
       {rows.map((r) => {
         const base = Number(r.cost_base || 0);
         const roi = base ? ((Number(r.listing_price || 0) - base) / base) * 100 : 0;
+        const is2812 = (r.address ?? "").toLowerCase().includes("2812");
+        if (is2812) {
+          return (
+            <div key={r.id} className="card-soft p-6">
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
+                  🟠 En venta
+                </span>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Box label="Precio de venta" value={formatUSD(415000)} />
+                <Box label="Total invertido" value={formatUSD(351000)} tone="muted" />
+              </div>
+              <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 space-y-2 text-sm">
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price</span><span className="font-semibold">{formatUSD(415000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(55000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Construction cost</span><span className="font-semibold">{formatUSD(296000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Total invested (land + construction)</span><span className="font-semibold">{formatUSD(351000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(381800)}</span></div>
+                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">8.77%</span></div>
+              </div>
+              {r.project_id && (
+                <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+                  <Link to="/dashboard/$projectId" params={{ projectId: r.project_id }}>
+                    Ver proyecto <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
+            </div>
+          );
+        }
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
