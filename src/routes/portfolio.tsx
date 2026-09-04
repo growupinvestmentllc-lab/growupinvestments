@@ -419,11 +419,37 @@ function RentalTab() {
     [entries, visibleProps],
   );
 
+  const propProjectId = useMemo(() => {
+    const map: Record<string, string | null> = {};
+    visibleProps.forEach((p) => {
+      map[p.id] = p.project_id ?? null;
+    });
+    return map;
+  }, [visibleProps]);
+
+  const rentalPct = (projectId: string | null) => {
+    if (!projectId || !myLlc) return 100;
+    const o = ownerships.find(
+      (o) =>
+        o.project_id === projectId &&
+        o.stage === "alquiler" &&
+        !o.to_date &&
+        o.llc_name.toUpperCase() === myLlc.toUpperCase(),
+    );
+    return o ? Number(o.percentage) : 100;
+  };
+
+  const ownerIncomeForEntry = (e: Entry) => {
+    const income = Number(e.income_rent || 0) + Number(e.income_other || 0);
+    const pct = rentalPct(propProjectId[e.property_id]);
+    return (income * pct) / 100;
+  };
+
   const periodEntries = visibleEntries.filter((e) => e.month === month && e.year === year);
-  const periodNoi = periodEntries.reduce((s, e) => s + entryNoi(e), 0);
-  const ytdNoi = visibleEntries
+  const periodOwnerIncome = periodEntries.reduce((s, e) => s + ownerIncomeForEntry(e), 0);
+  const ytdOwnerIncome = visibleEntries
     .filter((e) => e.year === year && e.month <= month)
-    .reduce((s, e) => s + entryNoi(e), 0);
+    .reduce((s, e) => s + ownerIncomeForEntry(e), 0);
 
   const chartData = MONTHS.map((m, i) => ({
     mes: m.slice(0, 3),
@@ -563,8 +589,8 @@ function RentalTab() {
       <div className="card-soft p-6 bg-secondary/30 border-secondary">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Consolidado</h3>
         <div className="mt-4 grid sm:grid-cols-2 gap-3">
-          <Box label={`NOI total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodNoi)} />
-          <Box label={`NOI acumulado ${year}`} value={formatUSD(ytdNoi)} />
+          <Box label={`Ingreso total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
+          <Box label={`Ingreso total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
         </div>
       </div>
 
