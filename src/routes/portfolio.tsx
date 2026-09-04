@@ -341,6 +341,15 @@ const STATUS_META: Record<string, { label: string; dot: string; cls: string }> =
   vacante: { label: "Vacante", dot: "🔴", cls: "bg-red-100 text-red-800" },
 };
 
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium text-foreground text-right">{value}</dd>
+    </div>
+  );
+}
+
 function entryNoi(e: Entry) {
   return (
     Number(e.income_rent || 0) + Number(e.income_other || 0) -
@@ -362,7 +371,17 @@ function RentalTab() {
       const { data: p } = await db.from("rental_properties").select("*").order("sort_order");
       setProps(p ?? []);
       const { data: e } = await db.from("rental_monthly_entries").select("*");
-      setEntries(e ?? []);
+      const list = e ?? [];
+      setEntries(list);
+      // Posicionar el período en el último mes con datos cargados
+      const withData = list.filter((x: Entry) => entryNoi(x) !== 0 || Number(x.income_rent || 0) !== 0);
+      if (withData.length) {
+        const last = withData.reduce((a: Entry, b: Entry) =>
+          b.year * 12 + b.month > a.year * 12 + a.month ? b : a,
+        );
+        setYear(last.year);
+        setMonth(last.month);
+      }
     })();
   }, []);
 
@@ -454,26 +473,44 @@ function RentalTab() {
         return (
           <div key={p.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {p.tenant_name ? `Inquilino: ${p.tenant_name}` : "Sin inquilino"}
-                  {p.lease_start ? ` · Inicio: ${fmtDate(p.lease_start)}` : ""}
-                  {p.lease_end ? ` · Vence: ${fmtDate(p.lease_end)}` : ""}
-                </p>
-                {p.owner_name && <p className="text-xs text-muted-foreground">Propietario: {p.owner_name}</p>}
-                {(p as any).notes && <p className="text-xs text-muted-foreground mt-0.5">{(p as any).notes}</p>}
-                {((p as any).property_tax_annual || (p as any).insurance_annual || (p as any).management_annual) && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Anual: impuestos {formatUSD((p as any).property_tax_annual)} · seguro {formatUSD((p as any).insurance_annual)} · administración {formatUSD((p as any).management_annual)}
-                    {(p as any).cap_rate ? ` · Cap rate ${Number((p as any).cap_rate)}%` : ""}
-                  </p>
-                )}
-              </div>
+              <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${meta.cls}`}>
                 {meta.dot} {meta.label}
               </span>
             </div>
+
+            <div className="mt-4 rounded-xl border border-border bg-muted/30 overflow-hidden">
+              <div className="grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border">
+                <div className="p-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Contrato de alquiler
+                  </p>
+                  <dl className="mt-2 space-y-1.5 text-sm">
+                    <InfoRow label="Inquilino" value={p.tenant_name || "Sin inquilino"} />
+                    {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
+                    {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
+                    {p.owner_name && <InfoRow label="Propietarios" value={p.owner_name} />}
+                  </dl>
+                </div>
+                <div className="p-4">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                    Costos anuales
+                  </p>
+                  <dl className="mt-2 space-y-1.5 text-sm">
+                    <InfoRow label="Impuestos" value={formatUSD((p as any).property_tax_annual)} />
+                    <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
+                    <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
+                    {(p as any).cap_rate && (
+                      <InfoRow label="Cap rate" value={`${Number((p as any).cap_rate)}%`} />
+                    )}
+                  </dl>
+                </div>
+              </div>
+              {(p as any).notes && (
+                <p className="px-4 py-2 text-xs text-muted-foreground border-t border-border">{(p as any).notes}</p>
+              )}
+            </div>
+
 
             <div className="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-3">
               <Box label="Participación" value={`${Number(p.ownership_pct)}%`} />
