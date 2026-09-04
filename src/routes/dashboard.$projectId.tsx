@@ -679,10 +679,10 @@ function DrawSchedule({
     "Hard Construction 2",
     "Hard Construction 3",
     "Hard Construction 4",
-    "CO (Certificate of Occupancy)",
+    "CO (Certificado de Ocupación)",
   ];
   const LABELS: Record<string, string> = {
-    "CO (Certificate of Occupancy)": "C.O",
+    "CO (Certificado de Ocupación)": "C.O",
   };
   const groupRows = DRAW_GROUPS.map((group, idx) => {
     const groupStages = stages.filter((s) => (s.stage_group ?? "") === group);
