@@ -640,6 +640,7 @@ function ForSaleTab() {
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(55000)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Construction cost</span><span className="font-semibold">{formatUSD(296000)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Total invested (land + construction)</span><span className="font-semibold">{formatUSD(351000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (8%)</span><span className="font-semibold">({formatUSD(33200)})</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(381800)}</span></div>
                 <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">8.77%</span></div>
               </div>
