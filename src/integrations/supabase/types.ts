@@ -962,10 +962,6 @@ export type Database = {
         Args: { _project_id: string }
         Returns: undefined
       }
-      has_project_ownership: {
-        Args: { _llc_name: string; _project_id: string }
-        Returns: boolean
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
