@@ -437,11 +437,11 @@ function RentalTab() {
         </Select>
       </div>
 
-      {props.length === 0 && (
+      {visibleProps.length === 0 && (
         <p className="text-muted-foreground text-center py-12">No hay propiedades en alquiler.</p>
       )}
 
-      {props.map((p) => {
+      {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
         const noi = Number(p.monthly_rent || 0) - Number(p.monthly_expenses || 0);
         const e = periodEntries.find((x) => x.property_id === p.id);
@@ -449,7 +449,7 @@ function RentalTab() {
         const expenses = e
           ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0)
           : 0;
-        const accum = entries
+        const accum = visibleEntries
           .filter((x) => x.property_id === p.id && x.year === year && x.month <= month)
           .reduce((s, x) => s + Number(x.income_rent || 0) + Number(x.income_other || 0), 0);
 
