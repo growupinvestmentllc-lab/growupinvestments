@@ -141,6 +141,7 @@ function ProjectDetail() {
   const is1405Cortez = project?.id === "ed024506-b782-401f-9fd6-6c6691430a0c";
   const is35SW = (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
   const is477 = (project?.address?.toLowerCase() ?? "").includes("477 rayford");
+  const is127Cape = (project?.address?.toLowerCase() ?? "").includes("127 nw 24th");
   const is127 =
     (project?.address?.toLowerCase() ?? "").includes("127 nw 24th") ||
     (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
@@ -406,7 +407,7 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is14Trout && !is5963Virtudes && !is448Rajah && (
+            {!is14Trout && !is5963Virtudes && !is448Rajah && !is127Cape && (
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
               {is35SW ? (
@@ -462,10 +463,23 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && !is127Cape && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
+            {is127Cape ? (
+              <div className="card-soft p-6 bg-primary text-primary-foreground">
+                <h3 className="font-semibold mb-1">Resultado de la venta</h3>
+                <p className="text-xs opacity-80 mb-4">Lote (sin construcción) · Vendida el 2 de julio de 2026</p>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price (lote)</span><span className="font-semibold">{formatUSD(62000)}</span></div>
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (7,83%)</span><span className="font-semibold">({formatUSD(4854.58)})</span></div>
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(57145.42)}</span></div>
+                  <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost (costo original)</span><span className="font-semibold">{formatUSD(50000)}</span></div>
+                  <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">14,29%</span></div>
+                </div>
+              </div>
+            ) : (
             <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : "Rentabilidad esperada"}</h3>
               <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
@@ -510,6 +524,7 @@ function ProjectDetail() {
                 )}
               </div>
             </div>
+            )}
             {project.notes && (
               <div className="card-soft p-6">
                 <h3 className="font-semibold text-foreground mb-2">Detalles del Proyecto</h3>
