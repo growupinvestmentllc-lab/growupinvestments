@@ -507,6 +507,8 @@ function ProjectDetail() {
                 )}
                 {is127Cape ? (
                   <Stat dark label="ROI estimado" value="14.29%" />
+                ) : is35SW ? (
+                  <Stat dark label="ROI estimado" value="10.40%" />
                 ) : is127 ? (
                   <Stat dark label="ROI estimado" value={`${project.lot_cost ? (((Number(project.expected_sale_price || 0) - Number(project.lot_cost)) / Number(project.lot_cost)) * 100).toFixed(1) : 0}%`} />
                 ) : project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
