@@ -453,7 +453,7 @@ function RentalTab() {
 
   const chartData = MONTHS.map((m, i) => ({
     mes: m.slice(0, 3),
-    noi: visibleEntries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + entryNoi(e), 0),
+    total: visibleEntries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + ownerIncomeForEntry(e), 0),
   }));
 
   return (
@@ -605,7 +605,7 @@ function RentalTab() {
               <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip formatter={(v: any) => formatUSD(Number(v))} />
-              <Bar dataKey="noi" fill="#1B4332" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="total" fill="#1B4332" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
