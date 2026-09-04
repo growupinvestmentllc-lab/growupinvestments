@@ -512,10 +512,9 @@ function RentalTab() {
             </div>
 
 
-            <div className="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
               <Box label="Participación" value={`${Number(p.ownership_pct)}%`} />
               <Box label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
-              <Box label="NOI mensual" value={formatUSD(noi)} />
               <Box label="NOI anual estimado" value={formatUSD(noi * 12)} />
               <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
             </div>
@@ -527,7 +526,6 @@ function RentalTab() {
                 stage="alquiler"
                 amounts={[
                   { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
-                  { label: "NOI mensual", value: noi },
                   { label: "NOI anual estimado", value: noi * 12 },
                   { label: "NOI del período", value: income - expenses },
                 ]}
@@ -578,7 +576,7 @@ function RentalTab() {
 
       <div className="card-soft p-6">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-          NOI mensual total {year}
+          Resultado neto mensual {year}
         </h3>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
