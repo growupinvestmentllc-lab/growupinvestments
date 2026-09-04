@@ -845,6 +845,44 @@ function DocsTab({ projectId }: { projectId: string }) {
     window.open(data.signedUrl, "_blank");
   };
 
+  // 127 NW 24th Pl — venta de lote: solo el registro de la venta
+  if (projectId === "2f2c8509-18d0-489c-b5bb-758120a21e3b") {
+    return (
+      <div className="card-soft p-6">
+        <h3 className="font-semibold text-foreground mb-4">Documentos</h3>
+        {docs.length === 0 ? (
+          <p className="text-sm text-muted-foreground">Sin documentos disponibles.</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 gap-3">
+            {docs.map((d) => {
+              const uploaded = !!d.file_path;
+              return (
+                <button
+                  key={d.id}
+                  disabled={!uploaded}
+                  onClick={() => uploaded && open(d.file_path)}
+                  className="text-left flex items-center gap-3 p-4 rounded-lg border border-border bg-background hover:border-primary hover:bg-primary/5 transition-colors group disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-background"
+                >
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <FileText className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground truncate">Registro de la Venta</p>
+                    <p className="text-xs text-muted-foreground">
+                      {d.llc_name ? `${d.llc_name} · ` : ""}
+                      {uploaded ? "Cargado" : "Pendiente"}
+                    </p>
+                  </div>
+                  {uploaded && <Download className="h-4 w-4 text-muted-foreground group-hover:text-primary shrink-0" />}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   const groups = [
     { key: "legal", label: "Documentos Legales" },
     { key: "construccion", label: "Documentos de Construcción" },
