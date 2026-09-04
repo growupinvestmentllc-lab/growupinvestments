@@ -349,6 +349,7 @@ function entryNoi(e: Entry) {
 
 function RentalTab() {
   const { rows: ownerships, myLlc } = useOwnerships();
+  const { user, role } = useAuth();
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
@@ -364,25 +365,51 @@ function RentalTab() {
     })();
   }, []);
 
+  const isAdmin = role === "admin";
+
+  const myRentalProjectIds = useMemo(() => {
+    const ids = new Set<string>();
+    ownerships.forEach((o) => {
+      if (o.stage === "alquiler" && !o.to_date && o.project_id) {
+        ids.add(o.project_id);
+      }
+    });
+    return ids;
+  }, [ownerships]);
+
+  const visibleProps = useMemo(() => {
+    if (isAdmin) return props;
+    return props.filter((p) => {
+      if (p.project_id && myRentalProjectIds.has(p.project_id)) return true;
+      if (p.investor_id && user && p.investor_id === user.id) return true;
+      return false;
+    });
+  }, [props, ownerships, myRentalProjectIds, isAdmin, user]);
+
   const years = useMemo(() => {
     const set = new Set<number>([now.getFullYear(), now.getFullYear() - 1, now.getFullYear() + 1]);
     entries.forEach((e) => set.add(e.year));
     return Array.from(set).sort();
   }, [entries]);
 
-  const active = props.filter((p) => p.status !== "vacante");
+  const active = visibleProps.filter((p) => p.status !== "vacante");
   const grossMonthly = active.reduce((s, p) => s + Number(p.monthly_rent || 0), 0);
   const noiMonthly = active.reduce((s, p) => s + (Number(p.monthly_rent || 0) - Number(p.monthly_expenses || 0)), 0);
 
-  const periodEntries = entries.filter((e) => e.month === month && e.year === year);
+  const visibleEntries = useMemo(
+    () => entries.filter((e) => visibleProps.some((p) => p.id === e.property_id)),
+    [entries, visibleProps],
+  );
+
+  const periodEntries = visibleEntries.filter((e) => e.month === month && e.year === year);
   const periodNoi = periodEntries.reduce((s, e) => s + entryNoi(e), 0);
-  const ytdNoi = entries
+  const ytdNoi = visibleEntries
     .filter((e) => e.year === year && e.month <= month)
     .reduce((s, e) => s + entryNoi(e), 0);
 
   const chartData = MONTHS.map((m, i) => ({
     mes: m.slice(0, 3),
-    noi: entries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + entryNoi(e), 0),
+    noi: visibleEntries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + entryNoi(e), 0),
   }));
 
   return (
