@@ -458,7 +458,6 @@ function RentalTab() {
 
       {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
-        const noi = Number(p.monthly_rent || 0) - Number(p.monthly_expenses || 0);
         const e = periodEntries.find((x) => x.property_id === p.id);
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
