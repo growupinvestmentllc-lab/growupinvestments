@@ -540,9 +540,15 @@ function RentalTab() {
                   <Row label="Total egresos" value={expenses} strong />
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-border flex justify-between items-center">
-                <span className="text-sm font-semibold text-foreground">Resultado neto del período</span>
-                <span className="text-lg font-bold text-primary">{formatUSD(income - expenses)}</span>
+              <div className="mt-3 pt-3 border-t border-border space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-foreground">Resultado neto total del período</span>
+                  <span className="text-lg font-bold text-primary">{formatUSD(income - expenses)}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-semibold text-foreground">Total ingreso propietario {pct}%</span>
+                  <span className="text-lg font-bold text-primary">{formatUSD(((income - expenses) * pct) / 100)}</span>
+                </div>
               </div>
             </div>
 
