@@ -605,6 +605,38 @@ function SoldTab() {
       {rows.map((r) => {
         const base = Number(r.cost_base || 0);
         const roi = base ? ((Number(r.sale_price || 0) - base) / base) * 100 : null;
+        const is127Cape = (r.address ?? "").toLowerCase().includes("127 nw 24th");
+        if (is127Cape) {
+          return (
+            <div key={r.id} className="card-soft p-6">
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+                  ✅ Vendida
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Lote (sin construcción) · Vendida el 2 de julio de 2026</p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Box label="Precio de venta" value={formatUSD(62000)} />
+                <Box label="Costo lote" value={formatUSD(50000)} tone="muted" />
+              </div>
+              <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 space-y-2 text-sm">
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price (lote)</span><span className="font-semibold">{formatUSD(62000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (7,83%)</span><span className="font-semibold">({formatUSD(4854.58)})</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(57145.42)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost (costo original)</span><span className="font-semibold">{formatUSD(50000)}</span></div>
+                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">14.29%</span></div>
+              </div>
+              {r.project_id && (
+                <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+                  <Link to="/dashboard/$projectId" params={{ projectId: r.project_id }}>
+                    Ver proyecto <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
+            </div>
+          );
+        }
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
