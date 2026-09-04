@@ -407,13 +407,13 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is14Trout && !is5963Virtudes && !is448Rajah && !is127Cape && (
+            {!is14Trout && !is5963Virtudes && !is448Rajah && (
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
-              {is35SW ? (
+              {is35SW || is127Cape ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <StatCard label="Costo lote" value={formatUSD(project.lot_cost)} />
-                  <StatCard label="Precio de venta (estimado)" value={formatUSD(project.expected_sale_price)} accent="muted" />
+                  <StatCard label={is127Cape ? "Precio de venta" : "Precio de venta (estimado)"} value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
               ) : is127 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -463,7 +463,7 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && !is127Cape && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
