@@ -44,7 +44,7 @@ const GROUP_SHORT_LABELS: Record<string, string> = {
   "Hard Construction 2": "HC 2",
   "Hard Construction 3": "HC 3",
   "Hard Construction 4": "HC 4",
-  "CO (Certificate of Occupancy)": "C.O.",
+  "CO (Certificado de Ocupación)": "C.O.",
 };
 
 function GroupStagesList({ stages, group }: { stages: Stage[]; group: string }) {
