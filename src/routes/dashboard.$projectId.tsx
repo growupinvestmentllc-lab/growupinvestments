@@ -421,16 +421,16 @@ function ProjectDetail() {
                   <StatCard label="Precio de venta" value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
               ) : (
-              <div className={`grid grid-cols-1 gap-4 ${is621Flamingo ? "sm:grid-cols-[2fr_1fr_1fr_1fr]" : "sm:grid-cols-[2fr_1fr_1fr]"}`}>
+              <div className={`grid grid-cols-1 gap-4 ${is621Flamingo || is2812 ? "sm:grid-cols-[2fr_1fr_1fr_1fr]" : "sm:grid-cols-[2fr_1fr_1fr]"}`}>
                 <StatCard
                   label="Costo de construcción Draw 1 a Draw 6 incluido"
                   value={
-                    steamwallLabel > 0
+                    steamwallLabel > 0 && !is2812
                       ? `${formatUSD(constructionBase)} + Steamwall (${formatUSD(steamwallLabel)}) = ${formatUSD(constructionLabelTotal)}`
                       : formatUSD(project.construction_cost)
                   }
                   sub={hasMultipleOwners && myPct != null
-                    ? `Tu participación ${myPct}% = ${formatUSD((steamwall > 0 ? constructionTotal : Number(project.construction_cost) || 0) * (myPct / 100))}`
+                    ? `Tu participación ${myPct}% = ${formatUSD(((steamwall > 0 && !is2812 ? constructionTotal : Number(project.construction_cost)) || 0) * (myPct / 100))}`
                     : undefined}
                   className="min-h-[140px] py-6"
                 />
@@ -441,6 +441,15 @@ function ProjectDetail() {
                     ? `Tu participación ${myPct}% = ${formatUSD((Number(project.lot_cost) || 0) * (myPct / 100))}`
                     : undefined}
                 />
+                {is2812 && (
+                  <StatCard
+                    label="Gastos de contingencias"
+                    value={formatUSD(steamwall)}
+                    sub={hasMultipleOwners && myPct != null
+                      ? `Steamwall · Tu participación ${myPct}% = ${formatUSD(steamwall * (myPct / 100))}`
+                      : "Steamwall"}
+                  />
+                )}
                 {is621Flamingo && (
                   <StatCard
                     label="Fee due diligence"
