@@ -68,6 +68,7 @@ type Rental = {
   purchase_price: number | null;
   estimated_sale_price: number | null;
   project_id: string | null;
+  investor_id: string | null;
 };
 
 type Entry = {
