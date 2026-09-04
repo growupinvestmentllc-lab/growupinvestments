@@ -710,7 +710,7 @@ function SoldTab() {
               </div>
               <p className="text-xs text-muted-foreground mt-1">Lote (sin construcción) · Vendida el 2 de julio de 2026</p>
               <div className="mt-4 grid grid-cols-2 gap-3">
-                <Box label="Precio de venta" value={formatUSD(62000)} />
+                <Box label="Precio de venta" value={formatUSD(57145.42)} />
                 <Box label="Costo lote" value={formatUSD(50000)} tone="muted" />
               </div>
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 space-y-2 text-sm">
