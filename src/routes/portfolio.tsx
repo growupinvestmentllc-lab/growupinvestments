@@ -341,6 +341,15 @@ const STATUS_META: Record<string, { label: string; dot: string; cls: string }> =
   vacante: { label: "Vacante", dot: "🔴", cls: "bg-red-100 text-red-800" },
 };
 
+function InfoRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-3">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="font-medium text-foreground text-right">{value}</dd>
+    </div>
+  );
+}
+
 function entryNoi(e: Entry) {
   return (
     Number(e.income_rent || 0) + Number(e.income_other || 0) -
