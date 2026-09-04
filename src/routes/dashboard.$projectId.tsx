@@ -497,7 +497,7 @@ function ProjectDetail() {
                     <Stat dark label="Costo construcción" value={formatUSD(is2446 || is2434 ? constructionTotal : project.construction_cost)} />
                   </>
                 )}
-                {!is14Trout && !is5963Virtudes && !is448Rajah && (
+                {!is14Trout && !is5963Virtudes && !is448Rajah && !is568Cypress && (
                   <Stat
                     dark
                     label={
