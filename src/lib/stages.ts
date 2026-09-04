@@ -40,7 +40,7 @@ export const STAGE_GROUPS: { group: string; stages: string[] }[] = [
     ],
   },
   {
-    group: "CO (Certificate of Occupancy)",
+    group: "CO (Certificado de Ocupación)",
     stages: ["Inspecciones finales", "Entrega de documentos finales"],
   },
 ];
