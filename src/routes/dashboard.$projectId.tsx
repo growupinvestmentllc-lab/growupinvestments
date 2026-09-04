@@ -435,6 +435,7 @@ function ProjectDetail() {
                     : undefined}
                   className="min-h-[140px] py-6"
                 />
+                {!is568Cypress && (
                 <StatCard
                   label="Lote"
                   value={formatUSD(project.lot_cost)}
@@ -442,6 +443,7 @@ function ProjectDetail() {
                     ? `Tu participación ${myPct}% = ${formatUSD((Number(project.lot_cost) || 0) * (myPct / 100))}`
                     : undefined}
                 />
+                )}
                 {is2812 && (
                   <StatCard
                     label="Gastos de contingencias"
