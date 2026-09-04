@@ -458,6 +458,10 @@ function RentalTab() {
 
       {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
+        const mine = ownerships
+          .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
+          .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
+        const pct = mine ? Number(mine.percentage) : 100;
         const e = periodEntries.find((x) => x.property_id === p.id);
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
