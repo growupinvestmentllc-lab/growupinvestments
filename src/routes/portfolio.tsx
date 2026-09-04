@@ -526,7 +526,6 @@ function RentalTab() {
                 stage="alquiler"
                 amounts={[
                   { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
-                  { label: "NOI mensual", value: noi },
                   { label: "NOI anual estimado", value: noi * 12 },
                   { label: "NOI del período", value: income - expenses },
                 ]}
