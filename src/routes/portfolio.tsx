@@ -415,10 +415,8 @@ function RentalTab() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="max-w-xs">
         <Box label="Propiedades activas" value={String(active.length)} />
-        <Box label="Alquiler bruto mensual total" value={formatUSD(grossMonthly)} />
-        <Box label="NOI anual estimado" value={formatUSD(noiMonthly * 12)} tone="muted" />
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
