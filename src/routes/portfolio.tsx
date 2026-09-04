@@ -607,9 +607,9 @@ function ForSaleTab() {
               </div>
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 space-y-2 text-sm">
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price</span><span className="font-semibold">{formatUSD(60000)}</span></div>
-                <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(50000)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (8%)</span><span className="font-semibold">({formatUSD(4800)})</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(55200)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(50000)}</span></div>
                 <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">10.40%</span></div>
               </div>
               {r.project_id && (
@@ -637,11 +637,10 @@ function ForSaleTab() {
               </div>
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 space-y-2 text-sm">
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price</span><span className="font-semibold">{formatUSD(415000)}</span></div>
-                <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(55000)}</span></div>
-                <div className="flex justify-between border-b border-white/20 pb-2"><span>Construction cost</span><span className="font-semibold">{formatUSD(296000)}</span></div>
-                <div className="flex justify-between border-b border-white/20 pb-2"><span>Total invested (land + construction)</span><span className="font-semibold">{formatUSD(351000)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (8%)</span><span className="font-semibold">({formatUSD(33200)})</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(381800)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(55000)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Construction cost</span><span className="font-semibold">{formatUSD(296000)}</span></div>
                 <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">8.77%</span></div>
               </div>
               {r.project_id && (
