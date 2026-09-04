@@ -576,7 +576,7 @@ function RentalTab() {
 
       <div className="card-soft p-6">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-          NOI mensual total {year}
+          Resultado neto mensual {year}
         </h3>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
