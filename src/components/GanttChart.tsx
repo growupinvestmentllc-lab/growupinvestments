@@ -27,7 +27,7 @@ const GROUP_SHORT: Record<string, string> = {
   "Hard Construction 2": "Hard C2",
   "Hard Construction 3": "Hard C3",
   "Hard Construction 4": "Hard C4",
-  "CO (Certificate of Occupancy)": "C.O.",
+  "CO (Certificado de Ocupación)": "C.O.",
 };
 
 const MONTH_LABELS = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
