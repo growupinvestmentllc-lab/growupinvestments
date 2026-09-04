@@ -463,7 +463,7 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && !is127Cape && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
