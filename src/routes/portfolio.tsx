@@ -590,7 +590,7 @@ function RentalTab() {
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Consolidado</h3>
         <div className="mt-4 grid sm:grid-cols-2 gap-3">
           <Box label={`Ingreso total ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
-          <Box label={`Ingreso total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
+          <Box label={`Total acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
         </div>
       </div>
 
@@ -659,10 +659,10 @@ function ForSaleTab() {
               </div>
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 space-y-2 text-sm">
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Purchase price</span><span className="font-semibold">{formatUSD(60000)}</span></div>
-                <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (8%)</span><span className="font-semibold">({formatUSD(4800)})</span></div>
-                <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(55200)}</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (2%)</span><span className="font-semibold">({formatUSD(1200)})</span></div>
+                <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(58800)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(50000)}</span></div>
-                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">10.40%</span></div>
+                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">17.60%</span></div>
               </div>
               {r.project_id && (
                 <Button asChild size="sm" variant="outline" className="mt-4 w-full">
