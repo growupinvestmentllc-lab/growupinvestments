@@ -493,9 +493,6 @@ function RentalTab() {
         const expenses = e
           ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0)
           : 0;
-        const accum = visibleEntries
-          .filter((x) => x.property_id === p.id && x.year === year && x.month <= month)
-          .reduce((s, x) => s + Number(x.income_rent || 0) + Number(x.income_other || 0), 0);
 
         return (
           <div key={p.id} className="card-soft p-6">
