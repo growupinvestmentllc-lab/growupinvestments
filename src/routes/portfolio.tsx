@@ -413,8 +413,6 @@ function RentalTab() {
   }, [entries]);
 
   const active = visibleProps.filter((p) => p.status !== "vacante");
-  const grossMonthly = active.reduce((s, p) => s + Number(p.monthly_rent || 0), 0);
-  const noiMonthly = active.reduce((s, p) => s + (Number(p.monthly_rent || 0) - Number(p.monthly_expenses || 0)), 0);
 
   const visibleEntries = useMemo(
     () => entries.filter((e) => visibleProps.some((p) => p.id === e.property_id)),
@@ -460,7 +458,6 @@ function RentalTab() {
 
       {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
-        const noi = Number(p.monthly_rent || 0) - Number(p.monthly_expenses || 0);
         const e = periodEntries.find((x) => x.property_id === p.id);
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
@@ -489,7 +486,12 @@ function RentalTab() {
                     <InfoRow label="Inquilino" value={p.tenant_name || "Sin inquilino"} />
                     {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
                     {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
-                    {p.owner_name && <InfoRow label="Propietarios" value={p.owner_name} />}
+                    {(() => {
+                      const mine = ownerships
+                        .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
+                        .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
+                      return mine ? <InfoRow label="Tu participación" value={`${mine.llc_name} (${mine.percentage}%)`} /> : null;
+                    })()}
                   </dl>
                 </div>
                 <div className="p-4">
@@ -518,18 +520,6 @@ function RentalTab() {
               <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
             </div>
 
-            {p.project_id && (
-              <OwnershipPanel
-                ownerships={ownerships.filter((o) => o.project_id === p.project_id)}
-                myLlc={myLlc}
-                stage="alquiler"
-                amounts={[
-                  { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
-                  { label: "NOI anual estimado", value: noi * 12 },
-                  { label: "Resultado neto del período", value: income - expenses },
-                ]}
-              />
-            )}
 
 
             <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
