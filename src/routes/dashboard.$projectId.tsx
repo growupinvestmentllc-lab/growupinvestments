@@ -471,6 +471,7 @@ function ProjectDetail() {
                     ? `Tu participación ${myPct}% = ${formatUSD(totalCost * (myPct / 100))}`
                     : undefined}
                 />
+                )}
               </div>
               )}
             </div>
