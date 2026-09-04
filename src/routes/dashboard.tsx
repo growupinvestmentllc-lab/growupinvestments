@@ -105,12 +105,13 @@ function Dashboard() {
         list.map(async (proj) => {
           const { data: stages } = await supabase
             .from("project_stages")
-            .select("completed,active,stage_name")
+            .select("completed,active,stage_name,stage_group")
             .eq("project_id", proj.id);
           const total = ALL_STAGES.length;
           const done = (stages ?? []).filter((s) => s.completed).length;
           const active = (stages ?? []).find((s) => s.active);
           let activeStage = active?.stage_name ?? "Por iniciar";
+          if (active?.stage_group?.startsWith("CO")) activeStage = active.stage_group;
           if (
             proj.address.toLowerCase().includes("365") &&
             proj.address.toLowerCase().includes("progress")
