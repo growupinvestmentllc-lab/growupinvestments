@@ -497,7 +497,7 @@ function RentalTab() {
                     Costos anuales
                   </p>
                   <dl className="mt-2 space-y-1.5 text-sm">
-                    <InfoRow label="Impuestos" value={formatUSD((p as any).property_tax_annual)} />
+                    <InfoRow label="Impuesto a la propiedad anual" value={formatUSD((p as any).property_tax_annual)} />
                     <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
                     <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
                     {(p as any).cap_rate && (
