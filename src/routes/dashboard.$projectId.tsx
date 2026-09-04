@@ -158,6 +158,7 @@ function ProjectDetail() {
   const constructionLabelTotal = constructionBase + steamwallLabel;
   const normalizedAddress = project?.address?.toLowerCase() ?? "";
   const is472Rajah = normalizedAddress.includes("472") && normalizedAddress.includes("rajah");
+  const is568Cypress = normalizedAddress.includes("568") && normalizedAddress.includes("cypress");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
   const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
   const totalCost =
@@ -434,6 +435,7 @@ function ProjectDetail() {
                     : undefined}
                   className="min-h-[140px] py-6"
                 />
+                {!is568Cypress && (
                 <StatCard
                   label="Lote"
                   value={formatUSD(project.lot_cost)}
@@ -441,6 +443,7 @@ function ProjectDetail() {
                     ? `Tu participación ${myPct}% = ${formatUSD((Number(project.lot_cost) || 0) * (myPct / 100))}`
                     : undefined}
                 />
+                )}
                 {is2812 && (
                   <StatCard
                     label="Gastos de contingencias"
@@ -459,6 +462,7 @@ function ProjectDetail() {
                     <p className="text-lg font-bold text-foreground">{formatUSD(1000)}</p>
                   </StatCard>
                 )}
+                {!is568Cypress && (
                 <StatCard
                   label="Costo Total"
                   value={formatUSD(totalCost)}
@@ -467,6 +471,7 @@ function ProjectDetail() {
                     ? `Tu participación ${myPct}% = ${formatUSD(totalCost * (myPct / 100))}`
                     : undefined}
                 />
+                )}
               </div>
               )}
             </div>
@@ -492,7 +497,7 @@ function ProjectDetail() {
                     <Stat dark label="Costo construcción" value={formatUSD(is2446 || is2434 ? constructionTotal : project.construction_cost)} />
                   </>
                 )}
-                {!is14Trout && !is5963Virtudes && !is448Rajah && (
+                {!is14Trout && !is5963Virtudes && !is448Rajah && !is568Cypress && (
                   <Stat
                     dark
                     label={
@@ -505,7 +510,7 @@ function ProjectDetail() {
                     value={formatUSD(project.lot_cost)}
                   />
                 )}
-                {is127Cape ? (
+                {is568Cypress ? null : is127Cape ? (
                   <Stat dark label="ROI estimado" value="14.29%" />
                 ) : is35SW ? (
                   <Stat dark label="ROI estimado" value="17.60%" />
