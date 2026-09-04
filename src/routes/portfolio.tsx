@@ -523,18 +523,6 @@ function RentalTab() {
               <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
             </div>
 
-            {p.project_id && (
-              <OwnershipPanel
-                ownerships={ownerships.filter((o) => o.project_id === p.project_id)}
-                myLlc={myLlc}
-                stage="alquiler"
-                amounts={[
-                  { label: "Alquiler mensual", value: Number(p.monthly_rent || 0) },
-                  { label: "NOI anual estimado", value: noi * 12 },
-                  { label: "Resultado neto del período", value: income - expenses },
-                ]}
-              />
-            )}
 
 
             <div className="mt-5 rounded-xl border border-border bg-muted/30 p-4">
