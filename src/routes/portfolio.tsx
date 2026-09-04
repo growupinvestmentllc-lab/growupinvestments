@@ -362,7 +362,17 @@ function RentalTab() {
       const { data: p } = await db.from("rental_properties").select("*").order("sort_order");
       setProps(p ?? []);
       const { data: e } = await db.from("rental_monthly_entries").select("*");
-      setEntries(e ?? []);
+      const list = e ?? [];
+      setEntries(list);
+      // Posicionar el período en el último mes con datos cargados
+      const withData = list.filter((x: Entry) => entryNoi(x) !== 0 || Number(x.income_rent || 0) !== 0);
+      if (withData.length) {
+        const last = withData.reduce((a: Entry, b: Entry) =>
+          b.year * 12 + b.month > a.year * 12 + a.month ? b : a,
+        );
+        setYear(last.year);
+        setMonth(last.month);
+      }
     })();
   }, []);
 
