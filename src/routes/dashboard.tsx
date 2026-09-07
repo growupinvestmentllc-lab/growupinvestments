@@ -275,6 +275,7 @@ function Dashboard() {
             )}
             {opps.map((o) => {
               const isLot = o.status?.trim().toLowerCase() === "lote disponible";
+              const is329 = o.name?.includes("329") || o.location?.includes("329");
               return (
                 <div key={o.id} className="card-soft overflow-hidden flex flex-col">
                   {o.image_url ? (
@@ -299,13 +300,14 @@ function Dashboard() {
                           Lote disponible. Juntos elegiremos el modelo de casa que más se adecue a tus necesidades.
                         </p>
                       </div>
-                    ) : o.name?.includes("329") || o.location?.includes("329") ? (
+                    ) : is329 ? (
                       <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
                         <p className="text-xs text-foreground leading-relaxed">
                           Lote + modelo de casa ya permisada y aprobada, lista para comenzar la construcción.
                         </p>
                       </div>
-                    ) : (
+                    ) : null}
+                    {!isLot && (
                       <>
                         {(o.model || o.sqft_total || o.sqft_living || o.bedrooms || o.bathrooms || o.garage || o.builder || o.architect) && (
                           <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
