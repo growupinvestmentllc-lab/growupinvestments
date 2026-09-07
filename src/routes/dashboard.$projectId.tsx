@@ -497,7 +497,7 @@ function ProjectDetail() {
                     <Stat dark label="Costo total" value={formatUSD(totalCost)} />
                   </>
                 )}
-                {!is14Trout && !is5963Virtudes && !is448Rajah && !is568Cypress && (
+                {!is14Trout && !is5963Virtudes && !is448Rajah && (
                   <Stat
                     dark
                     label={
