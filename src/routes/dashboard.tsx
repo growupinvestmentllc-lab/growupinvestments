@@ -273,62 +273,76 @@ function Dashboard() {
                 No hay oportunidades disponibles.
               </p>
             )}
-            {opps.map((o) => (
-              <div key={o.id} className="card-soft overflow-hidden flex flex-col">
-                {o.image_url ? (
-                  <img src={o.image_url} alt={o.name} className="w-full h-40 object-cover" />
-                ) : (
-                  <div className="w-full h-40 bg-secondary/40 flex items-center justify-center text-secondary-foreground">
-                    <Home className="h-8 w-8" />
-                  </div>
-                )}
-                <div className="p-5 flex-1 flex flex-col">
-                  <span className="self-start text-xs font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
-                    {o.status}
-                  </span>
-                  <h3 className="mt-2 font-semibold text-foreground">{o.name}</h3>
-                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <MapPin className="h-3 w-3" />
-                    {o.location}
-                  </p>
-                  {(o.model || o.sqft_total || o.sqft_living || o.bedrooms || o.bathrooms || o.garage || o.builder || o.architect) && (
-                    <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
-                      <p className="text-xs font-semibold text-foreground mb-2">Especificaciones</p>
-                      <div className="grid grid-cols-2 gap-2 text-xs">
-                        {o.model && <SpecItem label="Modelo" value={o.model} />}
-                        {o.sqft_total && <SpecItem label="Sqft total" value={`${o.sqft_total.toLocaleString()} sqft`} />}
-                        {o.sqft_living && <SpecItem label="Sqft living" value={`${o.sqft_living.toLocaleString()} sqft`} />}
-                        {o.bedrooms != null && <SpecItem label="Habitaciones" value={String(o.bedrooms)} />}
-                        {o.bathrooms != null && <SpecItem label="Baños" value={String(o.bathrooms)} />}
-                        {o.garage && <SpecItem label="Garage" value={o.garage === "Yes" ? "SI" : o.garage} />}
-                        {o.builder && <SpecItem label="Constructor" value={o.builder} />}
-                        {o.architect && <SpecItem label="Arquitecto" value={o.architect} />}
-                      </div>
+            {opps.map((o) => {
+              const isLot = o.status?.trim().toLowerCase() === "lote disponible";
+              return (
+                <div key={o.id} className="card-soft overflow-hidden flex flex-col">
+                  {o.image_url ? (
+                    <img src={o.image_url} alt={o.name} className="w-full h-40 object-cover" />
+                  ) : (
+                    <div className="w-full h-40 bg-secondary/40 flex items-center justify-center text-secondary-foreground">
+                      <Home className="h-8 w-8" />
                     </div>
                   )}
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <p className="text-xs text-muted-foreground">ROI esperado</p>
-                      <p className="font-semibold text-primary">{o.expected_roi}%</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Inversión</p>
-                      <p className="font-semibold text-foreground">
-                        {formatUSD(o.total_investment)}
-                      </p>
-                    </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <span className="self-start text-xs font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
+                      {o.status}
+                    </span>
+                    <h3 className="mt-2 font-semibold text-foreground">{o.name}</h3>
+                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <MapPin className="h-3 w-3" />
+                      {o.location}
+                    </p>
+                    {isLot ? (
+                      <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
+                        <p className="text-xs text-foreground leading-relaxed">
+                          Lote disponible para elegir el modelo de casa que más se adecue a tus necesidades.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        {(o.model || o.sqft_total || o.sqft_living || o.bedrooms || o.bathrooms || o.garage || o.builder || o.architect) && (
+                          <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
+                            <p className="text-xs font-semibold text-foreground mb-2">Especificaciones</p>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              {o.model && <SpecItem label="Modelo" value={o.model} />}
+                              {o.sqft_total && <SpecItem label="Sqft total" value={`${o.sqft_total.toLocaleString()} sqft`} />}
+                              {o.sqft_living && <SpecItem label="Sqft living" value={`${o.sqft_living.toLocaleString()} sqft`} />}
+                              {o.bedrooms != null && <SpecItem label="Habitaciones" value={String(o.bedrooms)} />}
+                              {o.bathrooms != null && <SpecItem label="Baños" value={String(o.bathrooms)} />}
+                              {o.garage && <SpecItem label="Garage" value={o.garage === "Yes" ? "SI" : o.garage} />}
+                              {o.builder && <SpecItem label="Constructor" value={o.builder} />}
+                              {o.architect && <SpecItem label="Arquitecto" value={o.architect} />}
+                            </div>
+                          </div>
+                        )}
+                        <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                          <div>
+                            <p className="text-xs text-muted-foreground">ROI esperado</p>
+                            <p className="font-semibold text-primary">{o.expected_roi}%</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-muted-foreground">Inversión</p>
+                            <p className="font-semibold text-foreground">
+                              {formatUSD(o.total_investment)}
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                    <div className="flex-1" />
+                    <Button asChild className="mt-5">
+                      <Link
+                        to="/contact"
+                        search={{ opportunity_id: o.id, opportunity_name: o.name }}
+                      >
+                        {isLot ? "Consultar" : "Quiero saber más"} <ArrowRight className="h-3 w-3" />
+                      </Link>
+                    </Button>
                   </div>
-                  <Button asChild className="mt-5">
-                    <Link
-                      to="/contact"
-                      search={{ opportunity_id: o.id, opportunity_name: o.name }}
-                    >
-                      Quiero saber más <ArrowRight className="h-3 w-3" />
-                    </Link>
-                  </Button>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </section>
         )}
