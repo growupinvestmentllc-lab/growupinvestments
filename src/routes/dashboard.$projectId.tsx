@@ -162,7 +162,7 @@ function ProjectDetail() {
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
   const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
   const totalCost =
-    constructionTotal + (Number(project?.lot_cost) || 0) + (is621Flamingo ? 3500 : 0) || Number(project?.total_cost) || 0;
+    Number(project?.total_cost) || constructionTotal + (Number(project?.lot_cost) || 0) + (is621Flamingo ? 3500 : 0) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   const pending = totalCost - deposited;
   const overDeposited = deposited > totalCost && totalCost > 0;
