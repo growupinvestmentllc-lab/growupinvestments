@@ -296,7 +296,7 @@ function Dashboard() {
                     {isLot ? (
                       <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
                         <p className="text-xs text-foreground leading-relaxed">
-                          Lote disponible para elegir el modelo de casa que más se adecue a tus necesidades.
+                          Lote + modelo de casa ya permisada y aprobada, lista para comenzar la construcción.
                         </p>
                       </div>
                     ) : (
