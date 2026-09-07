@@ -203,16 +203,16 @@ function Dashboard() {
               </div>
               <div className="p-5">
                 <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
-                      {p.status}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`inline-flex items-center text-xs font-medium px-2 py-1 rounded-full ${p.status === "En construcción" ? "bg-status-construction text-status-construction-foreground" : "bg-secondary text-secondary-foreground"}`}>
+                    {p.status}
+                  </span>
+                  {p.myPct != null && (
+                    <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-participation text-participation-foreground">
+                      Tu participación: {p.myPct}%
                     </span>
-                    {p.myPct != null && (
-                      <span className="inline-flex items-center text-xs font-medium px-2 py-1 rounded-full bg-orange-100 text-orange-800">
-                        Tu participación: {p.myPct}%
-                      </span>
-                    )}
-                  </div>
+                  )}
+                </div>
                   <Link
                     to="/dashboard/$projectId"
                     params={{ projectId: p.id }}
