@@ -510,7 +510,9 @@ function ProjectDetail() {
                     value={formatUSD(project.lot_cost)}
                   />
                 )}
-                {is568Cypress ? null : is127Cape ? (
+                {is568Cypress ? (
+                  <Stat dark label="ROI estimado" value={`${totalCost ? (((Number(project.expected_sale_price) - totalCost) / totalCost) * 100).toFixed(1) : 0}%`} />
+                ) : is127Cape ? (
                   <Stat dark label="ROI estimado" value="14.29%" />
                 ) : is35SW ? (
                   <Stat dark label="ROI estimado" value="17.60%" />
