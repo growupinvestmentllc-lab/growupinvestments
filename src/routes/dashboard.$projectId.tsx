@@ -335,6 +335,7 @@ function ProjectDetail() {
                     }
                   />
                 </div>
+                )}
               </div>
             )}
 
