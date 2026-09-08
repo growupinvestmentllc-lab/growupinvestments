@@ -161,20 +161,22 @@ function ProjectDetail() {
   const is568Cypress = normalizedAddress.includes("568") && normalizedAddress.includes("cypress");
   const is365Progress = normalizedAddress.includes("365") && normalizedAddress.includes("progress");
   const is621Flamingo = normalizedAddress.includes("621") && normalizedAddress.includes("flamingo");
+  const is1153Chalmer = normalizedAddress.includes("1153") && normalizedAddress.includes("chalmer");
   const totalCost =
     Number(project?.total_cost) || constructionTotal + (Number(project?.lot_cost) || 0) + (is621Flamingo ? 3500 : 0) || 0;
   const deposited = Number(project?.amount_deposited) || 0;
   const pending = totalCost - deposited;
   const overDeposited = deposited > totalCost && totalCost > 0;
   const activeStageLabel =
-
-    is365Progress
-      ? "Colocando trusses"
-      : activeStage?.stage_group?.startsWith("CO")
-        ? activeStage.stage_group
-        : progress >= 100
-          ? "Finalizada"
-          : activeStage?.stage_name ?? "Finalizada";
+    is1153Chalmer
+      ? "Obra 100% completada y entregada"
+      : is365Progress
+        ? "Colocando trusses"
+        : activeStage?.stage_group?.startsWith("CO")
+          ? activeStage.stage_group
+          : progress >= 100
+            ? "Finalizada"
+            : activeStage?.stage_name ?? "Finalizada";
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
