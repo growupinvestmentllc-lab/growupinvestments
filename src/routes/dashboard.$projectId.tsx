@@ -294,13 +294,14 @@ function ProjectDetail() {
                 </div>
               </div>
             ) : (
-              <div className="grid lg:grid-cols-3 gap-5">
-                <div className="card-soft p-6 lg:col-span-1 flex flex-col items-center justify-center">
+              <div className={is2217Embers ? "grid gap-5" : "grid lg:grid-cols-3 gap-5"}>
+                <div className={`card-soft p-6 flex flex-col items-center justify-center ${is2217Embers ? "" : "lg:col-span-1"}`}>
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                   <ProgressCircle value={progress} />
                   <p className="mt-3 text-sm text-muted-foreground text-center">Etapa actual</p>
                   <p className="text-base font-semibold text-foreground text-center">{activeStageLabel}</p>
                 </div>
+                {!is2217Embers && (
                 <div className="card-soft p-6 lg:col-span-2">
                   <GanttChart
                     stages={stages}
@@ -334,6 +335,7 @@ function ProjectDetail() {
                     }
                   />
                 </div>
+                )}
               </div>
             )}
 
