@@ -152,7 +152,8 @@ function Dashboard() {
         return 2;
       };
       enriched.sort((a, b) => rank(a.address) - rank(b.address));
-      setProjects(enriched);
+      const visibleProjects = role === "admin" ? enriched : enriched.filter((p) => p.myPct != null);
+      setProjects(visibleProjects);
       const { data: pr } = await supabase
         .from("profiles")
         .select("full_name,llc_name")
