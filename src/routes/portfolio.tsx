@@ -754,11 +754,17 @@ function ForSaleTab() {
 /* ------------------------------ TAB 4: VENDIDAS ----------------------------- */
 
 function SoldTab() {
+  const { user, role } = useAuth();
   const [rows, setRows] = useState<any[]>([]);
   useEffect(() => {
     db.from("portfolio_sold").select("*").order("sale_date", { ascending: false }).then(({ data }: any) => setRows(data ?? []));
   }, []);
-  if (rows.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
+  const isAdmin = role === "admin";
+  const visibleRows = useMemo(() => {
+    if (isAdmin) return rows;
+    return rows.filter((r) => r.investor_id === user?.id);
+  }, [rows, user, isAdmin]);
+  if (visibleRows.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
       {rows.map((r) => {
