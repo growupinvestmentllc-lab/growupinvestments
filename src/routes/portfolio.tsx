@@ -767,7 +767,7 @@ function SoldTab() {
   if (visibleRows.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
-      {rows.map((r) => {
+      {visibleRows.map((r) => {
         const base = Number(r.cost_base || 0);
         const roi = base ? ((Number(r.sale_price || 0) - base) / base) * 100 : null;
         const is127Cape = (r.address ?? "").toLowerCase().includes("127 nw 24th");
