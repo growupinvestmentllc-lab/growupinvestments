@@ -640,11 +640,17 @@ function fmtDate(d: string) {
 /* ----------------------------- TAB 3: A LA VENTA ---------------------------- */
 
 function ForSaleTab() {
+  const { user, role } = useAuth();
   const [rows, setRows] = useState<any[]>([]);
   useEffect(() => {
     db.from("portfolio_for_sale").select("*").order("created_at").then(({ data }: any) => setRows(data ?? []));
   }, []);
-  if (rows.length === 0) return <p className="text-muted-foreground text-center py-12">No hay propiedades a la venta.</p>;
+  const isAdmin = role === "admin";
+  const visibleRows = useMemo(() => {
+    if (isAdmin) return rows;
+    return rows.filter((r) => r.investor_id === user?.id);
+  }, [rows, user, isAdmin]);
+  if (visibleRows.length === 0) return <p className="text-muted-foreground text-center py-12">No hay propiedades a la venta.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
       {rows.map((r) => {
