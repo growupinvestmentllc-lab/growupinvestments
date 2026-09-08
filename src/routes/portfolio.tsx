@@ -150,6 +150,7 @@ function Box({ label, value, tone }: { label: string; value: string; tone?: "mut
 
 function ConstructionTab() {
   const { rows: ownerships, myLlc } = useOwnerships();
+  const { role, user } = useAuth();
   const [rows, setRows] = useState<
     (Project & { progress: number; stage: string; deposited: number; pending: number })[]
   >([]);
@@ -210,7 +211,23 @@ function ConstructionTab() {
     })();
   }, []);
 
-  const totals = rows.reduce(
+  const isAdmin = role === "admin";
+  const visibleRows = useMemo(() => {
+    if (isAdmin || !myLlc) return rows;
+    const mine = new Set(
+      ownerships
+        .filter(
+          (o) =>
+            o.llc_name.toUpperCase() === myLlc.toUpperCase() &&
+            o.stage === "construccion" &&
+            !o.to_date,
+        )
+        .map((o) => o.project_id),
+    );
+    return rows.filter((r) => mine.has(r.id));
+  }, [rows, ownerships, myLlc, isAdmin]);
+
+  const totals = visibleRows.reduce(
     (acc, r) => {
       const contract = contractValue(r);
       const sale = salePrice(r);
@@ -225,13 +242,13 @@ function ConstructionTab() {
   const totalGain = totals.sale - totals.contract;
   const totalRoi = totals.contract ? (totalGain / totals.contract) * 100 : 0;
 
-  if (rows.length === 0) {
+  if (visibleRows.length === 0) {
     return <p className="text-muted-foreground text-center py-12">No hay propiedades en construcción.</p>;
   }
 
   return (
     <div className="space-y-5">
-      {rows.map((r) => {
+      {visibleRows.map((r) => {
         const contract = contractValue(r);
         const sale = salePrice(r);
         const gain = sale - contract;
