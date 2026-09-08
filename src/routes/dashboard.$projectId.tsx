@@ -346,7 +346,7 @@ function ProjectDetail() {
               <StatCard
                 label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total depositado (tu inversión)" : "Total depositado"}
                 value={formatUSD(
-                  myInvestment
+                  myInvestment && !is621Flamingo
                     ? Number(myInvestment.total_deposited)
                     : deposited,
                 )}
@@ -362,7 +362,7 @@ function ProjectDetail() {
               <StatCard
                 label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total pendiente (tu inversión)" : "Total pendiente"}
                 value={formatUSD(
-                  myInvestment
+                  myInvestment && !is621Flamingo
                     ? Number(myInvestment.total_pending)
                     : pending,
                 )}
