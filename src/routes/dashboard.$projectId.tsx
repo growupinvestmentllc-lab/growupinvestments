@@ -346,19 +346,15 @@ function ProjectDetail() {
               <StatCard
                 label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total depositado (tu inversión)" : "Total depositado"}
                 value={formatUSD(
-                  is621Flamingo
-                    ? deposited
-                    : myInvestment
-                      ? Number(myInvestment.total_deposited)
-                      : deposited,
+                  myInvestment
+                    ? Number(myInvestment.total_deposited)
+                    : deposited,
                 )}
                 accent="primary"
                 sub={
                   hasMultipleOwners && myPct != null && !is621Flamingo
                     ? `Tu participación ${myPct}% = ${formatUSD(
-                        is621Flamingo
-                          ? (Number(myInvestment?.total_deposited) || 0)
-                          : (Number(myInvestment?.total_deposited) || 0),
+                        Number(myInvestment?.total_deposited) || 0,
                       )}`
                     : undefined
                 }
@@ -366,19 +362,15 @@ function ProjectDetail() {
               <StatCard
                 label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total pendiente (tu inversión)" : "Total pendiente"}
                 value={formatUSD(
-                  is621Flamingo
-                    ? 25000
-                    : myInvestment
-                      ? Number(myInvestment.total_pending)
-                      : pending,
+                  myInvestment
+                    ? Number(myInvestment.total_pending)
+                    : pending,
                 )}
                 accent="muted"
                 sub={
                   hasMultipleOwners && myPct != null && !is621Flamingo
                     ? `Tu participación ${myPct}% = ${formatUSD(
-                        is621Flamingo
-                          ? (Number(myInvestment?.total_pending) || 0)
-                          : (Number(myInvestment?.total_pending) || 0),
+                        Number(myInvestment?.total_pending) || 0,
                       )}`
                     : undefined
                 }
