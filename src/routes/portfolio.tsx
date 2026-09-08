@@ -653,7 +653,7 @@ function ForSaleTab() {
   if (visibleRows.length === 0) return <p className="text-muted-foreground text-center py-12">No hay propiedades a la venta.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
-      {rows.map((r) => {
+      {visibleRows.map((r) => {
         const base = Number(r.cost_base || 0);
         const roi = base ? ((Number(r.listing_price || 0) - base) / base) * 100 : 0;
         const is2812 = (r.address ?? "").toLowerCase().includes("2812");
