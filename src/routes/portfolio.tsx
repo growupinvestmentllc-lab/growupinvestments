@@ -216,17 +216,19 @@ function ConstructionTab() {
   const isAdmin = role === "admin";
   const visibleRows = useMemo(() => {
     if (isAdmin || !myLlc) return rows;
-    const mine = new Set(
+    // Todos los proyectos "En construcción" visibles para el inversor,
+    // salvo que su LLC ya los tenga en otra etapa (venta / alquiler).
+    const otherStage = new Set(
       ownerships
         .filter(
           (o) =>
             o.llc_name.toUpperCase() === myLlc.toUpperCase() &&
-            o.stage === "construccion" &&
+            o.stage !== "construccion" &&
             !o.to_date,
         )
         .map((o) => o.project_id),
     );
-    return rows.filter((r) => mine.has(r.id));
+    return rows.filter((r) => !otherStage.has(r.id));
   }, [rows, ownerships, myLlc, isAdmin]);
 
   const totals = visibleRows.reduce(
