@@ -81,6 +81,8 @@ type Entry = {
   expense_admin: number;
   expense_repairs: number;
   expense_other: number;
+  expense_insurance?: number;
+  expense_taxes?: number;
 };
 
 function PortfolioPage() {
@@ -370,7 +372,8 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 function entryNoi(e: Entry) {
   return (
     Number(e.income_rent || 0) + Number(e.income_other || 0) -
-    Number(e.expense_admin || 0) - Number(e.expense_repairs || 0) - Number(e.expense_other || 0)
+    Number(e.expense_admin || 0) - Number(e.expense_repairs || 0) - Number(e.expense_other || 0) -
+    Number(e.expense_insurance || 0) - Number(e.expense_taxes || 0)
   );
 }
 
@@ -515,7 +518,8 @@ function RentalTab() {
         const e = periodEntries.find((x) => x.property_id === p.id);
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
-          ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0)
+          ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0) +
+            Number(e.expense_insurance || 0) + Number(e.expense_taxes || 0)
           : 0;
 
         return (
@@ -582,6 +586,8 @@ function RentalTab() {
                 <div>
                   <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Egresos</p>
                   <Row label="Management fee" value={e ? Number(e.expense_admin || 0) : 0} />
+                  <Row label="Seguro (Insurance)" value={e ? Number(e.expense_insurance || 0) : 0} />
+                  <Row label="Impuestos / Taxes" value={e ? Number(e.expense_taxes || 0) : 0} />
                   <Row label="Reparaciones" value={e ? Number(e.expense_repairs || 0) : 0} />
                   <Row label="Otros" value={e ? Number(e.expense_other || 0) : 0} />
                   <Row label="Total egresos" value={expenses} strong />

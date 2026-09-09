@@ -769,8 +769,10 @@ export type Database = {
         Row: {
           created_at: string
           expense_admin: number
+          expense_insurance: number
           expense_other: number
           expense_repairs: number
+          expense_taxes: number
           id: string
           income_other: number
           income_rent: number
@@ -781,8 +783,10 @@ export type Database = {
         Insert: {
           created_at?: string
           expense_admin?: number
+          expense_insurance?: number
           expense_other?: number
           expense_repairs?: number
+          expense_taxes?: number
           id?: string
           income_other?: number
           income_rent?: number
@@ -793,8 +797,10 @@ export type Database = {
         Update: {
           created_at?: string
           expense_admin?: number
+          expense_insurance?: number
           expense_other?: number
           expense_repairs?: number
+          expense_taxes?: number
           id?: string
           income_other?: number
           income_rent?: number
