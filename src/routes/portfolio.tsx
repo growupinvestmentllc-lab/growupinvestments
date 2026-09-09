@@ -387,11 +387,17 @@ function RentalTab() {
   const [year, setYear] = useState(now.getFullYear());
   const [props, setProps] = useState<Rental[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [rentedProjects, setRentedProjects] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
       const { data: p } = await db.from("rental_properties").select("*").order("sort_order");
       setProps(p ?? []);
+      const { data: rp } = await db
+        .from("projects")
+        .select("id,address,status,expected_rent_price,estimated_sale_price,expected_sale_price")
+        .in("status", ["Alquilada", "En venta con opción de alquiler"]);
+      setRentedProjects((rp ?? []).filter((x: any) => x.address !== "Nueva propiedad"));
       const { data: e } = await db.from("rental_monthly_entries").select("*");
       const list = e ?? [];
       setEntries(list);
