@@ -146,10 +146,15 @@ function Dashboard() {
       );
       const rank = (addr: string) => {
         const a = addr.toLowerCase();
-        if (a.includes("7305")) return 0;
-        if (a.includes("2725")) return 1;
+        if (a.includes("5963")) return 0;
+        if (a.includes("14") && a.includes("trout")) return 1;
+        if (a.includes("5747")) return 2;
+        if (a.includes("4309")) return 3;
+        if (a.includes("925")) return 4;
+        if (a.includes("7305")) return 5;
+        if (a.includes("2725")) return 6;
         if (a.includes("365") && a.includes("progress")) return 99;
-        return 2;
+        return 7;
       };
       enriched.sort((a, b) => rank(a.address) - rank(b.address));
       setProjects(enriched);
