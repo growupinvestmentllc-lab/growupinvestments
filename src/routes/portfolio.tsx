@@ -521,9 +521,38 @@ function RentalTab() {
         </Select>
       </div>
 
-      {visibleProps.length === 0 && (
+      {visibleProps.length === 0 && extraRented.length === 0 && (
         <p className="text-muted-foreground text-center py-12">No hay propiedades en alquiler.</p>
       )}
+
+      {extraRented.length > 0 && (
+        <div className="grid sm:grid-cols-2 gap-5">
+          {extraRented.map((p) => (
+            <div key={p.id} className="card-soft p-6">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+                  🏠 {p.status}
+                </span>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Box label="Alquiler estimado mensual" value={p.expected_rent_price ? formatUSD(p.expected_rent_price) : "—"} />
+                <Box
+                  label="Precio estimado de venta"
+                  value={p.estimated_sale_price || p.expected_sale_price ? formatUSD(p.estimated_sale_price ?? p.expected_sale_price) : "—"}
+                  tone="muted"
+                />
+              </div>
+              <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+                <Link to="/dashboard/$projectId" params={{ projectId: p.id }}>
+                  Ver proyecto <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
 
       {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
