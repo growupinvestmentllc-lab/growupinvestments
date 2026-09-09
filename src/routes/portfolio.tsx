@@ -434,6 +434,14 @@ function RentalTab() {
     });
   }, [props, ownerships, myRentalProjectIds, isAdmin, user]);
 
+  // Propiedades alquiladas visibles en "Mis Proyectos" que todavía no tienen
+  // una ficha de alquiler cargada: se muestran como acceso directo.
+  const extraRented = useMemo(() => {
+    const covered = new Set(visibleProps.map((p) => p.project_id).filter(Boolean));
+    return rentedProjects.filter((p) => !covered.has(p.id));
+  }, [rentedProjects, visibleProps]);
+
+
   const years = useMemo(() => {
     const set = new Set<number>([now.getFullYear(), now.getFullYear() - 1, now.getFullYear() + 1]);
     entries.forEach((e) => set.add(e.year));
