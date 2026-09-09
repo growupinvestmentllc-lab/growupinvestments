@@ -502,7 +502,7 @@ function RentalTab() {
   return (
     <div className="space-y-6">
       <div className="max-w-xs">
-        <Box label="Propiedades activas" value={String(active.length)} />
+        <Box label="Propiedades activas" value={String(active.length + extraRented.length)} />
       </div>
 
       <div className="flex items-center gap-3 flex-wrap">
