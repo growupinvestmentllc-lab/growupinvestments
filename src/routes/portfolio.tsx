@@ -216,17 +216,19 @@ function ConstructionTab() {
   const isAdmin = role === "admin";
   const visibleRows = useMemo(() => {
     if (isAdmin || !myLlc) return rows;
-    const mine = new Set(
+    // Todos los proyectos "En construcción" visibles para el inversor,
+    // salvo que su LLC ya los tenga en otra etapa (venta / alquiler).
+    const otherStage = new Set(
       ownerships
         .filter(
           (o) =>
             o.llc_name.toUpperCase() === myLlc.toUpperCase() &&
-            o.stage === "construccion" &&
+            o.stage !== "construccion" &&
             !o.to_date,
         )
         .map((o) => o.project_id),
     );
-    return rows.filter((r) => mine.has(r.id));
+    return rows.filter((r) => !otherStage.has(r.id));
   }, [rows, ownerships, myLlc, isAdmin]);
 
   const totals = visibleRows.reduce(
@@ -385,11 +387,17 @@ function RentalTab() {
   const [year, setYear] = useState(now.getFullYear());
   const [props, setProps] = useState<Rental[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
+  const [rentedProjects, setRentedProjects] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
       const { data: p } = await db.from("rental_properties").select("*").order("sort_order");
       setProps(p ?? []);
+      const { data: rp } = await db
+        .from("projects")
+        .select("id,address,status,expected_rent_price,estimated_sale_price,expected_sale_price")
+        .in("status", ["Alquilada", "En venta con opción de alquiler"]);
+      setRentedProjects((rp ?? []).filter((x: any) => x.address !== "Nueva propiedad"));
       const { data: e } = await db.from("rental_monthly_entries").select("*");
       const list = e ?? [];
       setEntries(list);
@@ -425,6 +433,14 @@ function RentalTab() {
       return false;
     });
   }, [props, ownerships, myRentalProjectIds, isAdmin, user]);
+
+  // Propiedades alquiladas visibles en "Mis Proyectos" que todavía no tienen
+  // una ficha de alquiler cargada: se muestran como acceso directo.
+  const extraRented = useMemo(() => {
+    const covered = new Set(visibleProps.map((p) => p.project_id).filter(Boolean));
+    return rentedProjects.filter((p) => !covered.has(p.id));
+  }, [rentedProjects, visibleProps]);
+
 
   const years = useMemo(() => {
     const set = new Set<number>([now.getFullYear(), now.getFullYear() - 1, now.getFullYear() + 1]);
@@ -505,9 +521,38 @@ function RentalTab() {
         </Select>
       </div>
 
-      {visibleProps.length === 0 && (
+      {visibleProps.length === 0 && extraRented.length === 0 && (
         <p className="text-muted-foreground text-center py-12">No hay propiedades en alquiler.</p>
       )}
+
+      {extraRented.length > 0 && (
+        <div className="grid sm:grid-cols-2 gap-5">
+          {extraRented.map((p) => (
+            <div key={p.id} className="card-soft p-6">
+              <div className="flex items-start justify-between gap-3 flex-wrap">
+                <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
+                <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+                  🏠 {p.status}
+                </span>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Box label="Alquiler estimado mensual" value={p.expected_rent_price ? formatUSD(p.expected_rent_price) : "—"} />
+                <Box
+                  label="Precio estimado de venta"
+                  value={p.estimated_sale_price || p.expected_sale_price ? formatUSD(p.estimated_sale_price ?? p.expected_sale_price) : "—"}
+                  tone="muted"
+                />
+              </div>
+              <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+                <Link to="/dashboard/$projectId" params={{ projectId: p.id }}>
+                  Ver proyecto <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
 
       {visibleProps.map((p) => {
         const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
@@ -655,18 +700,75 @@ function fmtDate(d: string) {
 
 function ForSaleTab() {
   const { user, role } = useAuth();
+  const { rows: ownerships, myLlc } = useOwnerships();
   const [rows, setRows] = useState<any[]>([]);
+  const [saleProjects, setSaleProjects] = useState<any[]>([]);
   useEffect(() => {
     db.from("portfolio_for_sale").select("*").order("created_at").then(({ data }: any) => setRows(data ?? []));
+    db.from("projects")
+      .select("id,address,status,total_cost,construction_cost,lot_cost,estimated_sale_price,expected_sale_price")
+      .in("status", ["A la venta", "En venta con opción de alquiler"])
+      .then(({ data }: any) =>
+        setSaleProjects((data ?? []).filter((p: any) => p.address !== "Nueva propiedad")),
+      );
   }, []);
   const isAdmin = role === "admin";
   const visibleRows = useMemo(() => {
     if (isAdmin) return rows;
     return rows.filter((r) => r.investor_id === user?.id);
   }, [rows, user, isAdmin]);
-  if (visibleRows.length === 0) return <p className="text-muted-foreground text-center py-12">No hay propiedades a la venta.</p>;
+
+  // Propiedades "A la venta" de Mis Proyectos que no tienen ficha cargada
+  const extraSale = useMemo(() => {
+    const covered = new Set(visibleRows.map((r) => r.project_id).filter(Boolean));
+    const sold = new Set(
+      ownerships
+        .filter(
+          (o) =>
+            myLlc &&
+            o.llc_name.toUpperCase() === myLlc.toUpperCase() &&
+            o.stage === "venta" &&
+            !o.to_date,
+        )
+        .map((o) => o.project_id),
+    );
+    return saleProjects.filter((p) => !covered.has(p.id) && !sold.has(p.id));
+  }, [saleProjects, visibleRows, ownerships, myLlc]);
+
+  if (visibleRows.length === 0 && extraSale.length === 0)
+    return <p className="text-muted-foreground text-center py-12">No hay propiedades a la venta.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
+      {extraSale.map((p) => {
+        const base = Number(p.total_cost ?? Number(p.construction_cost || 0) + Number(p.lot_cost || 0));
+        const price = Number(p.estimated_sale_price ?? p.expected_sale_price ?? 0);
+        const roi = base ? ((price - base) / base) * 100 : 0;
+        return (
+          <div key={p.id} className="card-soft p-6">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
+                🟠 En venta
+              </span>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <Box label="Precio de venta" value={price ? formatUSD(price) : "—"} />
+              <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />
+            </div>
+            {base > 0 && price > 0 && (
+              <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between">
+                <span className="text-xs uppercase tracking-wide opacity-80">ROI estimado</span>
+                <span className="text-xl font-bold">{roi.toFixed(2)}%</span>
+              </div>
+            )}
+            <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+              <Link to="/dashboard/$projectId" params={{ projectId: p.id }}>
+                Ver proyecto <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        );
+      })}
       {visibleRows.map((r) => {
         const base = Number(r.cost_base || 0);
         const roi = base ? ((Number(r.listing_price || 0) - base) / base) * 100 : 0;
