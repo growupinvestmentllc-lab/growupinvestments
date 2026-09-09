@@ -180,6 +180,9 @@ function ProjectDetail() {
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
+  const is2434Embers = projectId === "7c90af5f-39f4-428a-8cce-22db6ac3eadb" ||
+    project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb" ||
+    (normalizedAddress.includes("2434") && normalizedAddress.includes("embers"));
 
   // Investment record of the signed-in owner (per-owner financials)
   const myInvestment = useMemo(() => {
