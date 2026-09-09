@@ -468,6 +468,13 @@ function RentalTab() {
     .filter((e) => e.year === year && e.month <= month)
     .reduce((s, e) => s + ownerIncomeForEntry(e), 0);
 
+  // El % del consolidado sigue la participación real del propietario
+  const consolidatedPcts = Array.from(
+    new Set(visibleProps.map((p) => rentalPct(p.project_id ?? null))),
+  );
+  const consolidatedPctLabel = consolidatedPcts.length === 1 ? ` ${consolidatedPcts[0]}%` : "";
+
+
   const chartData = MONTHS.map((m, i) => ({
     mes: m.slice(0, 3),
     total: visibleEntries.filter((e) => e.year === year && e.month === i + 1).reduce((s, e) => s + ownerIncomeForEntry(e), 0),
@@ -598,8 +605,9 @@ function RentalTab() {
       <div className="card-soft p-6 bg-secondary/30 border-secondary">
         <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Consolidado</h3>
         <div className="mt-4 grid sm:grid-cols-2 gap-3">
-          <Box label={`Total ingreso propietario 50% ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
-          <Box label={`Total ingreso propietario 50% acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
+          <Box label={`Total ingreso propietario${consolidatedPctLabel} ${MONTHS[month - 1]} ${year}`} value={formatUSD(periodOwnerIncome)} />
+          <Box label={`Total ingreso propietario${consolidatedPctLabel} acumulado ${year}`} value={formatUSD(ytdOwnerIncome)} />
+
         </div>
       </div>
 
