@@ -180,6 +180,9 @@ function ProjectDetail() {
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
+  const is2434Embers = projectId === "7c90af5f-39f4-428a-8cce-22db6ac3eadb" ||
+    project?.id === "7c90af5f-39f4-428a-8cce-22db6ac3eadb" ||
+    (normalizedAddress.includes("2434") && normalizedAddress.includes("embers"));
 
   // Investment record of the signed-in owner (per-owner financials)
   const myInvestment = useMemo(() => {
@@ -296,14 +299,14 @@ function ProjectDetail() {
                 </div>
               </div>
             ) : (
-              <div className={is2217Embers ? "grid gap-5" : "grid lg:grid-cols-3 gap-5"}>
-                <div className={`card-soft p-6 flex flex-col items-center justify-center ${is2217Embers ? "" : "lg:col-span-1"}`}>
+              <div className={is2217Embers || is2434Embers ? "grid gap-5" : "grid lg:grid-cols-3 gap-5"}>
+                <div className={`card-soft p-6 flex flex-col items-center justify-center ${is2217Embers || is2434Embers ? "" : "lg:col-span-1"}`}>
                   <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                   <ProgressCircle value={progress} />
                   <p className="mt-3 text-sm text-muted-foreground text-center">Etapa actual</p>
                   <p className="text-base font-semibold text-foreground text-center">{activeStageLabel}</p>
                 </div>
-                {!is2217Embers && (
+                {!is2217Embers && !is2434Embers && (
                 <div className="card-soft p-6 lg:col-span-2">
                   <GanttChart
                     stages={stages}
