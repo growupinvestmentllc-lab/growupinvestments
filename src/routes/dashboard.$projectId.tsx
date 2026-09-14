@@ -346,7 +346,7 @@ function ProjectDetail() {
 
             {!is127 && <ConstructionProgressBar stages={stages} />}
 
-            {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && (
+            {!is127 && !is14Trout && !is5963Virtudes && (
             <div className="grid sm:grid-cols-2 gap-4">
               <StatCard
                 label={hasMultipleOwners && myInvestment && !is621Flamingo ? "Total depositado (tu inversión)" : "Total depositado"}
@@ -409,7 +409,7 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is14Trout && !is5963Virtudes && !is448Rajah && (
+            {!is14Trout && !is5963Virtudes && (
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
               {is35SW || is127Cape ? (
@@ -478,7 +478,7 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && !is5963Virtudes && !is448Rajah && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
@@ -492,13 +492,13 @@ function ProjectDetail() {
                     <Stat dark label="Neto recibido" value={formatUSD(57145.42)} />
                   </>
                 )}
-                {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && (
+                {!is127 && !is14Trout && !is5963Virtudes && (
                   <>
                     <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
                     <Stat dark label="Costo total" value={formatUSD(totalCost)} />
                   </>
                 )}
-                {!is14Trout && !is5963Virtudes && !is448Rajah && !is2812 && (
+                {!is14Trout && !is5963Virtudes && !is2812 && (
                   <Stat
                     dark
                     label={
