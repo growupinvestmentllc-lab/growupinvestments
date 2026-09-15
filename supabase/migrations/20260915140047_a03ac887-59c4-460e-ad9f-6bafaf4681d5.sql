@@ -1,0 +1,1 @@
+UPDATE public.projects SET expected_sale_price = 380000 WHERE id = 'ed024506-b782-401f-9fd6-6c6691430a0c';
