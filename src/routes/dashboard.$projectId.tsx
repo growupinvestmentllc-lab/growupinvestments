@@ -536,7 +536,15 @@ function ProjectDetail() {
                 ) : is621Flamingo ? (
                   <Stat dark label="ROI estimado" value="9.51%" />
                 ) : (
-                  <Stat dark label="ROI estimado" value={`${project.total_cost ? (((project.expected_sale_price - project.total_cost) / project.total_cost) * 100).toFixed(1) : 0}%`} />
+                  <Stat
+                    dark
+                    label="ROI estimado"
+                    value={
+                      totalCost && Number(project.expected_sale_price) > 0
+                        ? `${(((Number(project.expected_sale_price) - totalCost) / totalCost) * 100).toFixed(1)}%`
+                        : "—"
+                    }
+                  />
                 )}
               </div>
             </div>
