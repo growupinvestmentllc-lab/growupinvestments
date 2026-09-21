@@ -8,22 +8,19 @@ import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/use-auth";
 
-export const Route = createFileRoute("/login")({
-  component: LoginPage,
-  validateSearch: (s: Record<string, unknown>) => ({ otra: s.otra === "1" ? "1" : undefined }),
-});
+export const Route = createFileRoute("/login")({ component: LoginPage });
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { otra } = Route.useSearch();
+  const otra = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("otra") === "1";
   const { user, role, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [switching, setSwitching] = useState(otra === "1");
+  const [switching, setSwitching] = useState(otra);
 
   useEffect(() => {
-    if (otra !== "1") return;
+    if (!otra) return;
     supabase.auth.signOut().finally(() => setSwitching(false));
   }, [otra]);
 
