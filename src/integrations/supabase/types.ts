@@ -189,6 +189,126 @@ export type Database = {
         }
         Relationships: []
       }
+      hunter_offerings: {
+        Row: {
+          active: boolean
+          bathrooms: number | null
+          bedrooms: number | null
+          commission_pct: number | null
+          construction_cost: number | null
+          created_at: string
+          deposit_required: number | null
+          expected_roi: number | null
+          expected_sale_price: number | null
+          id: string
+          image_url: string | null
+          kind: string
+          location: string | null
+          lot_cost: number | null
+          model: string | null
+          notes: string | null
+          price: number | null
+          sort_order: number
+          sqft_living: number | null
+          sqft_total: number | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          bathrooms?: number | null
+          bedrooms?: number | null
+          commission_pct?: number | null
+          construction_cost?: number | null
+          created_at?: string
+          deposit_required?: number | null
+          expected_roi?: number | null
+          expected_sale_price?: number | null
+          id?: string
+          image_url?: string | null
+          kind: string
+          location?: string | null
+          lot_cost?: number | null
+          model?: string | null
+          notes?: string | null
+          price?: number | null
+          sort_order?: number
+          sqft_living?: number | null
+          sqft_total?: number | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          bathrooms?: number | null
+          bedrooms?: number | null
+          commission_pct?: number | null
+          construction_cost?: number | null
+          created_at?: string
+          deposit_required?: number | null
+          expected_roi?: number | null
+          expected_sale_price?: number | null
+          id?: string
+          image_url?: string | null
+          kind?: string
+          location?: string | null
+          lot_cost?: number | null
+          model?: string | null
+          notes?: string | null
+          price?: number | null
+          sort_order?: number
+          sqft_living?: number | null
+          sqft_total?: number | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      hunter_sales: {
+        Row: {
+          address: string
+          buyer_name: string | null
+          commission_amount: number | null
+          commission_pct: number | null
+          created_at: string
+          hunter_id: string
+          id: string
+          kind: string
+          notes: string | null
+          sale_date: string | null
+          sale_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          address: string
+          buyer_name?: string | null
+          commission_amount?: number | null
+          commission_pct?: number | null
+          created_at?: string
+          hunter_id: string
+          id?: string
+          kind: string
+          notes?: string | null
+          sale_date?: string | null
+          sale_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          buyer_name?: string | null
+          commission_amount?: number | null
+          commission_pct?: number | null
+          created_at?: string
+          hunter_id?: string
+          id?: string
+          kind?: string
+          notes?: string | null
+          sale_date?: string | null
+          sale_price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investment_payments: {
         Row: {
           amount: number
