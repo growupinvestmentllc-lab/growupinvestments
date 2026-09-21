@@ -143,29 +143,29 @@ function HunterOfferings() {
     <div>
       <h1 className="text-2xl font-bold text-foreground">Propuestas para vender</h1>
       <p className="text-sm text-muted-foreground mt-1">
-        Casas para construir, lotes disponibles y oportunidades RBI.
+        Casas disponibles, opciones con contrato de alquiler y lotes para elegir modelo.
       </p>
 
       <Section
         icon={<HardHat className="h-5 w-5 text-primary" />}
-        title="Casas para construir"
-        subtitle="Propuestas con costo total y monto a depositar."
+        title="Posibilidad de vender"
+        subtitle="Casas disponibles para ofrecer a tus clientes."
         items={by("construccion")}
         empty="Todavía no hay casas cargadas."
       />
       <Section
-        icon={<MapPin className="h-5 w-5 text-primary" />}
-        title="Lotes para comprar"
-        subtitle="Lotes disponibles para elegir el modelo de casa."
-        items={by("lote")}
-        empty="Todavía no hay lotes cargados."
+        icon={<Sparkles className="h-5 w-5 text-primary" />}
+        title="Posibilidad de vender con contrato de alquiler"
+        subtitle="Casas con inquilino y contrato vigente."
+        items={by("rbi")}
+        empty="Todavía no hay opciones cargadas."
       />
       <Section
-        icon={<Sparkles className="h-5 w-5 text-primary" />}
-        title="Oportunidades RBI"
-        subtitle="Opciones más atractivas para vender."
-        items={by("rbi")}
-        empty="Todavía no hay opciones RBI cargadas."
+        icon={<MapPin className="h-5 w-5 text-primary" />}
+        title="Lotes en venta para elegir modelo de casa"
+        subtitle="Lotes disponibles para definir el modelo junto al cliente."
+        items={by("lote")}
+        empty="Todavía no hay lotes cargados."
       />
     </div>
   );
