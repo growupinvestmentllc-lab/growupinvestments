@@ -75,7 +75,21 @@ function LoginPage() {
               {submitting ? "Ingresando..." : "Ingresar"}
             </Button>
           </form>
-          <p className="mt-6 text-xs text-muted-foreground text-center">
+          <button
+            type="button"
+            onClick={async () => {
+              setSwitching(true);
+              await supabase.auth.signOut();
+              setEmail("");
+              setPassword("");
+              setSwitching(false);
+              toast.success("Sesión cerrada. Ya puedes ingresar con otra cuenta.");
+            }}
+            className="mt-6 w-full text-xs text-muted-foreground underline text-center"
+          >
+            Ingresar con otra cuenta
+          </button>
+          <p className="mt-3 text-xs text-muted-foreground text-center">
             ¿Eres admin? También puedes acceder con tus credenciales aquí.
           </p>
         </div>
