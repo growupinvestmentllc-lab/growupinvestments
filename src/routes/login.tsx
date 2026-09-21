@@ -20,6 +20,7 @@ function LoginPage() {
   useEffect(() => {
     if (loading || !user) return;
     if (role === "admin") navigate({ to: "/admin" });
+    else if (role === "hunter") navigate({ to: "/hunter" });
     else if (role === "investor") navigate({ to: "/dashboard" });
   }, [user, role, loading, navigate]);
 

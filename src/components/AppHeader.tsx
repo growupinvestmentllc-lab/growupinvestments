@@ -9,11 +9,14 @@ export function AppHeader({ name }: { name?: string }) {
   return (
     <header className="sticky top-0 z-30 bg-background/80 backdrop-blur border-b border-border">
       <div className="pl-0 pr-4 sm:pr-6 h-24 flex items-center justify-between">
-        <Link to={role === "admin" ? "/admin" : "/dashboard"} className="flex items-center pl-2">
+        <Link
+          to={role === "admin" ? "/admin" : role === "hunter" ? "/hunter" : "/dashboard"}
+          className="flex items-center pl-2"
+        >
           <Logo className="h-20" />
         </Link>
         <div className="flex items-center gap-3">
-          {role !== "admin" && (
+          {role !== "admin" && role !== "hunter" && (
             <nav className="flex items-center gap-1">
               <Link
                 to="/dashboard"
