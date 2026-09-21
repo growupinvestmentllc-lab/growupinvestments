@@ -12,17 +12,24 @@ export const Route = createFileRoute("/login")({ component: LoginPage });
 
 function LoginPage() {
   const navigate = useNavigate();
+  const otra = typeof window !== "undefined" && new URLSearchParams(window.location.search).get("otra") === "1";
   const { user, role, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [switching, setSwitching] = useState(otra);
 
   useEffect(() => {
-    if (loading || !user) return;
+    if (!otra) return;
+    supabase.auth.signOut().finally(() => setSwitching(false));
+  }, [otra]);
+
+  useEffect(() => {
+    if (switching || loading || !user) return;
     if (role === "admin") navigate({ to: "/admin" });
     else if (role === "hunter") navigate({ to: "/hunter" });
     else if (role === "investor") navigate({ to: "/dashboard" });
-  }, [user, role, loading, navigate]);
+  }, [user, role, loading, navigate, switching]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -65,7 +72,21 @@ function LoginPage() {
               {submitting ? "Ingresando..." : "Ingresar"}
             </Button>
           </form>
-          <p className="mt-6 text-xs text-muted-foreground text-center">
+          <button
+            type="button"
+            onClick={async () => {
+              setSwitching(true);
+              await supabase.auth.signOut();
+              setEmail("");
+              setPassword("");
+              setSwitching(false);
+              toast.success("Sesión cerrada. Ya puedes ingresar con otra cuenta.");
+            }}
+            className="mt-6 w-full text-xs text-muted-foreground underline text-center"
+          >
+            Ingresar con otra cuenta
+          </button>
+          <p className="mt-3 text-xs text-muted-foreground text-center">
             ¿Eres admin? También puedes acceder con tus credenciales aquí.
           </p>
         </div>
