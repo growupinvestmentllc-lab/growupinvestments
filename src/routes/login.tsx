@@ -8,21 +8,31 @@ import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/use-auth";
 
-export const Route = createFileRoute("/login")({ component: LoginPage });
+export const Route = createFileRoute("/login")({
+  component: LoginPage,
+  validateSearch: (s: Record<string, unknown>) => ({ otra: s.otra === "1" ? "1" : undefined }),
+});
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { otra } = Route.useSearch();
   const { user, role, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [switching, setSwitching] = useState(otra === "1");
 
   useEffect(() => {
-    if (loading || !user) return;
+    if (otra !== "1") return;
+    supabase.auth.signOut().finally(() => setSwitching(false));
+  }, [otra]);
+
+  useEffect(() => {
+    if (switching || loading || !user) return;
     if (role === "admin") navigate({ to: "/admin" });
     else if (role === "hunter") navigate({ to: "/hunter" });
     else if (role === "investor") navigate({ to: "/dashboard" });
-  }, [user, role, loading, navigate]);
+  }, [user, role, loading, navigate, switching]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
