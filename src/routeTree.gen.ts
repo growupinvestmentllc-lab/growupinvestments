@@ -12,10 +12,13 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HunterRouteImport } from './routes/hunter'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HunterIndexRouteImport } from './routes/hunter.index'
+import { Route as HunterVentasRouteImport } from './routes/hunter.ventas'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as DashboardProjectIdRouteImport } from './routes/dashboard.$projectId'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
@@ -39,6 +42,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HunterRoute = HunterRouteImport.update({
+  id: '/hunter',
+  path: '/hunter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -58,6 +66,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const HunterIndexRoute = HunterIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HunterRoute,
+} as any)
+const HunterVentasRoute = HunterVentasRouteImport.update({
+  id: '/ventas',
+  path: '/ventas',
+  getParentRoute: () => HunterRoute,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
@@ -103,11 +121,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/hunter': typeof HunterRouteWithChildren
   '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/dashboard/$projectId': typeof DashboardProjectIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/hunter/ventas': typeof HunterVentasRoute
+  '/hunter/': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -124,6 +145,8 @@ export interface FileRoutesByTo {
   '/unsubscribe': typeof UnsubscribeRoute
   '/dashboard/$projectId': typeof DashboardProjectIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/hunter/ventas': typeof HunterVentasRoute
+  '/hunter': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -136,11 +159,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/hunter': typeof HunterRouteWithChildren
   '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/dashboard/$projectId': typeof DashboardProjectIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/hunter/ventas': typeof HunterVentasRoute
+  '/hunter/': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
@@ -154,11 +180,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/dashboard'
+    | '/hunter'
     | '/login'
     | '/portfolio'
     | '/unsubscribe'
     | '/dashboard/$projectId'
     | '/email/unsubscribe'
+    | '/hunter/ventas'
+    | '/hunter/'
     | '/api/public/contact'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
@@ -175,6 +204,8 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/dashboard/$projectId'
     | '/email/unsubscribe'
+    | '/hunter/ventas'
+    | '/hunter'
     | '/api/public/contact'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
@@ -186,11 +217,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/contact'
     | '/dashboard'
+    | '/hunter'
     | '/login'
     | '/portfolio'
     | '/unsubscribe'
     | '/dashboard/$projectId'
     | '/email/unsubscribe'
+    | '/hunter/ventas'
+    | '/hunter/'
     | '/api/public/contact'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
@@ -203,6 +237,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  HunterRoute: typeof HunterRouteWithChildren
   LoginRoute: typeof LoginRoute
   PortfolioRoute: typeof PortfolioRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -237,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/hunter': {
+      id: '/hunter'
+      path: '/hunter'
+      fullPath: '/hunter'
+      preLoaderRoute: typeof HunterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -264,6 +306,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/hunter/': {
+      id: '/hunter/'
+      path: '/'
+      fullPath: '/hunter/'
+      preLoaderRoute: typeof HunterIndexRouteImport
+      parentRoute: typeof HunterRoute
+    }
+    '/hunter/ventas': {
+      id: '/hunter/ventas'
+      path: '/ventas'
+      fullPath: '/hunter/ventas'
+      preLoaderRoute: typeof HunterVentasRouteImport
+      parentRoute: typeof HunterRoute
     }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
@@ -329,11 +385,25 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
   DashboardRouteChildren,
 )
 
+interface HunterRouteChildren {
+  HunterVentasRoute: typeof HunterVentasRoute
+  HunterIndexRoute: typeof HunterIndexRoute
+}
+
+const HunterRouteChildren: HunterRouteChildren = {
+  HunterVentasRoute: HunterVentasRoute,
+  HunterIndexRoute: HunterIndexRoute,
+}
+
+const HunterRouteWithChildren =
+  HunterRoute._addFileChildren(HunterRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  HunterRoute: HunterRouteWithChildren,
   LoginRoute: LoginRoute,
   PortfolioRoute: PortfolioRoute,
   UnsubscribeRoute: UnsubscribeRoute,

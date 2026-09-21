@@ -73,6 +73,7 @@ function Dashboard() {
     if (loading) return;
     if (!user) navigate({ to: "/login" });
     else if (role === "admin") navigate({ to: "/admin" });
+    else if (role === "hunter") navigate({ to: "/hunter" });
   }, [user, role, loading, navigate]);
 
   useEffect(() => {
