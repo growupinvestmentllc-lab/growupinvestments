@@ -34,10 +34,34 @@ function LoginPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setSubmitting(false);
-    if (error) toast.error(error.message);
-    else toast.success("Bienvenido");
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setSubmitting(false);
+      toast.error(error.message);
+      return;
+    }
+
+    const { data: roleRows, error: roleError } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id);
+
+    if (roleError) {
+      setSubmitting(false);
+      toast.error("No pudimos abrir tu cuenta. Intenta nuevamente.");
+      return;
+    }
+
+    const roles = (roleRows ?? []).map((row) => row.role as string);
+    toast.success("Bienvenido");
+
+    if (roles.includes("admin")) await navigate({ to: "/admin", replace: true });
+    else if (roles.includes("hunter")) await navigate({ to: "/hunter", replace: true });
+    else if (roles.includes("investor")) await navigate({ to: "/dashboard", replace: true });
+    else {
+      setSubmitting(false);
+      toast.error("Tu cuenta todavía no tiene un acceso asignado.");
+    }
   }
 
   return (
