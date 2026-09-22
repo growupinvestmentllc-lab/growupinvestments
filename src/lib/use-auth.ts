@@ -11,37 +11,52 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+    let active = true;
+    let requestId = 0;
+
+    async function applySession(s: Session | null) {
+      const currentRequest = ++requestId;
       setSession(s);
       setUser(s?.user ?? null);
-      if (s?.user) {
-        // defer role fetch to avoid deadlock
-        setTimeout(async () => {
-          const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", s.user.id);
-          const roles = (data ?? []).map((r) => r.role as string);
-          setRole(
-            roles.includes("admin")
-              ? "admin"
-              : roles.includes("hunter")
-                ? "hunter"
-                : roles.includes("investor")
-                  ? "investor"
-                  : null,
-          );
-        }, 0);
-      } else {
+      setLoading(true);
+
+      if (!s?.user) {
         setRole(null);
+        setLoading(false);
+        return;
       }
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setUser(data.session?.user ?? null);
+
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", s.user.id);
+
+      if (!active || currentRequest !== requestId) return;
+
+      const roles = (data ?? []).map((row) => row.role as string);
+      setRole(
+        roles.includes("admin")
+          ? "admin"
+          : roles.includes("hunter")
+            ? "hunter"
+            : roles.includes("investor")
+              ? "investor"
+              : null,
+      );
       setLoading(false);
+    }
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      // Supabase recommends deferring follow-up API calls made from this callback.
+      setTimeout(() => void applySession(nextSession), 0);
     });
-    return () => sub.subscription.unsubscribe();
+
+    void supabase.auth.getSession().then(({ data }) => applySession(data.session));
+
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return { session, user, role, loading, signOut: () => supabase.auth.signOut() };
