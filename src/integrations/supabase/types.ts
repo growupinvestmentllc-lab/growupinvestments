@@ -200,6 +200,7 @@ export type Database = {
           deposit_required: number | null
           expected_roi: number | null
           expected_sale_price: number | null
+          gallery: string[]
           id: string
           image_url: string | null
           kind: string
@@ -224,6 +225,7 @@ export type Database = {
           deposit_required?: number | null
           expected_roi?: number | null
           expected_sale_price?: number | null
+          gallery?: string[]
           id?: string
           image_url?: string | null
           kind: string
@@ -248,6 +250,7 @@ export type Database = {
           deposit_required?: number | null
           expected_roi?: number | null
           expected_sale_price?: number | null
+          gallery?: string[]
           id?: string
           image_url?: string | null
           kind?: string
