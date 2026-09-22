@@ -209,6 +209,8 @@ export type Database = {
           model: string | null
           notes: string | null
           price: number | null
+          rent_gross: number | null
+          rent_net: number | null
           sort_order: number
           sqft_living: number | null
           sqft_total: number | null
@@ -234,6 +236,8 @@ export type Database = {
           model?: string | null
           notes?: string | null
           price?: number | null
+          rent_gross?: number | null
+          rent_net?: number | null
           sort_order?: number
           sqft_living?: number | null
           sqft_total?: number | null
@@ -259,6 +263,8 @@ export type Database = {
           model?: string | null
           notes?: string | null
           price?: number | null
+          rent_gross?: number | null
+          rent_net?: number | null
           sort_order?: number
           sqft_living?: number | null
           sqft_total?: number | null

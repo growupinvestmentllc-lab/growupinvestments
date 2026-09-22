@@ -1,0 +1,1 @@
+ALTER TABLE public.hunter_offerings ADD COLUMN IF NOT EXISTS rent_gross numeric, ADD COLUMN IF NOT EXISTS rent_net numeric;

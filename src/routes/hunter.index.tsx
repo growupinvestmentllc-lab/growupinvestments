@@ -40,6 +40,8 @@ type Offering = {
   notes: string | null;
   sort_order: number | null;
   gallery: string[] | null;
+  rent_gross: number | null;
+  rent_net: number | null;
 };
 
 const db = supabase as any;
@@ -135,6 +137,8 @@ function Card({ o }: { o: Offering }) {
   if (o.price != null) specs.push({ label: "Precio", value: formatUSD(o.price) });
   if (o.deposit_required != null) specs.push({ label: "Depósito requerido", value: formatUSD(o.deposit_required) });
   if (o.expected_sale_price != null) specs.push({ label: "Precio estimado de venta", value: formatUSD(o.expected_sale_price) });
+  if (o.rent_gross != null) specs.push({ label: "Alquiler bruto (mensual)", value: formatUSD(o.rent_gross) });
+  if (o.rent_net != null) specs.push({ label: "Alquiler neto (mensual)", value: formatUSD(o.rent_net) });
   if (o.expected_roi != null) specs.push({ label: "ROI estimado", value: `${Number(o.expected_roi).toFixed(1)}%` });
   if (o.commission_pct != null) specs.push({ label: "Tu comisión", value: `${Number(o.commission_pct).toFixed(1)}%` });
 
