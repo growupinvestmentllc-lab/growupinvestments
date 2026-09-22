@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
-import { HardHat, MapPin, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, HardHat, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/hunter/")({
   head: () => ({
@@ -38,6 +39,7 @@ type Offering = {
   image_url: string | null;
   notes: string | null;
   sort_order: number | null;
+  gallery: string[] | null;
 };
 
 const db = supabase as any;
@@ -47,6 +49,76 @@ function Field({ label, value }: { label: string; value: string }) {
     <div className="rounded-md bg-card border border-border/60 px-3 py-2">
       <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <p className="text-sm font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
+function Gallery({ photos, title }: { photos: string[]; title: string }) {
+  const [active, setActive] = useState(0);
+  const [open, setOpen] = useState(false);
+  const many = photos.length > 1;
+  const go = (d: number) => setActive((i) => (i + d + photos.length) % photos.length);
+
+  return (
+    <div>
+      <button type="button" onClick={() => setOpen(true)} className="relative block w-full">
+        <img src={photos[active]} alt={title} className="h-56 w-full object-cover" />
+        {many && (
+          <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md bg-foreground/75 px-2.5 py-1 text-xs font-medium text-background">
+            <ImageIcon className="h-3.5 w-3.5" /> {photos.length} fotos
+          </span>
+        )}
+      </button>
+      {many && (
+        <div className="flex gap-2 overflow-x-auto px-4 pt-3 pb-1">
+          {photos.map((p, i) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setActive(i)}
+              className={`shrink-0 overflow-hidden rounded-md border-2 transition ${
+                i === active ? "border-primary" : "border-transparent opacity-80 hover:opacity-100"
+              }`}
+            >
+              <img src={p} alt={`${title} foto ${i + 1}`} loading="lazy" className="h-14 w-20 object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-5xl p-2 sm:p-4">
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+          <div className="relative">
+            <img src={photos[active]} alt={title} className="max-h-[75vh] w-full rounded-md object-contain" />
+            {many && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => go(-1)}
+                  aria-label="Foto anterior"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => go(1)}
+                  aria-label="Foto siguiente"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 text-foreground"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
+          </div>
+          {many && (
+            <p className="text-center text-xs text-muted-foreground">
+              {active + 1} / {photos.length}
+            </p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -66,9 +138,11 @@ function Card({ o }: { o: Offering }) {
   if (o.expected_roi != null) specs.push({ label: "ROI estimado", value: `${Number(o.expected_roi).toFixed(1)}%` });
   if (o.commission_pct != null) specs.push({ label: "Tu comisión", value: `${Number(o.commission_pct).toFixed(1)}%` });
 
+  const photos = o.gallery && o.gallery.length > 0 ? o.gallery : o.image_url ? [o.image_url] : [];
+
   return (
     <div className="card-soft overflow-hidden">
-      {o.image_url && <img src={o.image_url} alt={o.title} className="h-44 w-full object-cover" />}
+      {photos.length > 0 && <Gallery photos={photos} title={o.title} />}
       <div className="p-5">
         <h3 className="font-semibold text-foreground">{o.title}</h3>
         {o.location && (
