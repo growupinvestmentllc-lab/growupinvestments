@@ -674,7 +674,7 @@ function RentalTab() {
                 {e && (
                   <ReceiptControl
                     entry={e}
-                    canEdit={true}
+                    canEdit={isAdmin}
                     onChange={(upd) => setEntries((prev) => prev.map((x) => (x.id === upd.id ? { ...x, ...upd } : x)))}
                   />
                 )}
@@ -983,6 +983,12 @@ function ReceiptControl({ entry, canEdit, onChange }: { entry: Entry; canEdit: b
     if (error || !data) return alert("No se pudo abrir el comprobante");
     window.open(data.signedUrl, "_blank");
   };
+  const download = async () => {
+    if (!entry.receipt_path) return;
+    const { data, error } = await supabase.storage.from("project-documents").createSignedUrl(entry.receipt_path, 600, { download: entry.receipt_name || true });
+    if (error || !data) return alert("No se pudo descargar el comprobante");
+    window.location.href = data.signedUrl;
+  };
   const upload = async (file: File) => {
     setBusy(true);
     try {
@@ -990,7 +996,7 @@ function ReceiptControl({ entry, canEdit, onChange }: { entry: Entry; canEdit: b
       const path = `rent-receipts/${entry.property_id}/${entry.year}-${String(entry.month).padStart(2, "0")}-${Date.now()}-${safe}`;
       const { error } = await supabase.storage.from("project-documents").upload(path, file);
       if (error) throw error;
-      const { error: e2 } = await (supabase as any).rpc("set_rent_receipt", { _entry_id: entry.id, _path: path, _name: file.name });
+      const { error: e2 } = await (supabase as any).from("rental_monthly_entries").update({ receipt_path: path, receipt_name: file.name }).eq("id", entry.id);
       if (e2) throw e2;
       onChange({ id: entry.id, receipt_path: path, receipt_name: file.name });
     } catch (err: any) {
@@ -1005,7 +1011,10 @@ function ReceiptControl({ entry, canEdit, onChange }: { entry: Entry; canEdit: b
       <span className="text-sm font-semibold text-foreground">Comprobante de transferencia</span>
       <div className="flex items-center gap-2">
         {entry.receipt_path && (
-          <Button size="sm" variant="outline" onClick={open}>Ver comprobante</Button>
+          <>
+            <Button size="sm" variant="outline" onClick={open}>Ver comprobante</Button>
+            <Button size="sm" variant="outline" onClick={download}>Descargar comprobante</Button>
+          </>
         )}
         {canEdit && (
           <label className="inline-flex">
