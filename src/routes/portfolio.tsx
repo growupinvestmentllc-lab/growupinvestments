@@ -358,6 +358,7 @@ function salePrice(p: Project) {
 
 const STATUS_META: Record<string, { label: string; dot: string; cls: string }> = {
   al_dia: { label: "Al día", dot: "🟢", cls: "bg-primary/10 text-primary" },
+  alquiler_pagado: { label: "Alquiler pagado", dot: "●", cls: "bg-emerald-100 text-emerald-800" },
   venciendo: { label: "Venciendo", dot: "🟡", cls: "bg-amber-100 text-amber-800" },
   vacante: { label: "Vacante", dot: "🔴", cls: "bg-red-100 text-red-800" },
 };
@@ -555,12 +556,13 @@ function RentalTab() {
 
 
       {visibleProps.map((p) => {
-        const meta = STATUS_META[p.status] ?? STATUS_META.al_dia;
         const mine = ownerships
           .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
           .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
         const pct = mine ? Number(mine.percentage) : 100;
         const e = periodEntries.find((x) => x.property_id === p.id);
+        const rentPaid = Number(e?.income_rent || 0) > 0;
+        const meta = rentPaid ? STATUS_META.alquiler_pagado : STATUS_META[p.status] ?? STATUS_META.al_dia;
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
           ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0) +
