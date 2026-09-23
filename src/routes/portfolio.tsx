@@ -674,7 +674,7 @@ function RentalTab() {
                 {e && (
                   <ReceiptControl
                     entry={e}
-                    canEdit={isAdmin}
+                    canEdit={true}
                     onChange={(upd) => setEntries((prev) => prev.map((x) => (x.id === upd.id ? { ...x, ...upd } : x)))}
                   />
                 )}
@@ -988,9 +988,9 @@ function ReceiptControl({ entry, canEdit, onChange }: { entry: Entry; canEdit: b
     try {
       const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const path = `rent-receipts/${entry.property_id}/${entry.year}-${String(entry.month).padStart(2, "0")}-${Date.now()}-${safe}`;
-      const { error } = await supabase.storage.from("project-documents").upload(path, file, { upsert: true });
+      const { error } = await supabase.storage.from("project-documents").upload(path, file);
       if (error) throw error;
-      const { error: e2 } = await (supabase as any).from("rental_monthly_entries").update({ receipt_path: path, receipt_name: file.name }).eq("id", entry.id);
+      const { error: e2 } = await (supabase as any).rpc("set_rent_receipt", { _entry_id: entry.id, _path: path, _name: file.name });
       if (e2) throw e2;
       onChange({ id: entry.id, receipt_path: path, receipt_name: file.name });
     } catch (err: any) {
