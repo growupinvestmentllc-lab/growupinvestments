@@ -956,6 +956,47 @@ export type Database = {
           },
         ]
       }
+      rental_owner_payments: {
+        Row: {
+          created_at: string
+          entry_id: string
+          id: string
+          llc_name: string
+          paid_on: string | null
+          receipt_name: string | null
+          receipt_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          id?: string
+          llc_name: string
+          paid_on?: string | null
+          receipt_name?: string | null
+          receipt_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          id?: string
+          llc_name?: string
+          paid_on?: string | null
+          receipt_name?: string | null
+          receipt_path?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_owner_payments_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "rental_monthly_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rental_properties: {
         Row: {
           address: string
