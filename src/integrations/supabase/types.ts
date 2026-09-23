@@ -1130,6 +1130,10 @@ export type Database = {
           read_ct: number
         }[]
       }
+      set_rent_receipt: {
+        Args: { _entry_id: string; _name: string; _path: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "investor" | "hunter"
