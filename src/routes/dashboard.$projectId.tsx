@@ -717,6 +717,7 @@ function DrawSchedule({
     const anyCompleted = groupStages.some((s) => s.completed);
     return {
       num: idx + 1,
+      displayNum: idx as number | null,
       group: LABELS[group] ?? group,
       amount,
       completed: allCompleted,
@@ -724,7 +725,7 @@ function DrawSchedule({
     };
   });
   let list = [
-    { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
+    { num: 0, displayNum: null as number | null, group: "Compra Lote", amount: lotCost, completed: true, active: false },
     ...groupRows,
   ];
   if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
@@ -747,9 +748,11 @@ function DrawSchedule({
           return (
             <div key={d.num} className="flex items-center justify-between gap-3 p-3 rounded-lg border border-border bg-background">
               <div className="flex items-center gap-3 min-w-0">
-                <span className="h-8 w-8 rounded-full bg-muted text-foreground flex items-center justify-center text-sm font-semibold">{d.num}</span>
+                <span className="h-8 w-8 rounded-full bg-muted text-foreground flex items-center justify-center text-sm font-semibold">{d.displayNum ?? "•"}</span>
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">Draw {d.num} — {d.group}</p>
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {d.displayNum == null ? d.group : `Draw ${d.displayNum} — ${d.group}`}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {formatUSD(d.amount)}
                     {hasMultipleOwners && myPct != null && (

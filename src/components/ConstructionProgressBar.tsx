@@ -126,7 +126,7 @@ function GroupCircle({
           : "bg-muted text-muted-foreground border-border"
       }`}
     >
-      {isCompleted ? <Check className={icon} /> : <span>{index + 1}</span>}
+      {isCompleted ? <Check className={icon} /> : <span>{index}</span>}
     </button>
   );
   return (
