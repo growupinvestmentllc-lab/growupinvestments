@@ -234,6 +234,10 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
           </div>
         )}
         <DialogFooter><Button onClick={save}>Guardar período</Button></DialogFooter>
+        <OwnerPaymentsAdmin
+          property={property}
+          entry={entries.find((x) => x.month === month && x.year === year)}
+        />
       </DialogContent>
     </Dialog>
   );
