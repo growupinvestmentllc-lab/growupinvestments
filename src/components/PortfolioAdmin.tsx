@@ -740,11 +740,11 @@ function OwnerPaymentsAdmin({ property, entry }: { property: any; entry: any }) 
 
 function OwnerPaymentRow({ entry, owner, payment, onSaved }: { entry: any; owner: any; payment: any; onSaved: () => void }) {
   const [paidOn, setPaidOn] = useState(payment?.paid_on ?? "");
-  const defaultAmount = Math.round((
+  const defaultAmount = Math.round(
     Number(entry.income_rent || 0) + Number(entry.income_other || 0) -
     Number(entry.expense_admin || 0) - Number(entry.expense_repairs || 0) - Number(entry.expense_other || 0) -
     Number(entry.expense_insurance || 0) - Number(entry.expense_taxes || 0)
-  ) * 100) / 100 * Number(owner.percentage || 0) / 100;
+  ) * Number(owner.percentage || 0) / 100;
   const [amount, setAmount] = useState(payment?.amount ?? defaultAmount);
   const [busy, setBusy] = useState(false);
   useEffect(() => {
