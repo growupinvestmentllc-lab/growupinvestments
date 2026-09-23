@@ -84,18 +84,6 @@ type Entry = {
   expense_insurance?: number;
   expense_taxes?: number;
   paid_on?: string | null;
-  receipt_path?: string | null;
-  receipt_name?: string | null;
-};
-
-type OwnerPayment = {
-  id: string;
-  entry_id: string;
-  llc_name: string;
-  amount: number | null;
-  paid_on: string | null;
-  receipt_path: string | null;
-  receipt_name: string | null;
 };
 
 function PortfolioPage() {
@@ -415,7 +403,6 @@ function RentalTab() {
   const [props, setProps] = useState<Rental[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [rentedProjects, setRentedProjects] = useState<any[]>([]);
-  const [ownerPays, setOwnerPays] = useState<OwnerPayment[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -429,8 +416,6 @@ function RentalTab() {
       const { data: e } = await db.from("rental_monthly_entries").select("*");
       const list = e ?? [];
       setEntries(list);
-      const { data: op } = await db.from("rental_owner_payments").select("*");
-      setOwnerPays(op ?? []);
       // Posicionar el período en el último mes con datos cargados
       const withData = list.filter((x: Entry) => entryNoi(x) !== 0 || Number(x.income_rent || 0) !== 0);
       if (withData.length) {
@@ -506,12 +491,6 @@ function RentalTab() {
   };
 
   const ownerIncomeForEntry = (e: Entry) => {
-    const savedPayment = myLlc
-      ? ownerPays.find((payment) =>
-          payment.entry_id === e.id && payment.llc_name.toUpperCase() === myLlc.toUpperCase(),
-        )
-      : undefined;
-    if (!isAdmin && savedPayment?.amount != null) return Number(savedPayment.amount);
     const noi = entryNoi(e);
     const pct = rentalPct(propProjectId[e.property_id]);
     return ownerIncome(noi, pct);
@@ -603,14 +582,6 @@ function RentalTab() {
           ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0) +
             Number(e.expense_insurance || 0) + Number(e.expense_taxes || 0)
           : 0;
-        const myOwnerPayment = e && mine
-          ? ownerPays.find((payment) =>
-              payment.entry_id === e.id && payment.llc_name.toUpperCase() === mine.llc_name.toUpperCase(),
-            )
-          : undefined;
-        const displayedOwnerIncome = myOwnerPayment?.amount != null
-          ? Number(myOwnerPayment.amount)
-          : ownerIncome(income - expenses, pct);
 
         return (
           <div key={p.id} className="card-soft p-6">
@@ -690,28 +661,14 @@ function RentalTab() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold text-foreground">Total ingreso propietario {pct}%</span>
-                  <span className="text-lg font-bold text-primary">{formatUSDCents(displayedOwnerIncome)}</span>
+                  <span className="text-lg font-bold text-primary">{formatUSDCents(ownerIncome(income - expenses, pct))}</span>
                 </div>
-                {e && ownerPays
-                  .filter((op) => op.entry_id === e.id && (isAdmin || !mine || op.llc_name.toUpperCase() === mine.llc_name.toUpperCase()))
-                  .map((op) => (
-                    <div key={op.id} className="space-y-2">
-                      {isAdmin && <p className="text-xs font-semibold text-muted-foreground uppercase">{op.llc_name}</p>}
-                      {op.amount != null && isAdmin && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-semibold text-foreground">Monto depositado</span>
-                          <span className="text-sm font-semibold text-primary">{formatUSDCents(Number(op.amount))}</span>
-                        </div>
-                      )}
-                      {op.paid_on && (
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
-                          <span className="text-sm font-semibold text-primary">{fmtDate(op.paid_on)}</span>
-                        </div>
-                      )}
-                      <ReceiptControl entry={{ ...e, receipt_path: op.receipt_path, receipt_name: op.receipt_name }} canEdit={false} onChange={() => {}} />
-                    </div>
-                  ))}
+                {e?.paid_on && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
+                    <span className="text-sm font-semibold text-primary">{fmtDate(e.paid_on)}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -1005,61 +962,6 @@ function SoldTab() {
           </div>
         );
       })}
-    </div>
-  );
-}
-
-function ReceiptControl({ entry, canEdit, onChange }: { entry: Entry; canEdit: boolean; onChange: (e: Partial<Entry> & { id: string }) => void }) {
-  const [busy, setBusy] = useState(false);
-  const open = async () => {
-    if (!entry.receipt_path) return;
-    const { data, error } = await supabase.storage.from("project-documents").createSignedUrl(entry.receipt_path, 600);
-    if (error || !data) return alert("No se pudo abrir el comprobante");
-    window.open(data.signedUrl, "_blank");
-  };
-  const download = async () => {
-    if (!entry.receipt_path) return;
-    const { data, error } = await supabase.storage.from("project-documents").createSignedUrl(entry.receipt_path, 600, { download: entry.receipt_name || true });
-    if (error || !data) return alert("No se pudo descargar el comprobante");
-    window.location.href = data.signedUrl;
-  };
-  const upload = async (file: File) => {
-    setBusy(true);
-    try {
-      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const path = `rent-receipts/${entry.property_id}/${entry.year}-${String(entry.month).padStart(2, "0")}-${Date.now()}-${safe}`;
-      const { error } = await supabase.storage.from("project-documents").upload(path, file);
-      if (error) throw error;
-      const { error: e2 } = await (supabase as any).from("rental_monthly_entries").update({ receipt_path: path, receipt_name: file.name }).eq("id", entry.id);
-      if (e2) throw e2;
-      onChange({ id: entry.id, receipt_path: path, receipt_name: file.name });
-    } catch (err: any) {
-      alert("No se pudo subir el comprobante: " + (err?.message ?? ""));
-    } finally {
-      setBusy(false);
-    }
-  };
-  if (!entry.receipt_path && !canEdit) return null;
-  return (
-    <div className="flex justify-between items-center gap-3">
-      <span className="text-sm font-semibold text-foreground">Comprobante de transferencia</span>
-      <div className="flex items-center gap-2">
-        {entry.receipt_path && (
-          <>
-            <Button size="sm" variant="outline" onClick={open}>Ver comprobante</Button>
-            <Button size="sm" variant="outline" onClick={download}>Descargar comprobante</Button>
-          </>
-        )}
-        {canEdit && (
-          <label className="inline-flex">
-            <input type="file" accept="image/*,application/pdf" className="hidden" disabled={busy}
-              onChange={(ev) => { const f = ev.target.files?.[0]; if (f) void upload(f); ev.target.value = ""; }} />
-            <span className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm hover:bg-secondary">
-              {busy ? "Subiendo…" : entry.receipt_path ? "Reemplazar" : "Cargar comprobante"}
-            </span>
-          </label>
-        )}
-      </div>
     </div>
   );
 }
