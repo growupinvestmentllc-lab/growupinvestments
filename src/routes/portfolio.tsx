@@ -405,6 +405,7 @@ function RentalTab() {
   const [props, setProps] = useState<Rental[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [rentedProjects, setRentedProjects] = useState<any[]>([]);
+  const [ownerPays, setOwnerPays] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -418,6 +419,8 @@ function RentalTab() {
       const { data: e } = await db.from("rental_monthly_entries").select("*");
       const list = e ?? [];
       setEntries(list);
+      const { data: op } = await db.from("rental_owner_payments").select("*");
+      setOwnerPays(op ?? []);
       // Posicionar el período en el último mes con datos cargados
       const withData = list.filter((x: Entry) => entryNoi(x) !== 0 || Number(x.income_rent || 0) !== 0);
       if (withData.length) {
@@ -665,19 +668,20 @@ function RentalTab() {
                   <span className="text-sm font-semibold text-foreground">Total ingreso propietario {pct}%</span>
                   <span className="text-lg font-bold text-primary">{formatUSDCents(ownerIncome(income - expenses, pct))}</span>
                 </div>
-                {e?.paid_on && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
-                    <span className="text-sm font-semibold text-primary">{fmtDate(e.paid_on)}</span>
-                  </div>
-                )}
-                {e && (
-                  <ReceiptControl
-                    entry={e}
-                    canEdit={isAdmin}
-                    onChange={(upd) => setEntries((prev) => prev.map((x) => (x.id === upd.id ? { ...x, ...upd } : x)))}
-                  />
-                )}
+                {e && ownerPays
+                  .filter((op) => op.entry_id === e.id && (isAdmin || !mine || op.llc_name.toUpperCase() === mine.llc_name.toUpperCase()))
+                  .map((op) => (
+                    <div key={op.id} className="space-y-2">
+                      {isAdmin && <p className="text-xs font-semibold text-muted-foreground uppercase">{op.llc_name}</p>}
+                      {op.paid_on && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
+                          <span className="text-sm font-semibold text-primary">{fmtDate(op.paid_on)}</span>
+                        </div>
+                      )}
+                      <ReceiptControl entry={{ ...e, receipt_path: op.receipt_path, receipt_name: op.receipt_name }} canEdit={false} onChange={() => {}} />
+                    </div>
+                  ))}
               </div>
             </div>
           </div>

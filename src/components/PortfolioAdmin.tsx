@@ -234,6 +234,10 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
           </div>
         )}
         <DialogFooter><Button onClick={save}>Guardar período</Button></DialogFooter>
+        <OwnerPaymentsAdmin
+          property={property}
+          entry={entries.find((x) => x.month === month && x.year === year)}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -691,6 +695,100 @@ function OwnershipAdmin() {
           <DialogFooter><Button onClick={save}>Guardar</Button></DialogFooter>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function OwnerPaymentsAdmin({ property, entry }: { property: any; entry: any }) {
+  const [owners, setOwners] = useState<any[]>([]);
+  const [payments, setPayments] = useState<any[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      if (!property.project_id) return setOwners([]);
+      const { data } = await db.from("property_ownerships").select("llc_name,percentage")
+        .eq("project_id", property.project_id).eq("stage", "alquiler").is("to_date", null);
+      setOwners(data ?? []);
+    })();
+  }, [property.project_id]);
+
+  const load = async () => {
+    if (!entry) return setPayments([]);
+    const { data } = await db.from("rental_owner_payments").select("*").eq("entry_id", entry.id);
+    setPayments(data ?? []);
+  };
+  useEffect(() => { load(); }, [entry?.id]);
+
+  if (!entry) {
+    return <p className="text-xs text-muted-foreground border-t pt-3">Guardá el período para cargar el pago de cada propietario.</p>;
+  }
+  if (owners.length === 0) return null;
+
+  return (
+    <div className="border-t pt-3 space-y-3">
+      <p className="text-sm font-semibold">Pago por propietario · {MONTHS[entry.month - 1]} {entry.year}</p>
+      {owners.map((o) => (
+        <OwnerPaymentRow key={o.llc_name} entry={entry} owner={o}
+          payment={payments.find((p) => p.llc_name === o.llc_name)} onSaved={load} />
+      ))}
+    </div>
+  );
+}
+
+function OwnerPaymentRow({ entry, owner, payment, onSaved }: { entry: any; owner: any; payment: any; onSaved: () => void }) {
+  const [paidOn, setPaidOn] = useState(payment?.paid_on ?? "");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setPaidOn(payment?.paid_on ?? ""); }, [payment?.paid_on, entry.id]);
+
+  const upsert = async (extra: Record<string, any>) => {
+    const { error } = await db.from("rental_owner_payments").upsert(
+      { entry_id: entry.id, llc_name: owner.llc_name, paid_on: paidOn || null, ...extra },
+      { onConflict: "entry_id,llc_name" },
+    );
+    if (error) { toast.error(error.message); return false; }
+    return true;
+  };
+
+  const saveDate = async () => {
+    if (await upsert({})) { toast.success(`Fecha guardada para ${owner.llc_name}`); onSaved(); }
+  };
+
+  const upload = async (file: File) => {
+    setBusy(true);
+    const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const llc = owner.llc_name.replace(/[^a-zA-Z0-9]/g, "_");
+    const path = `rent-receipts/${entry.property_id}/${entry.year}-${String(entry.month).padStart(2, "0")}-${llc}-${Date.now()}-${safe}`;
+    const { error } = await supabase.storage.from("project-documents").upload(path, file);
+    if (error) { setBusy(false); return toast.error(error.message); }
+    if (await upsert({ receipt_path: path, receipt_name: file.name })) {
+      toast.success(`Comprobante cargado para ${owner.llc_name}`); onSaved();
+    }
+    setBusy(false);
+  };
+
+  const view = async () => {
+    const { data } = await supabase.storage.from("project-documents").createSignedUrl(payment.receipt_path, 600);
+    if (data) window.open(data.signedUrl, "_blank");
+  };
+
+  return (
+    <div className="rounded-lg border p-3 space-y-2">
+      <p className="text-sm font-medium">{owner.llc_name} ({Number(owner.percentage)}%)</p>
+      <div className="flex flex-wrap items-end gap-2">
+        <div>
+          <Label className="text-xs">Fecha de pago</Label>
+          <Input type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} className="h-9 w-40" />
+        </div>
+        <Button size="sm" variant="outline" onClick={saveDate}>Guardar fecha</Button>
+        <label className="inline-flex">
+          <input type="file" accept="image/*,application/pdf" className="hidden" disabled={busy}
+            onChange={(ev) => { const f = ev.target.files?.[0]; if (f) void upload(f); ev.target.value = ""; }} />
+          <span className="cursor-pointer rounded-md border border-input px-3 py-1.5 text-sm hover:bg-secondary">
+            {busy ? "Subiendo…" : payment?.receipt_path ? "Reemplazar comprobante" : "Cargar comprobante"}
+          </span>
+        </label>
+        {payment?.receipt_path && <Button size="sm" variant="ghost" onClick={view}>Ver</Button>}
+      </div>
     </div>
   );
 }
