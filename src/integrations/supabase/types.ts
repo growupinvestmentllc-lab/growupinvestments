@@ -908,6 +908,8 @@ export type Database = {
           month: number
           paid_on: string | null
           property_id: string
+          receipt_name: string | null
+          receipt_path: string | null
           year: number
         }
         Insert: {
@@ -923,6 +925,8 @@ export type Database = {
           month: number
           paid_on?: string | null
           property_id: string
+          receipt_name?: string | null
+          receipt_path?: string | null
           year: number
         }
         Update: {
@@ -938,6 +942,8 @@ export type Database = {
           month?: number
           paid_on?: string | null
           property_id?: string
+          receipt_name?: string | null
+          receipt_path?: string | null
           year?: number
         }
         Relationships: [
@@ -946,6 +952,50 @@ export type Database = {
             columns: ["property_id"]
             isOneToOne: false
             referencedRelation: "rental_properties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rental_owner_payments: {
+        Row: {
+          amount: number | null
+          created_at: string
+          entry_id: string
+          id: string
+          llc_name: string
+          paid_on: string | null
+          receipt_name: string | null
+          receipt_path: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          entry_id: string
+          id?: string
+          llc_name: string
+          paid_on?: string | null
+          receipt_name?: string | null
+          receipt_path?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          entry_id?: string
+          id?: string
+          llc_name?: string
+          paid_on?: string | null
+          receipt_name?: string | null
+          receipt_path?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rental_owner_payments_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "rental_monthly_entries"
             referencedColumns: ["id"]
           },
         ]
