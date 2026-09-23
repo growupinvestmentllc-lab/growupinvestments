@@ -908,6 +908,8 @@ export type Database = {
           month: number
           paid_on: string | null
           property_id: string
+          receipt_name: string | null
+          receipt_path: string | null
           year: number
         }
         Insert: {
@@ -923,6 +925,8 @@ export type Database = {
           month: number
           paid_on?: string | null
           property_id: string
+          receipt_name?: string | null
+          receipt_path?: string | null
           year: number
         }
         Update: {
@@ -938,6 +942,8 @@ export type Database = {
           month?: number
           paid_on?: string | null
           property_id?: string
+          receipt_name?: string | null
+          receipt_path?: string | null
           year?: number
         }
         Relationships: [
