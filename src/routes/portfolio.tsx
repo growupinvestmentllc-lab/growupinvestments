@@ -83,6 +83,7 @@ type Entry = {
   expense_other: number;
   expense_insurance?: number;
   expense_taxes?: number;
+  paid_on?: string | null;
 };
 
 function PortfolioPage() {
@@ -380,6 +381,19 @@ function entryNoi(e: Entry) {
   );
 }
 
+function ownerIncome(noi: number, pct: number) {
+  return (Math.round(noi) * pct) / 100;
+}
+
+function formatUSDCents(value: number) {
+  return value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
 function RentalTab() {
   const { rows: ownerships, myLlc } = useOwnerships();
   const { user, role } = useAuth();
@@ -479,7 +493,7 @@ function RentalTab() {
   const ownerIncomeForEntry = (e: Entry) => {
     const noi = entryNoi(e);
     const pct = rentalPct(propProjectId[e.property_id]);
-    return (noi * pct) / 100;
+    return ownerIncome(noi, pct);
   };
 
   const periodEntries = visibleEntries.filter((e) => e.month === month && e.year === year);
@@ -647,8 +661,14 @@ function RentalTab() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold text-foreground">Total ingreso propietario {pct}%</span>
-                  <span className="text-lg font-bold text-primary">{formatUSD(((income - expenses) * pct) / 100)}</span>
+                  <span className="text-lg font-bold text-primary">{formatUSDCents(ownerIncome(income - expenses, pct))}</span>
                 </div>
+                {e?.paid_on && (
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
+                    <span className="text-sm font-semibold text-primary">{fmtDate(e.paid_on)}</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
