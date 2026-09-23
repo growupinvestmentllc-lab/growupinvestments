@@ -717,6 +717,7 @@ function DrawSchedule({
     const anyCompleted = groupStages.some((s) => s.completed);
     return {
       num: idx + 1,
+      displayNum: idx as number | null,
       group: LABELS[group] ?? group,
       amount,
       completed: allCompleted,
@@ -724,7 +725,7 @@ function DrawSchedule({
     };
   });
   let list = [
-    { num: 0, group: "Compra Lote", amount: lotCost, completed: true, active: false },
+    { num: 0, displayNum: null as number | null, group: "Compra Lote", amount: lotCost, completed: true, active: false },
     ...groupRows,
   ];
   if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
