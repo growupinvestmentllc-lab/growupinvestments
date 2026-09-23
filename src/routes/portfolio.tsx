@@ -84,6 +84,8 @@ type Entry = {
   expense_insurance?: number;
   expense_taxes?: number;
   paid_on?: string | null;
+  receipt_path?: string | null;
+  receipt_name?: string | null;
 };
 
 function PortfolioPage() {
@@ -668,6 +670,13 @@ function RentalTab() {
                     <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
                     <span className="text-sm font-semibold text-primary">{fmtDate(e.paid_on)}</span>
                   </div>
+                )}
+                {e && (
+                  <ReceiptControl
+                    entry={e}
+                    canEdit={isAdmin}
+                    onChange={(upd) => setEntries((prev) => prev.map((x) => (x.id === upd.id ? { ...x, ...upd } : x)))}
+                  />
                 )}
               </div>
             </div>
