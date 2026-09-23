@@ -88,6 +88,16 @@ type Entry = {
   receipt_name?: string | null;
 };
 
+type OwnerPayment = {
+  id: string;
+  entry_id: string;
+  llc_name: string;
+  amount: number | null;
+  paid_on: string | null;
+  receipt_path: string | null;
+  receipt_name: string | null;
+};
+
 function PortfolioPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
@@ -405,7 +415,7 @@ function RentalTab() {
   const [props, setProps] = useState<Rental[]>([]);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [rentedProjects, setRentedProjects] = useState<any[]>([]);
-  const [ownerPays, setOwnerPays] = useState<any[]>([]);
+  const [ownerPays, setOwnerPays] = useState<OwnerPayment[]>([]);
 
   useEffect(() => {
     (async () => {
@@ -496,6 +506,12 @@ function RentalTab() {
   };
 
   const ownerIncomeForEntry = (e: Entry) => {
+    const savedPayment = myLlc
+      ? ownerPays.find((payment) =>
+          payment.entry_id === e.id && payment.llc_name.toUpperCase() === myLlc.toUpperCase(),
+        )
+      : undefined;
+    if (!isAdmin && savedPayment?.amount != null) return Number(savedPayment.amount);
     const noi = entryNoi(e);
     const pct = rentalPct(propProjectId[e.property_id]);
     return ownerIncome(noi, pct);
@@ -587,6 +603,14 @@ function RentalTab() {
           ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0) +
             Number(e.expense_insurance || 0) + Number(e.expense_taxes || 0)
           : 0;
+        const myOwnerPayment = e && mine
+          ? ownerPays.find((payment) =>
+              payment.entry_id === e.id && payment.llc_name.toUpperCase() === mine.llc_name.toUpperCase(),
+            )
+          : undefined;
+        const displayedOwnerIncome = myOwnerPayment?.amount != null
+          ? Number(myOwnerPayment.amount)
+          : ownerIncome(income - expenses, pct);
 
         return (
           <div key={p.id} className="card-soft p-6">
@@ -666,13 +690,19 @@ function RentalTab() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-semibold text-foreground">Total ingreso propietario {pct}%</span>
-                  <span className="text-lg font-bold text-primary">{formatUSDCents(ownerIncome(income - expenses, pct))}</span>
+                  <span className="text-lg font-bold text-primary">{formatUSDCents(displayedOwnerIncome)}</span>
                 </div>
                 {e && ownerPays
                   .filter((op) => op.entry_id === e.id && (isAdmin || !mine || op.llc_name.toUpperCase() === mine.llc_name.toUpperCase()))
                   .map((op) => (
                     <div key={op.id} className="space-y-2">
                       {isAdmin && <p className="text-xs font-semibold text-muted-foreground uppercase">{op.llc_name}</p>}
+                      {op.amount != null && isAdmin && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-semibold text-foreground">Monto depositado</span>
+                          <span className="text-sm font-semibold text-primary">{formatUSDCents(Number(op.amount))}</span>
+                        </div>
+                      )}
                       {op.paid_on && (
                         <div className="flex justify-between items-center">
                           <span className="text-sm font-semibold text-foreground">Fecha de pago</span>

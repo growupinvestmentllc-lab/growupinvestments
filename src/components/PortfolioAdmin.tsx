@@ -134,10 +134,13 @@ function RentalsAdmin() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[85vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{editing ? "Editar" : "Nueva"} propiedad en alquiler</DialogTitle></DialogHeader>
+          {editing && (
+            <p className="rounded-md border border-border bg-muted/40 p-3 text-sm text-muted-foreground">
+              Estos son los datos comunes de la propiedad. Los montos, fechas y comprobantes de cada LLC se cargan por separado desde <strong className="text-foreground">Meses</strong>.
+            </p>
+          )}
           <div className="grid sm:grid-cols-2 gap-3">
             <Field className="sm:col-span-2" label="Dirección" value={form.address} onChange={(v) => setForm({ ...form, address: v })} />
-            <Field label="Propietario" value={form.owner_name} onChange={(v) => setForm({ ...form, owner_name: v })} />
-            <Field label="Participación %" type="number" value={form.ownership_pct} onChange={(v) => setForm({ ...form, ownership_pct: v })} />
             <Field label="Inquilino" value={form.tenant_name} onChange={(v) => setForm({ ...form, tenant_name: v })} />
             <div>
               <Label>Estado</Label>
@@ -737,20 +740,29 @@ function OwnerPaymentsAdmin({ property, entry }: { property: any; entry: any }) 
 
 function OwnerPaymentRow({ entry, owner, payment, onSaved }: { entry: any; owner: any; payment: any; onSaved: () => void }) {
   const [paidOn, setPaidOn] = useState(payment?.paid_on ?? "");
+  const defaultAmount = Math.round(
+    Number(entry.income_rent || 0) + Number(entry.income_other || 0) -
+    Number(entry.expense_admin || 0) - Number(entry.expense_repairs || 0) - Number(entry.expense_other || 0) -
+    Number(entry.expense_insurance || 0) - Number(entry.expense_taxes || 0)
+  ) * Number(owner.percentage || 0) / 100;
+  const [amount, setAmount] = useState(payment?.amount ?? defaultAmount);
   const [busy, setBusy] = useState(false);
-  useEffect(() => { setPaidOn(payment?.paid_on ?? ""); }, [payment?.paid_on, entry.id]);
+  useEffect(() => {
+    setPaidOn(payment?.paid_on ?? "");
+    setAmount(payment?.amount ?? defaultAmount);
+  }, [payment?.paid_on, payment?.amount, entry.id, defaultAmount]);
 
   const upsert = async (extra: Record<string, any>) => {
     const { error } = await db.from("rental_owner_payments").upsert(
-      { entry_id: entry.id, llc_name: owner.llc_name, paid_on: paidOn || null, ...extra },
+      { entry_id: entry.id, llc_name: owner.llc_name, amount: Number(amount) || 0, paid_on: paidOn || null, ...extra },
       { onConflict: "entry_id,llc_name" },
     );
     if (error) { toast.error(error.message); return false; }
     return true;
   };
 
-  const saveDate = async () => {
-    if (await upsert({})) { toast.success(`Fecha guardada para ${owner.llc_name}`); onSaved(); }
+  const savePayment = async () => {
+    if (await upsert({})) { toast.success(`Pago guardado para ${owner.llc_name}`); onSaved(); }
   };
 
   const upload = async (file: File) => {
@@ -776,10 +788,14 @@ function OwnerPaymentRow({ entry, owner, payment, onSaved }: { entry: any; owner
       <p className="text-sm font-medium">{owner.llc_name} ({Number(owner.percentage)}%)</p>
       <div className="flex flex-wrap items-end gap-2">
         <div>
+          <Label className="text-xs">Monto depositado</Label>
+          <Input type="number" step="0.01" value={amount} onChange={(e) => setAmount(e.target.value)} className="h-9 w-40" />
+        </div>
+        <div>
           <Label className="text-xs">Fecha de pago</Label>
           <Input type="date" value={paidOn} onChange={(e) => setPaidOn(e.target.value)} className="h-9 w-40" />
         </div>
-        <Button size="sm" variant="outline" onClick={saveDate}>Guardar fecha</Button>
+        <Button size="sm" variant="outline" onClick={savePayment}>Guardar pago</Button>
         <label className="inline-flex">
           <input type="file" accept="image/*,application/pdf" className="hidden" disabled={busy}
             onChange={(ev) => { const f = ev.target.files?.[0]; if (f) void upload(f); ev.target.value = ""; }} />
