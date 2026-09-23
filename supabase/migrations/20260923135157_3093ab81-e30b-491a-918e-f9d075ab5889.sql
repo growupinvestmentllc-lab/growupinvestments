@@ -1,0 +1,1 @@
+DELETE FROM public.project_documents WHERE id='82a0fbfa-fd20-4258-bf81-f8a07b7fa2e5'
