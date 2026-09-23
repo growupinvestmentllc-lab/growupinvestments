@@ -974,3 +974,49 @@ function SoldTab() {
     </div>
   );
 }
+
+function ReceiptControl({ entry, canEdit, onChange }: { entry: Entry; canEdit: boolean; onChange: (e: Partial<Entry> & { id: string }) => void }) {
+  const [busy, setBusy] = useState(false);
+  const open = async () => {
+    if (!entry.receipt_path) return;
+    const { data, error } = await supabase.storage.from("project-documents").createSignedUrl(entry.receipt_path, 600);
+    if (error || !data) return alert("No se pudo abrir el comprobante");
+    window.open(data.signedUrl, "_blank");
+  };
+  const upload = async (file: File) => {
+    setBusy(true);
+    try {
+      const safe = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const path = `rent-receipts/${entry.property_id}/${entry.year}-${String(entry.month).padStart(2, "0")}-${Date.now()}-${safe}`;
+      const { error } = await supabase.storage.from("project-documents").upload(path, file, { upsert: true });
+      if (error) throw error;
+      const { error: e2 } = await (supabase as any).from("rental_monthly_entries").update({ receipt_path: path, receipt_name: file.name }).eq("id", entry.id);
+      if (e2) throw e2;
+      onChange({ id: entry.id, receipt_path: path, receipt_name: file.name });
+    } catch (err: any) {
+      alert("No se pudo subir el comprobante: " + (err?.message ?? ""));
+    } finally {
+      setBusy(false);
+    }
+  };
+  if (!entry.receipt_path && !canEdit) return null;
+  return (
+    <div className="flex justify-between items-center gap-3">
+      <span className="text-sm font-semibold text-foreground">Comprobante de transferencia</span>
+      <div className="flex items-center gap-2">
+        {entry.receipt_path && (
+          <Button size="sm" variant="outline" onClick={open}>Ver comprobante</Button>
+        )}
+        {canEdit && (
+          <label className="inline-flex">
+            <input type="file" accept="image/*,application/pdf" className="hidden" disabled={busy}
+              onChange={(ev) => { const f = ev.target.files?.[0]; if (f) void upload(f); ev.target.value = ""; }} />
+            <span className="cursor-pointer rounded-md border border-border px-3 py-1.5 text-sm hover:bg-secondary">
+              {busy ? "Subiendo…" : entry.receipt_path ? "Reemplazar" : "Cargar comprobante"}
+            </span>
+          </label>
+        )}
+      </div>
+    </div>
+  );
+}
