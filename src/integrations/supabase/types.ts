@@ -958,6 +958,7 @@ export type Database = {
       }
       rental_owner_payments: {
         Row: {
+          amount: number | null
           created_at: string
           entry_id: string
           id: string
@@ -968,6 +969,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          amount?: number | null
           created_at?: string
           entry_id: string
           id?: string
@@ -978,6 +980,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          amount?: number | null
           created_at?: string
           entry_id?: string
           id?: string
