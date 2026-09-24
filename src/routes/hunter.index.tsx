@@ -274,6 +274,7 @@ function HunterOfferings() {
         empty="Todavía no hay casas cargadas."
       />
       <Section
+        emphasized
         title="Posibilidad de vender con contrato de alquiler"
         subtitle="Casas con inquilino y contrato vigente."
         items={by("rbi")}
