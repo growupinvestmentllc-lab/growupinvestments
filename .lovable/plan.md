@@ -10,6 +10,7 @@ Hacer que cada propiedad cambie automáticamente de sección en “Mi portafolio
 - Ocultar automáticamente una propiedad de “A la venta” cuando su proyecto pase a “Vendido”.
 - Mostrar automáticamente los proyectos vendidos en “Vendidas”, con dirección, valor disponible, costo y acceso al proyecto.
 - Incluir ahora **35 SW 19th Ct, Cape Coral, FL** en “Vendidas” de **REALSTOMA LLC** y quitarla de “A la venta”.
+- Al abrir “Mi portafolio”, mostrar primero un resumen con acceso a las cuatro secciones; ninguna quedará seleccionada de entrada.
 
 ## Detalles técnicos
 - Ajustar la lectura y consolidación en la página de portafolio; no duplicar registros ni mezclar LLC.
