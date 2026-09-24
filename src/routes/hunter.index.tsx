@@ -207,7 +207,7 @@ function Section({
   items,
   empty,
 }: {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   title: string;
   subtitle: string;
   items: Offering[];
