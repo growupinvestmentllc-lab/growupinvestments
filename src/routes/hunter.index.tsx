@@ -42,6 +42,7 @@ type Offering = {
   gallery: string[] | null;
   rent_gross: number | null;
   rent_net: number | null;
+  proforma_url: string | null;
 };
 
 const db = supabase as any;
@@ -180,6 +181,16 @@ function Card({ o }: { o: Offering }) {
           </div>
         )}
         {o.notes && <p className="mt-4 text-sm text-muted-foreground whitespace-pre-line">{o.notes}</p>}
+        {o.proforma_url && (
+          <a
+            href={o.proforma_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 block rounded-md bg-primary px-4 py-2.5 text-center text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+          >
+            Ver proforma
+          </a>
+        )}
       </div>
     </div>
   );
