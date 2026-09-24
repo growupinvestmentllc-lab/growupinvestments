@@ -211,20 +211,24 @@ function Section({
   subtitle,
   items,
   empty,
+  emphasized,
 }: {
   icon?: React.ReactNode;
   title: string;
   subtitle: string;
   items: Offering[];
   empty: string;
+  emphasized?: boolean;
 }) {
   return (
-    <section className="mt-10 first:mt-0">
+    <section className={emphasized ? "mt-16 first:mt-0" : "mt-10 first:mt-0"}>
       <div className="flex items-center gap-2">
         {icon}
-        <h2 className="text-lg font-bold text-foreground">{title}</h2>
+        <h2 className={emphasized ? "text-2xl font-extrabold tracking-tight text-foreground border-l-4 border-primary pl-3" : "text-lg font-bold text-foreground"}>
+          {title}
+        </h2>
       </div>
-      <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+      <p className={`text-sm text-muted-foreground ${emphasized ? "mt-2 pl-3" : "mt-1"}`}>{subtitle}</p>
       {items.length === 0 ? (
         <div className="mt-4 rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">{empty}</div>
       ) : (
@@ -270,6 +274,7 @@ function HunterOfferings() {
         empty="Todavía no hay casas cargadas."
       />
       <Section
+        emphasized
         title="Posibilidad de vender con contrato de alquiler"
         subtitle="Casas con inquilino y contrato vigente."
         items={by("rbi")}
