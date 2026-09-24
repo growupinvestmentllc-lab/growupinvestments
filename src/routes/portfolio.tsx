@@ -161,7 +161,7 @@ function PortfolioSummary() {
   const isAdmin = role === "admin";
   const [s, setS] = useState<null | {
     sold: number; soldCount: number; invested: number; pending: number; buildCount: number;
-    rentGross: number; rentNet: number; rentCount: number;
+    rentNet: number; rentCount: number;
   }>(null);
 
   useEffect(() => {
@@ -174,6 +174,7 @@ function PortfolioSummary() {
         db.from("portfolio_sold").select("investor_id,project_id,sale_price"),
       ]);
       const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
+      const constructionStatuses = new Set(["En construcción", "Inicio de obra", "Inspecciones finales", "Obra terminada"]);
       const mine = (invs ?? []).filter(
         (i: any) => isAdmin || (myLlc && String(i.owner_llc).trim().toUpperCase() === myLlc.trim().toUpperCase()),
       );
@@ -189,7 +190,7 @@ function PortfolioSummary() {
             ? 57000
             : Number(p.estimated_sale_price ?? p.expected_sale_price ?? 0) * Number(i.percentage || 0) / 100;
           sold += price; soldCount++;
-        } else if (st === "En construcción") {
+        } else if (constructionStatuses.has(st)) {
           invested += Number(i.total_deposited || 0);
           pending += Number(i.total_pending || 0);
           buildCount++;
@@ -202,22 +203,21 @@ function PortfolioSummary() {
         if (p && (String(p.status || "") === "Vendido" || String(p.status || "") === "Vendida")) countedSold.add(p.id);
       });
       (manualSold ?? []).forEach((r: any) => {
-        const ok = isAdmin || !r.investor_id || r.investor_id === user.id;
+        const ok = isAdmin || (r.investor_id ? r.investor_id === user.id : r.project_id && myProjectIds.has(r.project_id));
         if (!ok) return;
         if (r.project_id && countedSold.has(r.project_id)) return;
         sold += Number(r.sale_price || 0);
         soldCount++;
       });
-      let rentGross = 0, rentNet = 0, rentCount = 0;
+      let rentNet = 0, rentCount = 0;
       (rentals ?? []).forEach((r: any) => {
         const ok = isAdmin || (r.investor_id ? r.investor_id === user.id : r.project_id && myProjectIds.has(r.project_id));
         if (!ok) return;
         const pct = Number(r.ownership_pct || 0) / 100;
-        rentGross += Number(r.monthly_rent || 0) * 12 * pct;
         rentNet += (Number(r.monthly_rent || 0) - Number(r.monthly_expenses || 0)) * 12 * pct;
         rentCount++;
       });
-      setS({ sold, soldCount, invested, pending, buildCount, rentGross, rentNet, rentCount });
+      setS({ sold, soldCount, invested, pending, buildCount, rentNet, rentCount });
     })();
   }, [user, myLlc, isAdmin]);
 
