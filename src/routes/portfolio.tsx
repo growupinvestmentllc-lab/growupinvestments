@@ -167,10 +167,11 @@ function PortfolioSummary() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const [{ data: projects }, { data: invs }, { data: rentals }] = await Promise.all([
+      const [{ data: projects }, { data: invs }, { data: rentals }, { data: manualSold }] = await Promise.all([
         db.from("projects").select("id,address,status,estimated_sale_price,expected_sale_price"),
         db.from("investments").select("project_id,owner_llc,percentage,total_deposited,total_pending"),
         db.from("rental_properties").select("investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct"),
+        db.from("portfolio_sold").select("investor_id,project_id,sale_price"),
       ]);
       const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
       const mine = (invs ?? []).filter(
