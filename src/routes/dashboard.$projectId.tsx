@@ -415,7 +415,11 @@ function ProjectDetail() {
             {!is14Trout && !is5963Virtudes && (
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Costos del proyecto</h3>
-              {is35SW || is127Cape ? (
+              {is127Realstoma ? (
+                <div className="grid grid-cols-1 gap-4">
+                  <StatCard label="Precio de venta" value={formatUSD(project.expected_sale_price)} accent="muted" />
+                </div>
+              ) : is35SW || is127Cape ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <StatCard label="Costo lote" value={formatUSD(project.lot_cost)} />
                   <StatCard label={is127Cape ? "Precio de venta" : "Precio de venta (estimado)"} value={formatUSD(project.expected_sale_price)} accent="muted" />
@@ -485,7 +489,7 @@ function ProjectDetail() {
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
-            <div className="card-soft p-6 bg-primary text-primary-foreground">
+            {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : "Rentabilidad esperada"}</h3>
               <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127Cape ? "lg:grid-cols-5" : is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Precio de venta" : is35SW || is477 ? "Precio de venta" : is127 ? "Precio de venta" : "Precio est. de venta"} value={formatUSD(project.expected_sale_price)} />
@@ -550,7 +554,7 @@ function ProjectDetail() {
                   />
                 )}
               </div>
-            </div>
+            </div>}
             {project.notes && (
               <div className="card-soft p-6">
                 <h3 className="font-semibold text-foreground mb-2">Detalles del Proyecto</h3>
