@@ -142,6 +142,7 @@ function ProjectDetail() {
   const is35SW = (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
   const is477 = (project?.address?.toLowerCase() ?? "").includes("477 rayford");
   const is127Cape = (project?.address?.toLowerCase() ?? "").includes("127 nw 24th");
+  const is127Realstoma = project?.id === "db8709d1-f221-469b-9e93-d345f949cd63";
   const is127 =
     (project?.address?.toLowerCase() ?? "").includes("127 nw 24th") ||
     (project?.address?.toLowerCase() ?? "").includes("35 sw 19th");
@@ -282,7 +283,7 @@ function ProjectDetail() {
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="overview">Información</TabsTrigger>
             {!is127 && <TabsTrigger value="portfolio">Fotos de obra</TabsTrigger>}
-            <TabsTrigger value="docs">Documentación</TabsTrigger>
+            {!is127Realstoma && <TabsTrigger value="docs">Documentación</TabsTrigger>}
           </TabsList>
 
           {/* OVERVIEW */}
@@ -480,7 +481,7 @@ function ProjectDetail() {
             </div>
             )}
 
-            {!is2217Embers && !is14Trout && !is5963Virtudes && (
+            {!is2217Embers && !is14Trout && !is5963Virtudes && !is127Realstoma && (
               <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
@@ -625,9 +626,11 @@ function ProjectDetail() {
           </TabsContent>
 
           {/* DOCS */}
-          <TabsContent value="docs" className="mt-6">
-            <DocsTab projectId={project.id} />
-          </TabsContent>
+          {!is127Realstoma && (
+            <TabsContent value="docs" className="mt-6">
+              <DocsTab projectId={project.id} />
+            </TabsContent>
+          )}
         </Tabs>
       </main>
       {lightboxIdx !== null && images[lightboxIdx] && (
