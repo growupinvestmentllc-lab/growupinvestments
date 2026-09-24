@@ -46,11 +46,17 @@ type Offering = {
 
 const db = supabase as any;
 
-function Field({ label, value }: { label: string; value: string }) {
+function Field({ label, value, highlighted = false }: { label: string; value: string; highlighted?: boolean }) {
   return (
-    <div className="rounded-md bg-card border border-border/60 px-3 py-2">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className="text-sm font-semibold text-foreground">{value}</p>
+    <div
+      className={`rounded-md border px-3 py-2 ${
+        highlighted ? "border-primary/50 bg-secondary/40" : "border-border/60 bg-card"
+      }`}
+    >
+      <p className={`text-[10px] uppercase tracking-wide ${highlighted ? "font-semibold text-primary" : "text-muted-foreground"}`}>
+        {label}
+      </p>
+      <p className={`${highlighted ? "text-lg font-bold text-primary" : "text-sm font-semibold text-foreground"}`}>{value}</p>
     </div>
   );
 }
@@ -126,7 +132,7 @@ function Gallery({ photos, title }: { photos: string[]; title: string }) {
 }
 
 function Card({ o }: { o: Offering }) {
-  const specs: { label: string; value: string }[] = [];
+  const specs: { label: string; value: string; highlighted?: boolean }[] = [];
   if (o.model) specs.push({ label: "Modelo", value: o.model });
   if (o.bedrooms != null) specs.push({ label: "Dormitorios", value: String(o.bedrooms) });
   if (o.bathrooms != null) specs.push({ label: "Baños", value: String(o.bathrooms) });
@@ -137,8 +143,8 @@ function Card({ o }: { o: Offering }) {
   if (o.price != null) specs.push({ label: "Precio", value: formatUSD(o.price) });
   if (o.deposit_required != null) specs.push({ label: "Depósito requerido", value: formatUSD(o.deposit_required) });
   if (o.expected_sale_price != null) specs.push({ label: "Precio estimado de venta", value: formatUSD(o.expected_sale_price) });
-  if (o.rent_gross != null) specs.push({ label: "Alquiler bruto (mensual)", value: formatUSD(o.rent_gross) });
-  if (o.rent_net != null) specs.push({ label: "Alquiler neto (mensual)", value: formatUSD(o.rent_net) });
+  if (o.rent_gross != null) specs.push({ label: "Alquiler bruto (mensual)", value: formatUSD(o.rent_gross), highlighted: true });
+  if (o.rent_net != null) specs.push({ label: "Alquiler neto (mensual)", value: formatUSD(o.rent_net), highlighted: true });
   if (o.expected_roi != null) specs.push({ label: "ROI estimado", value: `${Number(o.expected_roi).toFixed(1)}%` });
   if (o.commission_pct != null) specs.push({ label: "Tu comisión", value: `${Number(o.commission_pct).toFixed(1)}%` });
 
