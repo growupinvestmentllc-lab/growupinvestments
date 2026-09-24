@@ -195,6 +195,19 @@ function PortfolioSummary() {
           buildCount++;
         }
       });
+      // Ventas cargadas manualmente en "Vendidas" (sin duplicar proyectos ya contados)
+      const countedSold = new Set<string>();
+      mine.forEach((i: any) => {
+        const p = pMap.get(i.project_id);
+        if (p && (String(p.status || "") === "Vendido" || String(p.status || "") === "Vendida")) countedSold.add(p.id);
+      });
+      (manualSold ?? []).forEach((r: any) => {
+        const ok = isAdmin || !r.investor_id || r.investor_id === user.id;
+        if (!ok) return;
+        if (r.project_id && countedSold.has(r.project_id)) return;
+        sold += Number(r.sale_price || 0);
+        soldCount++;
+      });
       let rentGross = 0, rentNet = 0, rentCount = 0;
       (rentals ?? []).forEach((r: any) => {
         const ok = isAdmin || (r.investor_id ? r.investor_id === user.id : r.project_id && myProjectIds.has(r.project_id));
