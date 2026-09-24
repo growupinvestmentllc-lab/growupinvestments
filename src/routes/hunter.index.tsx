@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
-import { ChevronLeft, ChevronRight, HardHat, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/hunter/")({
