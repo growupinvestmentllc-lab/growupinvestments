@@ -279,7 +279,7 @@ function HunterOfferings() {
 
       <Section
         icon={<HardHat className="h-5 w-5 text-primary" />}
-        title="Posibilidad de vender"
+        title="Casas terminadas para vender"
         subtitle="Casas disponibles para ofrecer a tus clientes."
         items={by("construccion")}
         empty="Todavía no hay casas cargadas."
