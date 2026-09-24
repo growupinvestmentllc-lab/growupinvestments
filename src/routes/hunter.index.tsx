@@ -282,8 +282,8 @@ function HunterOfferings() {
       />
       <Section
         emphasized
-        title="Lotes en venta para elegir modelo de casa"
-        subtitle="Lotes disponibles para definir el modelo junto al cliente."
+        title="Lotes en venta"
+        subtitle=""
         items={by("lote")}
         empty="Todavía no hay lotes cargados."
       />
