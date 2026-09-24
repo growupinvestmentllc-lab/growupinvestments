@@ -281,7 +281,7 @@ function HunterOfferings() {
         empty="Todavía no hay opciones cargadas."
       />
       <Section
-        icon={<MapPin className="h-5 w-5 text-primary" />}
+        emphasized
         title="Lotes en venta para elegir modelo de casa"
         subtitle="Lotes disponibles para definir el modelo junto al cliente."
         items={by("lote")}
