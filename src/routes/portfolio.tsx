@@ -142,12 +142,91 @@ function PortfolioPage() {
               );
             })}
           </div>
+          {portfolioTab === "resumen" && <PortfolioSummary />}
           <TabsContent value="construccion" className="mt-6"><ConstructionTab /></TabsContent>
           <TabsContent value="alquiler" className="mt-6"><RentalTab /></TabsContent>
           <TabsContent value="venta" className="mt-6"><ForSaleTab /></TabsContent>
           <TabsContent value="vendidas" className="mt-6"><SoldTab /></TabsContent>
         </Tabs>
       </main>
+    </div>
+  );
+}
+
+/* ------------------------------ MINI RESUMEN ------------------------------ */
+
+function PortfolioSummary() {
+  const { role, user } = useAuth();
+  const { myLlc } = useOwnerships();
+  const isAdmin = role === "admin";
+  const [s, setS] = useState<null | {
+    sold: number; soldCount: number; invested: number; pending: number; buildCount: number;
+    rentGross: number; rentNet: number; rentCount: number;
+  }>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    (async () => {
+      const [{ data: projects }, { data: invs }, { data: rentals }] = await Promise.all([
+        db.from("projects").select("id,address,status,estimated_sale_price,expected_sale_price"),
+        db.from("investments").select("project_id,owner_llc,percentage,total_deposited,total_pending"),
+        db.from("rental_properties").select("investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct"),
+      ]);
+      const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
+      const mine = (invs ?? []).filter(
+        (i: any) => isAdmin || (myLlc && String(i.owner_llc).trim().toUpperCase() === myLlc.trim().toUpperCase()),
+      );
+      let sold = 0, soldCount = 0, invested = 0, pending = 0, buildCount = 0;
+      const myProjectIds = new Set<string>();
+      mine.forEach((i: any) => {
+        const p = pMap.get(i.project_id);
+        if (!p) return;
+        myProjectIds.add(p.id);
+        const st = String(p.status || "");
+        if (st === "Vendido" || st === "Vendida") {
+          const price = p.id === "db8709d1-f221-469b-9e93-d345f949cd63"
+            ? 57000
+            : Number(p.estimated_sale_price ?? p.expected_sale_price ?? 0) * Number(i.percentage || 0) / 100;
+          sold += price; soldCount++;
+        } else if (st === "En construcción") {
+          invested += Number(i.total_deposited || 0);
+          pending += Number(i.total_pending || 0);
+          buildCount++;
+        }
+      });
+      let rentGross = 0, rentNet = 0, rentCount = 0;
+      (rentals ?? []).forEach((r: any) => {
+        const ok = isAdmin || (r.investor_id ? r.investor_id === user.id : r.project_id && myProjectIds.has(r.project_id));
+        if (!ok) return;
+        const pct = Number(r.ownership_pct || 0) / 100;
+        rentGross += Number(r.monthly_rent || 0) * 12 * pct;
+        rentNet += (Number(r.monthly_rent || 0) - Number(r.monthly_expenses || 0)) * 12 * pct;
+        rentCount++;
+      });
+      setS({ sold, soldCount, invested, pending, buildCount, rentGross, rentNet, rentCount });
+    })();
+  }, [user, myLlc, isAdmin]);
+
+  if (!s) return null;
+  const items = [
+    { label: "Ingresos por ventas", value: s.sold, note: `${s.soldCount} vendida(s) · ingreso único`, tone: "text-emerald-700" },
+    { label: "Invertido en construcción", value: s.invested, note: `${s.buildCount} proyecto(s) en obra`, tone: "text-foreground" },
+    { label: "Falta de depositar", value: s.pending, note: "Pendiente en construcción", tone: "text-destructive" },
+    { label: "Alquiler anual bruto", value: s.rentGross, note: `${s.rentCount} unidad(es) en alquiler`, tone: "text-foreground" },
+    { label: "Alquiler anual neto", value: s.rentNet, note: "Después de gastos, tu parte", tone: "text-emerald-700" },
+  ];
+  return (
+    <div className="card-soft p-5 mt-6">
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Resumen general</h3>
+      <div className="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-3">
+        {items.map((it) => (
+          <div key={it.label} className="rounded-xl border border-border bg-card px-3 py-3">
+            <p className="text-[10px] uppercase tracking-wide text-muted-foreground leading-tight">{it.label}</p>
+            <p className={`text-lg font-bold mt-1 ${it.tone}`}>{formatUSD(it.value)}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">{it.note}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
