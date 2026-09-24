@@ -168,11 +168,11 @@ function Card({ o }: { o: Offering }) {
           </div>
         )}
         {o.rent_net != null && (
-          <div className="mt-3 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2">
-            <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-400">
+          <div className="mt-3 rounded-md border border-primary/50 bg-secondary/40 px-3 py-2">
+            <p className="text-xs font-semibold text-primary">
               El alquiler neto ya incluye:
             </p>
-            <ul className="mt-1 list-disc pl-4 text-xs text-emerald-700 dark:text-emerald-400">
+            <ul className="mt-1 list-disc pl-4 text-xs text-primary">
               <li>Property management</li>
               <li>Property tax</li>
               <li>Seguro</li>
