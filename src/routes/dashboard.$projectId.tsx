@@ -960,6 +960,7 @@ function Spec({ label, value, icon }: { label: string; value: string; icon?: Rea
 }
 
 function DocsTab({ projectId }: { projectId: string }) {
+  const { role } = useAuth();
   const [docs, setDocs] = useState<any[]>([]);
   useEffect(() => {
     (async () => {
