@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ALL_STAGES, formatUSD } from "@/lib/stages";
-import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin } from "lucide-react";
+import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin, Eye, Download } from "lucide-react";
 import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -84,6 +84,9 @@ type Entry = {
   expense_insurance?: number;
   expense_taxes?: number;
   paid_on?: string | null;
+  payment_status?: string | null;
+  receipt_path?: string | null;
+  receipt_name?: string | null;
 };
 
 function PortfolioPage() {
@@ -360,9 +363,27 @@ function salePrice(p: Project) {
 const STATUS_META: Record<string, { label: string; dot: string; cls: string }> = {
   al_dia: { label: "Al día", dot: "🟢", cls: "bg-primary/10 text-primary" },
   alquiler_pagado: { label: "Alquiler pagado", dot: "●", cls: "bg-emerald-100 text-emerald-800" },
-  venciendo: { label: "Venciendo", dot: "🟡", cls: "bg-amber-100 text-amber-800" },
-  vacante: { label: "Vacante", dot: "🔴", cls: "bg-red-100 text-red-800" },
+  proximo_a_pagar: { label: "Próximo a pagar", dot: "●", cls: "bg-amber-100 text-amber-800" },
+  pendiente_pago: { label: "Pendiente de pago", dot: "●", cls: "bg-red-100 text-red-800" },
+  venciendo: { label: "Próximo a pagar", dot: "●", cls: "bg-amber-100 text-amber-800" },
+  vacante: { label: "Pendiente de pago", dot: "●", cls: "bg-red-100 text-red-800" },
 };
+
+async function viewReceipt(path: string) {
+  const { data, error } = await supabase.storage.from("project-documents").createSignedUrl(path, 60 * 10);
+  if (!error && data?.signedUrl) window.open(data.signedUrl, "_blank", "noopener,noreferrer");
+}
+
+async function downloadReceipt(path: string, name: string) {
+  const { data, error } = await supabase.storage.from("project-documents").download(path);
+  if (error || !data) return;
+  const url = URL.createObjectURL(data);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = name;
+  link.click();
+  URL.revokeObjectURL(url);
+}
 
 function InfoRow({ label, value }: { label: string; value: string }) {
   return (
@@ -576,8 +597,7 @@ function RentalTab() {
           .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
         const pct = mine ? Number(mine.percentage) : 100;
         const e = periodEntries.find((x) => x.property_id === p.id);
-        const rentPaid = Number(e?.income_rent || 0) > 0;
-        const meta = rentPaid ? STATUS_META.alquiler_pagado : STATUS_META[p.status] ?? STATUS_META.al_dia;
+        const meta = STATUS_META[e?.payment_status ?? ""] ?? STATUS_META[p.status] ?? STATUS_META.proximo_a_pagar;
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
           ? Number(e.expense_admin || 0) + Number(e.expense_repairs || 0) + Number(e.expense_other || 0) +
@@ -668,6 +688,19 @@ function RentalTab() {
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-semibold text-foreground">Fecha de pago</span>
                     <span className="text-sm font-semibold text-primary">{fmtDate(e.paid_on)}</span>
+                  </div>
+                )}
+                {e?.receipt_path && (
+                  <div className="flex items-center justify-between gap-3 border-t border-border pt-2">
+                    <span className="text-sm font-semibold text-foreground">Comprobante</span>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => viewReceipt(e.receipt_path ?? "")}>
+                        <Eye className="h-4 w-4" /> Ver comprobante
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => downloadReceipt(e.receipt_path ?? "", e.receipt_name ?? "comprobante")}>
+                        <Download className="h-4 w-4" /> Descargar
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
