@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/hunter/ventas")({
   head: () => ({
@@ -86,6 +87,7 @@ function Table({ rows }: { rows: Sale[] }) {
 
 function HunterSales() {
   const [sales, setSales] = useState<Sale[]>([]);
+  const [selectedPeriod, setSelectedPeriod] = useState("2026");
 
   useEffect(() => {
     (async () => {
@@ -97,9 +99,25 @@ function HunterSales() {
     })();
   }, []);
 
+  const periods = useMemo(() => {
+    const datedYears = sales
+      .map((sale) => sale.sale_date?.slice(0, 4))
+      .filter((year): year is string => Boolean(year));
+    const years = Array.from(new Set(["2026", "2027", ...datedYears])).sort();
+    return sales.some((sale) => !sale.sale_date) ? [...years, "sin-fecha"] : years;
+  }, [sales]);
+
+  const periodSales = useMemo(
+    () =>
+      sales.filter((sale) =>
+        selectedPeriod === "sin-fecha" ? !sale.sale_date : sale.sale_date?.startsWith(selectedPeriod),
+      ),
+    [sales, selectedPeriod],
+  );
+
   const totals = useMemo(() => {
-    const volume = sales.reduce((a, s) => a + Number(s.sale_price ?? 0), 0);
-    const commission = sales.reduce(
+    const volume = periodSales.reduce((a, s) => a + Number(s.sale_price ?? 0), 0);
+    const commission = periodSales.reduce(
       (a, s) =>
         a +
         Number(
@@ -108,15 +126,48 @@ function HunterSales() {
         ),
       0,
     );
-    return { volume, commission, count: sales.length };
-  }, [sales]);
+    return { volume, commission, count: periodSales.length };
+  }, [periodSales]);
 
   return (
     <div>
       <h1 className="text-2xl font-bold text-foreground">Mis Ventas</h1>
       <p className="text-sm text-muted-foreground mt-1">Record de operaciones cerradas.</p>
 
-      <div className="mt-6 grid sm:grid-cols-3 gap-4">
+      <div className="mt-6 border-b border-border">
+        <div className="flex gap-2 overflow-x-auto pb-3" role="tablist" aria-label="Año de ventas">
+          {periods.map((period) => {
+            const active = selectedPeriod === period;
+            return (
+              <Button
+                key={period}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                variant={active ? "default" : "outline"}
+                onClick={() => setSelectedPeriod(period)}
+                className="min-w-24 text-base font-bold"
+              >
+                {period === "sin-fecha" ? "Sin fecha" : period}
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-8 flex items-end justify-between gap-4 border-l-4 border-primary pl-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Período</p>
+          <h2 className="text-3xl font-extrabold text-foreground">
+            {selectedPeriod === "sin-fecha" ? "Ventas sin fecha" : `Ventas ${selectedPeriod}`}
+          </h2>
+        </div>
+        <p className="pb-1 text-sm font-medium text-muted-foreground">
+          {totals.count} {totals.count === 1 ? "operación" : "operaciones"}
+        </p>
+      </div>
+
+      <div className="mt-5 grid sm:grid-cols-3 gap-4">
         <div className="card-soft p-5">
           <p className="text-xs uppercase tracking-wide text-muted-foreground">Ventas</p>
           <p className="text-2xl font-bold text-foreground">{totals.count}</p>
@@ -134,7 +185,7 @@ function HunterSales() {
       {(["construccion", "terminada", "rbi"] as const).map((k) => (
         <section key={k} className="mt-8">
           <h2 className="text-lg font-bold text-foreground mb-3">{KIND_LABEL[k]}</h2>
-          <Table rows={sales.filter((s) => s.kind === k)} />
+          <Table rows={periodSales.filter((s) => s.kind === k)} />
         </section>
       ))}
     </div>
