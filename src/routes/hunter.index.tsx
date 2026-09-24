@@ -156,7 +156,12 @@ function Card({ o }: { o: Offering }) {
   const photos = o.gallery && o.gallery.length > 0 ? o.gallery : o.image_url ? [o.image_url] : [];
 
   return (
-    <div className="card-soft overflow-hidden">
+    <div className="card-soft relative overflow-hidden">
+      {o.kind === "rbi" && (
+        <div className="pointer-events-none absolute -left-12 top-6 z-10 w-44 -rotate-45 bg-red-600 py-1 text-center text-xs font-bold uppercase tracking-widest text-white shadow-md">
+          Alquilada
+        </div>
+      )}
       {photos.length > 0 && <Gallery photos={photos} title={o.title} />}
       <div className="p-5">
         <h3 className="font-semibold text-foreground">{o.title}</h3>
