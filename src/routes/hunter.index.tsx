@@ -177,6 +177,17 @@ function Card({ o }: { o: Offering }) {
             ))}
           </div>
         )}
+        {o.kind === "lote" && (
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-foreground">Fondeado</span>
+              <span className="font-semibold text-primary">0%</span>
+            </div>
+            <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: "0%" }} />
+            </div>
+          </div>
+        )}
         {o.rent_net != null && (
           <div className="mt-3 rounded-md border border-primary/50 bg-secondary/40 px-3 py-2">
             <p className="text-xs font-semibold text-primary">
