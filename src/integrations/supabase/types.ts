@@ -209,6 +209,7 @@ export type Database = {
           model: string | null
           notes: string | null
           price: number | null
+          proforma_url: string | null
           rent_gross: number | null
           rent_net: number | null
           sort_order: number
@@ -236,6 +237,7 @@ export type Database = {
           model?: string | null
           notes?: string | null
           price?: number | null
+          proforma_url?: string | null
           rent_gross?: number | null
           rent_net?: number | null
           sort_order?: number
@@ -263,6 +265,7 @@ export type Database = {
           model?: string | null
           notes?: string | null
           price?: number | null
+          proforma_url?: string | null
           rent_gross?: number | null
           rent_net?: number | null
           sort_order?: number
