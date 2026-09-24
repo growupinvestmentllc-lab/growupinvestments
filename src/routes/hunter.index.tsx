@@ -135,7 +135,11 @@ function Gallery({ photos, title }: { photos: string[]; title: string }) {
 function Card({ o }: { o: Offering }) {
   const specs: { label: string; value: string; highlighted?: boolean }[] = [];
   if (o.model) specs.push({ label: "Modelo", value: o.model });
-  if (o.bedrooms != null) specs.push({ label: "Dormitorios", value: String(o.bedrooms) });
+  if (o.bedrooms != null)
+    specs.push({
+      label: "Dormitorios",
+      value: o.model?.toLowerCase().includes("ponte vedra") ? `${o.bedrooms} + 1 studio` : String(o.bedrooms),
+    });
   if (o.bathrooms != null) specs.push({ label: "Baños", value: String(o.bathrooms) });
   if (o.sqft_living != null) specs.push({ label: "Sqft living", value: String(o.sqft_living) });
   if (o.sqft_total != null) specs.push({ label: "Sqft total", value: String(o.sqft_total) });
