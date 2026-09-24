@@ -228,7 +228,7 @@ function Section({
           {title}
         </h2>
       </div>
-      <p className={`text-sm text-muted-foreground ${emphasized ? "mt-2 pl-3" : "mt-1"}`}>{subtitle}</p>
+      {subtitle && <p className={`text-sm text-muted-foreground ${emphasized ? "mt-2 pl-3" : "mt-1"}`}>{subtitle}</p>}
       {items.length === 0 ? (
         <div className="mt-4 rounded-lg border border-dashed border-border p-6 text-sm text-muted-foreground">{empty}</div>
       ) : (
@@ -282,8 +282,8 @@ function HunterOfferings() {
       />
       <Section
         emphasized
-        title="Lotes en venta para elegir modelo de casa"
-        subtitle="Lotes disponibles para definir el modelo junto al cliente."
+        title="Lotes en venta"
+        subtitle=""
         items={by("lote")}
         empty="Todavía no hay lotes cargados."
       />
