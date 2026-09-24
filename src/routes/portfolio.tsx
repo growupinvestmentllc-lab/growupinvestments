@@ -119,45 +119,29 @@ function PortfolioPage() {
         </p>
 
         <Tabs value={portfolioTab} onValueChange={setPortfolioTab} className="mt-8">
-          <TabsList className="bg-muted/60 flex-wrap h-auto">
-            <TabsTrigger value="construccion" className="gap-1.5">
-              <HardHat className="h-4 w-4" /> En Construcción
-            </TabsTrigger>
-            <TabsTrigger value="alquiler" className="gap-1.5">
-              <Home className="h-4 w-4" /> En Alquiler
-            </TabsTrigger>
-            <TabsTrigger value="venta" className="gap-1.5">
-              <Tag className="h-4 w-4" /> A la Venta
-            </TabsTrigger>
-            <TabsTrigger value="vendidas" className="gap-1.5">
-              <CheckCircle2 className="h-4 w-4" /> Vendidas
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="resumen" className="mt-8">
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {[
-                { value: "construccion", label: "En Construcción", icon: HardHat },
-                { value: "alquiler", label: "En Alquiler", icon: Home },
-                { value: "venta", label: "A la Venta", icon: Tag },
-                { value: "vendidas", label: "Vendidas", icon: CheckCircle2 },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <Button
-                    key={item.value}
-                    type="button"
-                    variant="outline"
-                    className="h-28 flex-col gap-3 bg-card text-base"
-                    onClick={() => setPortfolioTab(item.value)}
-                  >
-                    <Icon className="h-7 w-7 text-primary" />
-                    {item.label}
-                  </Button>
-                );
-              })}
-            </div>
-          </TabsContent>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { value: "construccion", label: "En Construcción", icon: HardHat },
+              { value: "alquiler", label: "En Alquiler", icon: Home },
+              { value: "venta", label: "A la Venta", icon: Tag },
+              { value: "vendidas", label: "Vendidas", icon: CheckCircle2 },
+            ].map((item) => {
+              const Icon = item.icon;
+              const selected = portfolioTab === item.value;
+              return (
+                <Button
+                  key={item.value}
+                  type="button"
+                  variant={selected ? "default" : "outline"}
+                  className="h-28 flex-col gap-3 text-base"
+                  onClick={() => setPortfolioTab(item.value)}
+                >
+                  <Icon className="h-7 w-7" />
+                  {item.label}
+                </Button>
+              );
+            })}
+          </div>
           <TabsContent value="construccion" className="mt-6"><ConstructionTab /></TabsContent>
           <TabsContent value="alquiler" className="mt-6"><RentalTab /></TabsContent>
           <TabsContent value="venta" className="mt-6"><ForSaleTab /></TabsContent>
