@@ -1000,6 +1000,7 @@ function SoldTab() {
       {automaticRows.map((project) => {
         const investment = project.investment;
         const pct = Number(investment?.percentage ?? 100);
+        const is127Realstoma = project.id === "db8709d1-f221-469b-9e93-d345f949cd63";
         const sale = Number(project.estimated_sale_price ?? project.expected_sale_price ?? 0);
         const base = Number(
           project.total_cost || Number(project.construction_cost || 0) + Number(project.lot_cost || 0) || investment?.total_deposited || 0,
@@ -1018,11 +1019,11 @@ function SoldTab() {
                 ✅ Vendida
               </span>
             </div>
-            <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className={`mt-4 grid gap-3 ${is127Realstoma ? "grid-cols-1" : "grid-cols-2"}`}>
               <Box label="Precio de venta" value={sale ? formatUSD(sale) : "—"} />
-              <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />
-              {pct < 100 && <Box label={`Tu parte (${pct}%)`} value={sale ? formatUSD((sale * pct) / 100) : "—"} />}
-              {roi != null && <Box label="ROI" value={`${roi.toFixed(2)}%`} tone="muted" />}
+              {!is127Realstoma && <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />}
+              {!is127Realstoma && pct < 100 && <Box label={`Tu parte (${pct}%)`} value={sale ? formatUSD((sale * pct) / 100) : "—"} />}
+              {!is127Realstoma && roi != null && <Box label="ROI" value={`${roi.toFixed(2)}%`} tone="muted" />}
             </div>
             <Button asChild size="sm" variant="outline" className="mt-4 w-full">
               <Link to="/dashboard/$projectId" params={{ projectId: project.id }}>
