@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download } from "lucide-react";
+import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download, Upload } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
 
@@ -25,6 +26,7 @@ const DOC_LABELS: Record<string, string> = {
   informe_3: "Informe 3",
   landtrust: "Landtrust",
   certificado_ocupacion: "Certificado de Ocupación (CO)",
+  proforma: "Proforma",
 };
 
 type Project = {
@@ -61,7 +63,7 @@ const RAJAH_472_SELLERS = new Set(["ALMERIA LLC", "DAVI LLC"]);
 
 function ProjectDetail() {
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
-  const { user, loading } = useAuth();
+  const { user, loading, role } = useAuth();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
   const [stages, setStages] = useState<Stage[]>([]);
@@ -288,6 +290,7 @@ function ProjectDetail() {
 
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
+            {is127Cape && !is127Realstoma && <ProformaCard projectId={project.id} canUpload={role === "admin"} />}
             {is127 ? null : simpleProgress ? (
               <div className="card-soft p-6 flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
@@ -419,10 +422,17 @@ function ProjectDetail() {
                 <div className="grid grid-cols-1 gap-4">
                   <StatCard label="Precio de venta" value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
-              ) : is35SW || is127Cape ? (
+              ) : is127Cape ? (
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <StatCard label="Total costo construcción" value={formatUSD(project.construction_cost)} />
+                  <StatCard label="Costo de lote" value={formatUSD(project.lot_cost)} />
+                  <StatCard label="Total depositado" value={formatUSD(myInvestment?.total_deposited ?? deposited)} accent="primary" />
+                  <StatCard label="Total pendiente" value={formatUSD(myInvestment?.total_pending ?? pending)} accent="muted" />
+                </div>
+              ) : is35SW ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <StatCard label="Costo lote" value={formatUSD(project.lot_cost)} />
-                  <StatCard label={is127Cape ? "Precio de venta" : "Precio de venta (estimado)"} value={formatUSD(project.expected_sale_price)} accent="muted" />
+                  <StatCard label="Precio de venta (estimado)" value={formatUSD(project.expected_sale_price)} accent="muted" />
                 </div>
               ) : is127 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -486,7 +496,7 @@ function ProjectDetail() {
             )}
 
             {!is2217Embers && !is14Trout && !is5963Virtudes && !is127Realstoma && (
-              <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is127 ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
+              <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is35SW ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
             )}
 
             {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
@@ -682,6 +692,88 @@ function ProjectDetail() {
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function ProformaCard({ projectId, canUpload }: { projectId: string; canUpload: boolean }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [doc, setDoc] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const load = async () => {
+    const { data } = await (supabase as any)
+      .from("project_documents")
+      .select("id,file_path,file_name")
+      .eq("project_id", projectId)
+      .eq("doc_type", "proforma")
+      .maybeSingle();
+    setDoc(data ?? null);
+  };
+
+  useEffect(() => { void load(); }, [projectId]);
+
+  const open = async () => {
+    if (!doc?.file_path) return;
+    const { data } = await supabase.storage.from("project-documents").createSignedUrl(doc.file_path, 600);
+    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+  };
+
+  const upload = async (file: File) => {
+    if (!doc?.id) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "bin";
+    const path = `${projectId}/${doc.id}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from("project-documents")
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (!uploadError) {
+      await (supabase as any).from("project_documents").update({
+        file_path: path,
+        file_name: file.name,
+        uploaded_at: new Date().toISOString(),
+      }).eq("id", doc.id);
+      await load();
+    }
+    setUploading(false);
+  };
+
+  return (
+    <div className="card-soft p-5 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="h-10 w-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <FileText className="h-5 w-5" />
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Proforma</p>
+          <p className="text-sm font-semibold text-foreground truncate">{doc?.file_name || "Archivo pendiente"}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-2 shrink-0">
+        {doc?.file_path && (
+          <Button type="button" variant="outline" size="sm" onClick={open}>
+            <Download className="h-4 w-4" /> Ver archivo
+          </Button>
+        )}
+        {canUpload && (
+          <>
+            <input
+              ref={inputRef}
+              type="file"
+              className="hidden"
+              accept=".pdf,image/*"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                if (file) void upload(file);
+                event.target.value = "";
+              }}
+            />
+            <Button type="button" size="sm" onClick={() => inputRef.current?.click()} disabled={uploading || !doc}>
+              <Upload className="h-4 w-4" /> {uploading ? "Subiendo…" : doc?.file_path ? "Reemplazar" : "Subir archivo"}
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }
