@@ -226,13 +226,12 @@ function PortfolioSummary() {
     { label: "Ingresos por ventas", value: s.sold, note: `${s.soldCount} vendida(s) · ingreso único`, tone: "text-emerald-700" },
     { label: "Invertido en construcción", value: s.invested, note: `${s.buildCount} proyecto(s) en obra`, tone: "text-foreground" },
     { label: "Falta de depositar", value: s.pending, note: "Pendiente en construcción", tone: "text-destructive" },
-    { label: "Alquiler anual bruto", value: s.rentGross, note: `${s.rentCount} unidad(es) en alquiler`, tone: "text-foreground" },
-    { label: "Alquiler anual neto", value: s.rentNet, note: "Después de gastos, tu parte", tone: "text-emerald-700" },
+    { label: "Alquiler anual neto", value: s.rentNet, note: `${s.rentCount} unidad(es) · después de gastos`, tone: "text-emerald-700" },
   ];
   return (
     <div className="card-soft p-5 mt-6">
       <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Resumen general</h3>
-      <div className="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
         {items.map((it) => (
           <div key={it.label} className="rounded-xl border border-border bg-card px-3 py-3">
             <p className="text-[10px] uppercase tracking-wide text-muted-foreground leading-tight">{it.label}</p>
