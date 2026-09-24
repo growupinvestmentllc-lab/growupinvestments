@@ -51,7 +51,11 @@ const EMPTY_RENTAL = {
   address: "", owner_name: "", ownership_pct: 100, tenant_name: "",
   monthly_rent: 0, monthly_expenses: 0, lease_start: "", lease_end: "",
   status: "al_dia", purchase_price: "", estimated_sale_price: "", sort_order: 0,
+  annual_rent: "", cap_rate: "", property_tax_annual: "", insurance_annual: "", management_annual: "", notes: "",
 };
+
+const toNum = (v: any) => Number(String(v ?? "").replace(",", ".")) || 0;
+const toNumOrNull = (v: any) => (v === "" || v == null ? null : toNum(v));
 
 function RentalsAdmin() {
   const [rows, setRows] = useState<any[]>([]);
@@ -70,16 +74,22 @@ function RentalsAdmin() {
     const payload = {
       address: form.address,
       owner_name: form.owner_name || null,
-      ownership_pct: Number(form.ownership_pct) || 0,
+      ownership_pct: toNum(form.ownership_pct),
       tenant_name: form.tenant_name || null,
-      monthly_rent: Number(form.monthly_rent) || 0,
-      monthly_expenses: Number(form.monthly_expenses) || 0,
+      monthly_rent: toNum(form.monthly_rent),
+      monthly_expenses: toNum(form.monthly_expenses),
       lease_start: form.lease_start || null,
       lease_end: form.lease_end || null,
       status: form.status,
-      purchase_price: form.purchase_price === "" ? null : Number(form.purchase_price),
-      estimated_sale_price: form.estimated_sale_price === "" ? null : Number(form.estimated_sale_price),
-      sort_order: Number(form.sort_order) || 0,
+      purchase_price: toNumOrNull(form.purchase_price),
+      estimated_sale_price: toNumOrNull(form.estimated_sale_price),
+      sort_order: toNum(form.sort_order),
+      annual_rent: toNumOrNull(form.annual_rent),
+      cap_rate: toNumOrNull(form.cap_rate),
+      property_tax_annual: toNumOrNull(form.property_tax_annual),
+      insurance_annual: toNumOrNull(form.insurance_annual),
+      management_annual: toNumOrNull(form.management_annual),
+      notes: form.notes || null,
     };
     const { error } = editing
       ? await db.from("rental_properties").update(payload).eq("id", editing)
@@ -128,7 +138,10 @@ function RentalsAdmin() {
               <Button size="sm" variant="outline" onClick={() => {
                 setForm({ ...EMPTY_RENTAL, ...r, lease_start: r.lease_start ?? "", lease_end: r.lease_end ?? "",
                   purchase_price: r.purchase_price ?? "", estimated_sale_price: r.estimated_sale_price ?? "",
-                  owner_name: r.owner_name ?? "", tenant_name: r.tenant_name ?? "" });
+                  owner_name: r.owner_name ?? "", tenant_name: r.tenant_name ?? "",
+                  annual_rent: r.annual_rent ?? "", cap_rate: r.cap_rate ?? "",
+                  property_tax_annual: r.property_tax_annual ?? "", insurance_annual: r.insurance_annual ?? "",
+                  management_annual: r.management_annual ?? "", notes: r.notes ?? "" });
                 setEditing(r.id); setOpen(true);
               }}><Edit className="h-4 w-4" /></Button>
               <Button size="sm" variant="ghost" onClick={() => remove(r.id)}><Trash2 className="h-4 w-4" /></Button>
@@ -155,11 +168,17 @@ function RentalsAdmin() {
             </div>
             <Field label="Alquiler mensual" type="number" value={form.monthly_rent} onChange={(v) => setForm({ ...form, monthly_rent: v })} />
             <Field label="Gastos mensuales" type="number" value={form.monthly_expenses} onChange={(v) => setForm({ ...form, monthly_expenses: v })} />
+            <Field label="Alquiler anual" type="number" value={form.annual_rent} onChange={(v) => setForm({ ...form, annual_rent: v })} />
+            <Field label="Cap rate %" type="number" value={form.cap_rate} onChange={(v) => setForm({ ...form, cap_rate: v })} />
+            <Field label="Impuesto a la propiedad anual" type="number" value={form.property_tax_annual} onChange={(v) => setForm({ ...form, property_tax_annual: v })} />
+            <Field label="Seguro anual" type="number" value={form.insurance_annual} onChange={(v) => setForm({ ...form, insurance_annual: v })} />
+            <Field label="Administración anual" type="number" value={form.management_annual} onChange={(v) => setForm({ ...form, management_annual: v })} />
             <Field label="Inicio contrato" type="date" value={form.lease_start} onChange={(v) => setForm({ ...form, lease_start: v })} />
             <Field label="Vencimiento contrato" type="date" value={form.lease_end} onChange={(v) => setForm({ ...form, lease_end: v })} />
             <Field label="Precio de compra" type="number" value={form.purchase_price} onChange={(v) => setForm({ ...form, purchase_price: v })} />
             <Field label="Precio estimado de venta" type="number" value={form.estimated_sale_price} onChange={(v) => setForm({ ...form, estimated_sale_price: v })} />
             <Field label="Orden" type="number" value={form.sort_order} onChange={(v) => setForm({ ...form, sort_order: v })} />
+            <Field className="sm:col-span-2" label="Notas" value={form.notes} onChange={(v) => setForm({ ...form, notes: v })} />
           </div>
           <DialogFooter><Button onClick={save}>Guardar</Button></DialogFooter>
         </DialogContent>
@@ -176,7 +195,7 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
-  const [form, setForm] = useState({ income_rent: 0, income_other: 0, expense_admin: 0, expense_repairs: 0, expense_other: 0 });
+  const [form, setForm] = useState<any>({ income_rent: 0, income_other: 0, expense_admin: 0, expense_repairs: 0, expense_other: 0, expense_insurance: 0, expense_taxes: 0, paid_on: "" });
   const [entries, setEntries] = useState<any[]>([]);
 
   const load = async () => {
@@ -190,27 +209,43 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
     setForm({
       income_rent: e?.income_rent ?? 0, income_other: e?.income_other ?? 0,
       expense_admin: e?.expense_admin ?? 0, expense_repairs: e?.expense_repairs ?? 0, expense_other: e?.expense_other ?? 0,
+      expense_insurance: e?.expense_insurance ?? 0, expense_taxes: e?.expense_taxes ?? 0, paid_on: e?.paid_on ?? "",
     });
   }, [entries, month, year]);
+
+  const n = (v: any) => Number(String(v ?? "").replace(",", ".")) || 0;
+  const net = n(form.income_rent) + n(form.income_other) - n(form.expense_admin) - n(form.expense_repairs)
+    - n(form.expense_other) - n(form.expense_insurance) - n(form.expense_taxes);
 
   const save = async () => {
     const payload = {
       property_id: property.id, month, year,
-      income_rent: Number(form.income_rent) || 0,
-      income_other: Number(form.income_other) || 0,
-      expense_admin: Number(form.expense_admin) || 0,
-      expense_repairs: Number(form.expense_repairs) || 0,
-      expense_other: Number(form.expense_other) || 0,
+      income_rent: n(form.income_rent),
+      income_other: n(form.income_other),
+      expense_admin: n(form.expense_admin),
+      expense_repairs: n(form.expense_repairs),
+      expense_other: n(form.expense_other),
+      expense_insurance: n(form.expense_insurance),
+      expense_taxes: n(form.expense_taxes),
+      paid_on: form.paid_on || null,
     };
     const { error } = await db.from("rental_monthly_entries").upsert(payload, { onConflict: "property_id,month,year" });
     if (error) return toast.error(error.message);
     toast.success("Período guardado"); load();
   };
 
+  const remove = async () => {
+    const e = entries.find((x) => x.month === month && x.year === year);
+    if (!e) return;
+    const { error } = await db.from("rental_monthly_entries").delete().eq("id", e.id);
+    if (error) return toast.error(error.message);
+    toast.success("Período eliminado"); load();
+  };
+
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[85vh] overflow-y-auto">
-        <DialogHeader><DialogTitle>Ingresos y egresos · {property.address}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>Ingresos y egresos · {property.address}{property.owner_name ? ` · ${property.owner_name}` : ""}</DialogTitle></DialogHeader>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Mes</Label>
@@ -220,27 +255,36 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
             </select>
           </div>
           <Field label="Año" type="number" value={year} onChange={(v) => setYear(Number(v))} />
-          <Field label="Ingreso alquiler" type="number" value={form.income_rent} onChange={(v) => setForm({ ...form, income_rent: v as any })} />
-          <Field label="Otros ingresos" type="number" value={form.income_other} onChange={(v) => setForm({ ...form, income_other: v as any })} />
-          <Field label="Management fee" type="number" value={form.expense_admin} onChange={(v) => setForm({ ...form, expense_admin: v as any })} />
-          <Field label="Reparaciones" type="number" value={form.expense_repairs} onChange={(v) => setForm({ ...form, expense_repairs: v as any })} />
-          <Field label="Otros egresos" type="number" value={form.expense_other} onChange={(v) => setForm({ ...form, expense_other: v as any })} />
+          <Field label="Ingreso alquiler" type="number" value={form.income_rent} onChange={(v) => setForm({ ...form, income_rent: v })} />
+          <Field label="Otros ingresos" type="number" value={form.income_other} onChange={(v) => setForm({ ...form, income_other: v })} />
+          <Field label="Seguro" type="number" value={form.expense_insurance} onChange={(v) => setForm({ ...form, expense_insurance: v })} />
+          <Field label="Impuestos" type="number" value={form.expense_taxes} onChange={(v) => setForm({ ...form, expense_taxes: v })} />
+          <Field label="Management fee" type="number" value={form.expense_admin} onChange={(v) => setForm({ ...form, expense_admin: v })} />
+          <Field label="Reparaciones" type="number" value={form.expense_repairs} onChange={(v) => setForm({ ...form, expense_repairs: v })} />
+          <Field label="Otros egresos" type="number" value={form.expense_other} onChange={(v) => setForm({ ...form, expense_other: v })} />
+          <Field label="Fecha de pago" type="date" value={form.paid_on} onChange={(v) => setForm({ ...form, paid_on: v })} />
         </div>
-        <div className="rounded-lg bg-muted/40 p-3 text-sm flex justify-between">
-          <span className="font-medium">NOI del período</span>
-          <span className="font-bold text-primary">
-            {formatUSD(
-              Number(form.income_rent) + Number(form.income_other) -
-              Number(form.expense_admin) - Number(form.expense_repairs) - Number(form.expense_other),
-            )}
-          </span>
+        <div className="rounded-lg bg-muted/40 p-3 text-sm space-y-1">
+          <div className="flex justify-between">
+            <span className="font-medium">Resultado neto del período</span>
+            <span className="font-bold text-primary">{formatUSD(net)}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="font-medium">Ingreso propietario {Number(property.ownership_pct)}%</span>
+            <span className="font-bold text-primary">{formatUSD(net * Number(property.ownership_pct || 0) / 100)}</span>
+          </div>
         </div>
         {entries.length > 0 && (
           <div className="text-xs text-muted-foreground">
             Períodos cargados: {entries.map((e) => `${MONTHS[e.month - 1].slice(0, 3)} ${e.year}`).join(", ")}
           </div>
         )}
-        <DialogFooter><Button onClick={save}>Guardar período</Button></DialogFooter>
+        <DialogFooter className="gap-2">
+          {entries.some((x) => x.month === month && x.year === year) && (
+            <Button variant="outline" onClick={remove}>Eliminar período</Button>
+          )}
+          <Button onClick={save}>Guardar período</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
