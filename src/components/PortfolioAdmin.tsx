@@ -109,7 +109,14 @@ function RentalsAdmin() {
         {rows.map((r) => (
           <div key={r.id} className="card-soft p-4 flex items-start justify-between gap-4 flex-wrap">
             <div>
-              <p className="font-semibold text-foreground">{r.address}</p>
+              <p className="font-semibold text-foreground">
+                {r.address}
+                {r.investor_id && r.owner_name ? (
+                  <span className="ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-primary text-primary-foreground align-middle">
+                    {r.owner_name}
+                  </span>
+                ) : null}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {r.tenant_name || "Sin inquilino"} · {formatUSD(r.monthly_rent)}/mes · {Number(r.ownership_pct)}% · {r.status}
               </p>
