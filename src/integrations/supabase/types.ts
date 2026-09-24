@@ -907,6 +907,7 @@ export type Database = {
           income_rent: number
           month: number
           paid_on: string | null
+          payment_status: string
           property_id: string
           receipt_name: string | null
           receipt_path: string | null
@@ -924,6 +925,7 @@ export type Database = {
           income_rent?: number
           month: number
           paid_on?: string | null
+          payment_status?: string
           property_id: string
           receipt_name?: string | null
           receipt_path?: string | null
@@ -941,6 +943,7 @@ export type Database = {
           income_rent?: number
           month?: number
           paid_on?: string | null
+          payment_status?: string
           property_id?: string
           receipt_name?: string | null
           receipt_path?: string | null

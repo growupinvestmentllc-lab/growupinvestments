@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { formatUSD } from "@/lib/stages";
-import { Plus, Trash2, Edit, CalendarDays } from "lucide-react";
+import { Plus, Trash2, Edit, CalendarDays, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 const db = supabase as any;
@@ -18,9 +18,9 @@ const MONTHS = [
 ];
 
 const STATUSES = [
-  { value: "al_dia", label: "🟢 Al día" },
-  { value: "venciendo", label: "🟡 Venciendo" },
-  { value: "vacante", label: "🔴 Vacante" },
+  { value: "alquiler_pagado", label: "🟢 Alquiler pagado" },
+  { value: "proximo_a_pagar", label: "🟡 Próximo a pagar" },
+  { value: "pendiente_pago", label: "🔴 Pendiente de pago" },
 ];
 
 export function PortfolioAdmin() {
@@ -63,12 +63,31 @@ function RentalsAdmin() {
   const [form, setForm] = useState<any>(EMPTY_RENTAL);
   const [editing, setEditing] = useState<string | null>(null);
   const [entriesFor, setEntriesFor] = useState<any | null>(null);
+  const now = new Date();
+  const [paymentMonth, setPaymentMonth] = useState(now.getMonth() + 1);
+  const [paymentForm, setPaymentForm] = useState<any>({ payment_status: "proximo_a_pagar", paid_on: "", receipt_path: null, receipt_name: null });
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
   const load = async () => {
     const { data } = await db.from("rental_properties").select("*").order("sort_order");
     setRows(data ?? []);
   };
   useEffect(() => { load(); }, []);
+
+  useEffect(() => {
+    if (!editing || !open) return;
+    db.from("rental_monthly_entries").select("payment_status,paid_on,receipt_path,receipt_name")
+      .eq("property_id", editing).eq("month", paymentMonth).eq("year", now.getFullYear()).maybeSingle()
+      .then(({ data }: any) => {
+        setPaymentForm({
+          payment_status: data?.payment_status ?? "proximo_a_pagar",
+          paid_on: data?.paid_on ?? "",
+          receipt_path: data?.receipt_path ?? null,
+          receipt_name: data?.receipt_name ?? null,
+        });
+        setReceiptFile(null);
+      });
+  }, [editing, open, paymentMonth]);
 
   const save = async () => {
     const payload = {
@@ -95,6 +114,27 @@ function RentalsAdmin() {
       ? await db.from("rental_properties").update(payload).eq("id", editing)
       : await db.from("rental_properties").insert(payload);
     if (error) return toast.error(error.message);
+    if (editing) {
+      let receiptPath = paymentForm.receipt_path;
+      let receiptName = paymentForm.receipt_name;
+      if (receiptFile) {
+        const safeName = receiptFile.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+        receiptPath = `rent-receipts/${editing}/${now.getFullYear()}-${String(paymentMonth).padStart(2, "0")}-${crypto.randomUUID()}-${safeName}`;
+        const { error: uploadError } = await supabase.storage.from("project-documents").upload(receiptPath, receiptFile);
+        if (uploadError) return toast.error(uploadError.message);
+        receiptName = receiptFile.name;
+      }
+      const { error: periodError } = await db.from("rental_monthly_entries").upsert({
+        property_id: editing,
+        month: paymentMonth,
+        year: now.getFullYear(),
+        payment_status: paymentForm.payment_status,
+        paid_on: paymentForm.paid_on || null,
+        receipt_path: receiptPath,
+        receipt_name: receiptName,
+      }, { onConflict: "property_id,month,year" });
+      if (periodError) return toast.error(periodError.message);
+    }
     toast.success("Guardado");
     setOpen(false); setEditing(null); setForm(EMPTY_RENTAL);
     load();
@@ -142,6 +182,7 @@ function RentalsAdmin() {
                   annual_rent: r.annual_rent ?? "", cap_rate: r.cap_rate ?? "",
                   property_tax_annual: r.property_tax_annual ?? "", insurance_annual: r.insurance_annual ?? "",
                   management_annual: r.management_annual ?? "", notes: r.notes ?? "" });
+                setPaymentMonth(now.getMonth() + 1);
                 setEditing(r.id); setOpen(true);
               }}><Edit className="h-4 w-4" /></Button>
               <Button size="sm" variant="ghost" onClick={() => remove(r.id)}><Trash2 className="h-4 w-4" /></Button>
@@ -160,12 +201,20 @@ function RentalsAdmin() {
             <Field label="Participación %" type="number" value={form.ownership_pct} onChange={(v) => setForm({ ...form, ownership_pct: v })} />
             <Field label="Inquilino" value={form.tenant_name} onChange={(v) => setForm({ ...form, tenant_name: v })} />
             <div>
-              <Label>Estado</Label>
+              <Label>Mes</Label>
               <select className="mt-1 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
-                value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
+                value={paymentMonth} onChange={(e) => setPaymentMonth(Number(e.target.value))}>
+                {MONTHS.map((m, i) => <option key={m} value={i + 1}>{m}</option>)}
+              </select>
+            </div>
+            <div>
+              <Label>Estado de pago</Label>
+              <select className="mt-1 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+                value={paymentForm.payment_status} onChange={(e) => setPaymentForm({ ...paymentForm, payment_status: e.target.value })}>
                 {STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
               </select>
             </div>
+            <Field label="Fecha de pago alquiler" type="date" value={paymentForm.paid_on} onChange={(v) => setPaymentForm({ ...paymentForm, paid_on: v })} />
             <Field label="Alquiler mensual" type="number" value={form.monthly_rent} onChange={(v) => setForm({ ...form, monthly_rent: v })} />
             <Field label="Gastos mensuales" type="number" value={form.monthly_expenses} onChange={(v) => setForm({ ...form, monthly_expenses: v })} />
             <Field label="Alquiler anual" type="number" value={form.annual_rent} onChange={(v) => setForm({ ...form, annual_rent: v })} />
@@ -177,7 +226,14 @@ function RentalsAdmin() {
             <Field label="Vencimiento contrato" type="date" value={form.lease_end} onChange={(v) => setForm({ ...form, lease_end: v })} />
             <Field label="Precio de compra" type="number" value={form.purchase_price} onChange={(v) => setForm({ ...form, purchase_price: v })} />
             <Field label="Precio estimado de venta" type="number" value={form.estimated_sale_price} onChange={(v) => setForm({ ...form, estimated_sale_price: v })} />
-            <Field label="Orden" type="number" value={form.sort_order} onChange={(v) => setForm({ ...form, sort_order: v })} />
+            <div>
+              <Label>Comprobante</Label>
+              <label className="mt-1 flex h-9 cursor-pointer items-center gap-2 rounded-md border border-input bg-background px-3 text-sm">
+                <Upload className="h-4 w-4" />
+                <span className="truncate">{receiptFile?.name ?? paymentForm.receipt_name ?? "Seleccionar archivo"}</span>
+                <input className="sr-only" type="file" accept="image/*,.pdf" onChange={(e) => setReceiptFile(e.target.files?.[0] ?? null)} />
+              </label>
+            </div>
             <Field className="sm:col-span-2" label="Notas" value={form.notes} onChange={(v) => setForm({ ...form, notes: v })} />
           </div>
           <DialogFooter><Button onClick={save}>Guardar</Button></DialogFooter>
@@ -195,7 +251,7 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
   const now = new Date();
   const [month, setMonth] = useState(now.getMonth() + 1);
   const [year, setYear] = useState(now.getFullYear());
-  const [form, setForm] = useState<any>({ income_rent: 0, income_other: 0, expense_admin: 0, expense_repairs: 0, expense_other: 0, expense_insurance: 0, expense_taxes: 0, paid_on: "" });
+  const [form, setForm] = useState<any>({ income_rent: 0, income_other: 0, expense_admin: 0, expense_repairs: 0, expense_other: 0, expense_insurance: 0, expense_taxes: 0, paid_on: "", payment_status: "proximo_a_pagar" });
   const [entries, setEntries] = useState<any[]>([]);
 
   const load = async () => {
@@ -210,6 +266,7 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
       income_rent: e?.income_rent ?? 0, income_other: e?.income_other ?? 0,
       expense_admin: e?.expense_admin ?? 0, expense_repairs: e?.expense_repairs ?? 0, expense_other: e?.expense_other ?? 0,
       expense_insurance: e?.expense_insurance ?? 0, expense_taxes: e?.expense_taxes ?? 0, paid_on: e?.paid_on ?? "",
+      payment_status: e?.payment_status ?? "proximo_a_pagar",
     });
   }, [entries, month, year]);
 
@@ -228,6 +285,7 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
       expense_insurance: n(form.expense_insurance),
       expense_taxes: n(form.expense_taxes),
       paid_on: form.paid_on || null,
+      payment_status: form.payment_status,
     };
     const { error } = await db.from("rental_monthly_entries").upsert(payload, { onConflict: "property_id,month,year" });
     if (error) return toast.error(error.message);
@@ -263,6 +321,13 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
           <Field label="Reparaciones" type="number" value={form.expense_repairs} onChange={(v) => setForm({ ...form, expense_repairs: v })} />
           <Field label="Otros egresos" type="number" value={form.expense_other} onChange={(v) => setForm({ ...form, expense_other: v })} />
           <Field label="Fecha de pago" type="date" value={form.paid_on} onChange={(v) => setForm({ ...form, paid_on: v })} />
+          <div>
+            <Label>Estado de pago</Label>
+            <select className="mt-1 w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+              value={form.payment_status} onChange={(e) => setForm({ ...form, payment_status: e.target.value })}>
+              {STATUSES.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+            </select>
+          </div>
         </div>
         <div className="rounded-lg bg-muted/40 p-3 text-sm space-y-1">
           <div className="flex justify-between">
