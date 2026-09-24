@@ -290,7 +290,6 @@ function ProjectDetail() {
 
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
-            {is127Cape && !is127Realstoma && <ProformaCard projectId={project.id} canUpload={role === "admin"} />}
             {is127 ? null : simpleProgress ? (
               <div className="card-soft p-6 flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
@@ -505,8 +504,8 @@ function ProjectDetail() {
                 <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Precio de venta" : is35SW || is477 ? "Precio de venta" : is127 ? "Precio de venta" : "Precio est. de venta"} value={formatUSD(project.expected_sale_price)} />
                 {is127Cape && (
                   <>
-                    <Stat dark label="Closing costs (7,83%)" value={`(${formatUSD(4854.58)})`} />
-                    <Stat dark label="Neto recibido" value={formatUSD(57145.42)} />
+                    <Stat dark label="Closing costs (0%)" value={`(${formatUSD(0)})`} />
+                    <Stat dark label="Neto recibido" value={formatUSD(0)} />
                   </>
                 )}
                 {!is127 && !is14Trout && !is5963Virtudes && (
@@ -531,7 +530,7 @@ function ProjectDetail() {
                 {is568Cypress ? (
                   <Stat dark label="ROI estimado" value={`${totalCost ? (((Number(project.expected_sale_price) - totalCost) / totalCost) * 100).toFixed(1) : 0}%`} />
                 ) : is127Cape ? (
-                  <Stat dark label="ROI estimado" value="14.29%" />
+                  <Stat dark label="ROI estimado" value="0%" />
                 ) : is35SW ? (
                   <Stat dark label="ROI estimado" value="17.60%" />
                 ) : is127 ? (
@@ -961,6 +960,7 @@ function Spec({ label, value, icon }: { label: string; value: string; icon?: Rea
 }
 
 function DocsTab({ projectId }: { projectId: string }) {
+  const { role } = useAuth();
   const [docs, setDocs] = useState<any[]>([]);
   useEffect(() => {
     (async () => {
@@ -977,10 +977,11 @@ function DocsTab({ projectId }: { projectId: string }) {
 
   // 127 NW 24th Pl — venta de lote: solo el registro de la venta
   if (projectId === "2f2c8509-18d0-489c-b5bb-758120a21e3b") {
-    const uploadedDocs = docs.filter((d) => !!d.file_path);
+    const uploadedDocs = docs.filter((d) => !!d.file_path && d.doc_type !== "proforma");
     return (
-      <div className="card-soft p-6">
-        <h3 className="font-semibold text-foreground mb-4">Documentos</h3>
+      <div className="card-soft p-6 space-y-4">
+        <h3 className="font-semibold text-foreground">Documentos</h3>
+        <ProformaCard projectId={projectId} canUpload={role === "admin"} />
         {uploadedDocs.length === 0 ? (
           <p className="text-sm text-muted-foreground">Sin documentos disponibles.</p>
         ) : (
