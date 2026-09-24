@@ -265,7 +265,6 @@ function HunterOfferings() {
         empty="Todavía no hay casas cargadas."
       />
       <Section
-        icon={<Sparkles className="h-5 w-5 text-primary" />}
         title="Posibilidad de vender con contrato de alquiler"
         subtitle="Casas con inquilino y contrato vigente."
         items={by("rbi")}
