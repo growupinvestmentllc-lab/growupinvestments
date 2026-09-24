@@ -443,8 +443,9 @@ function RentalTab() {
   const visibleProps = useMemo(() => {
     if (isAdmin) return props;
     return props.filter((p) => {
+      // Ficha asignada a un inversor concreto: solo la ve ese inversor
+      if (p.investor_id) return !!user && p.investor_id === user.id;
       if (p.project_id && myRentalProjectIds.has(p.project_id)) return true;
-      if (p.investor_id && user && p.investor_id === user.id) return true;
       return false;
     });
   }, [props, ownerships, myRentalProjectIds, isAdmin, user]);
