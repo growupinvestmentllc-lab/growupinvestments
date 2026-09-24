@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
-import { ChevronLeft, ChevronRight, HardHat, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/hunter/")({
@@ -278,8 +278,7 @@ function HunterOfferings() {
       </p>
 
       <Section
-        icon={<HardHat className="h-5 w-5 text-primary" />}
-        title="Casas terminadas para vender"
+        title="Casas propias para vender"
         subtitle="Casas disponibles para ofrecer a tus clientes."
         items={by("construccion")}
         empty="Todavía no hay casas cargadas."
