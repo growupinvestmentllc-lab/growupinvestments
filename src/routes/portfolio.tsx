@@ -93,6 +93,7 @@ function PortfolioPage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [profileName, setProfileName] = useState<string>("");
+  const [portfolioTab, setPortfolioTab] = useState("resumen");
 
   useEffect(() => {
     if (loading) return;
@@ -117,7 +118,7 @@ function PortfolioPage() {
           Estado consolidado de tus inversiones inmobiliarias
         </p>
 
-        <Tabs defaultValue="construccion" className="mt-8">
+        <Tabs value={portfolioTab} onValueChange={setPortfolioTab} className="mt-8">
           <TabsList className="bg-muted/60 flex-wrap h-auto">
             <TabsTrigger value="construccion" className="gap-1.5">
               <HardHat className="h-4 w-4" /> En Construcción
@@ -133,6 +134,30 @@ function PortfolioPage() {
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="resumen" className="mt-8">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { value: "construccion", label: "En Construcción", icon: HardHat },
+                { value: "alquiler", label: "En Alquiler", icon: Home },
+                { value: "venta", label: "A la Venta", icon: Tag },
+                { value: "vendidas", label: "Vendidas", icon: CheckCircle2 },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Button
+                    key={item.value}
+                    type="button"
+                    variant="outline"
+                    className="h-28 flex-col gap-3 bg-card text-base"
+                    onClick={() => setPortfolioTab(item.value)}
+                  >
+                    <Icon className="h-7 w-7 text-primary" />
+                    {item.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </TabsContent>
           <TabsContent value="construccion" className="mt-6"><ConstructionTab /></TabsContent>
           <TabsContent value="alquiler" className="mt-6"><RentalTab /></TabsContent>
           <TabsContent value="venta" className="mt-6"><ForSaleTab /></TabsContent>
@@ -759,6 +784,7 @@ function ForSaleTab() {
   const { rows: ownerships, myLlc } = useOwnerships();
   const [rows, setRows] = useState<any[]>([]);
   const [saleProjects, setSaleProjects] = useState<any[]>([]);
+  const [projectStatuses, setProjectStatuses] = useState<Record<string, string>>({});
   useEffect(() => {
     db.from("portfolio_for_sale").select("*").order("created_at").then(({ data }: any) => setRows(data ?? []));
     db.from("projects")
@@ -767,12 +793,20 @@ function ForSaleTab() {
       .then(({ data }: any) =>
         setSaleProjects((data ?? []).filter((p: any) => p.address !== "Nueva propiedad")),
       );
+    db.from("projects").select("id,status").then(({ data }: any) => {
+      const next: Record<string, string> = {};
+      (data ?? []).forEach((p: any) => { next[p.id] = p.status; });
+      setProjectStatuses(next);
+    });
   }, []);
   const isAdmin = role === "admin";
   const visibleRows = useMemo(() => {
-    if (isAdmin) return rows;
-    return rows.filter((r) => r.investor_id === user?.id);
-  }, [rows, user, isAdmin]);
+    const current = rows.filter(
+      (r) => !r.project_id || ["A la venta", "En venta con opción de alquiler"].includes(projectStatuses[r.project_id]),
+    );
+    if (isAdmin) return current;
+    return current.filter((r) => r.investor_id === user?.id);
+  }, [rows, user, isAdmin, projectStatuses]);
 
   // Propiedades "A la venta" de Mis Proyectos que no tienen ficha cargada
   const extraSale = useMemo(() => {
@@ -927,18 +961,77 @@ function ForSaleTab() {
 
 function SoldTab() {
   const { user, role } = useAuth();
+  const { myLlc } = useOwnerships();
   const [rows, setRows] = useState<any[]>([]);
+  const [soldProjects, setSoldProjects] = useState<any[]>([]);
   useEffect(() => {
     db.from("portfolio_sold").select("*").order("sale_date", { ascending: false }).then(({ data }: any) => setRows(data ?? []));
-  }, []);
+    (async () => {
+      const [{ data: projects }, { data: investments }] = await Promise.all([
+        db.from("projects")
+          .select("id,address,status,total_cost,construction_cost,lot_cost,estimated_sale_price,expected_sale_price,updated_at")
+          .in("status", ["Vendido", "Vendida"]),
+        db.from("investments").select("project_id,owner_llc,percentage,total_deposited"),
+      ]);
+      const investmentRows = investments ?? [];
+      const automatic = (projects ?? []).flatMap((project: any) => {
+        const matches = investmentRows.filter((investment: any) => investment.project_id === project.id);
+        if (role !== "admin" && myLlc) {
+          return matches
+            .filter((investment: any) => investment.owner_llc?.trim().toUpperCase() === myLlc.trim().toUpperCase())
+            .map((investment: any) => ({ ...project, investment }));
+        }
+        if (matches.length > 0) return matches.map((investment: any) => ({ ...project, investment }));
+        return [{ ...project, investment: null }];
+      });
+      setSoldProjects(automatic);
+    })();
+  }, [role, myLlc]);
   const isAdmin = role === "admin";
   const visibleRows = useMemo(() => {
     if (isAdmin) return rows;
     return rows.filter((r) => r.investor_id === user?.id);
   }, [rows, user, isAdmin]);
-  if (visibleRows.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
+  const manualProjectIds = new Set(visibleRows.map((row) => row.project_id).filter(Boolean));
+  const automaticRows = soldProjects.filter((project) => !manualProjectIds.has(project.id));
+  if (visibleRows.length === 0 && automaticRows.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
+      {automaticRows.map((project) => {
+        const investment = project.investment;
+        const pct = Number(investment?.percentage ?? 100);
+        const sale = Number(project.estimated_sale_price ?? project.expected_sale_price ?? 0);
+        const base = Number(
+          project.total_cost || Number(project.construction_cost || 0) + Number(project.lot_cost || 0) || investment?.total_deposited || 0,
+        );
+        const roi = base ? ((sale - base) / base) * 100 : null;
+        return (
+          <div key={`${project.id}-${investment?.owner_llc ?? "project"}`} className="card-soft p-6">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-semibold text-foreground">{project.address}</h3>
+                {investment?.owner_llc && (
+                  <p className="mt-1 text-xs font-medium text-muted-foreground">{investment.owner_llc} · {pct}%</p>
+                )}
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
+                ✅ Vendida
+              </span>
+            </div>
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <Box label="Precio de venta" value={sale ? formatUSD(sale) : "—"} />
+              <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />
+              {pct < 100 && <Box label={`Tu parte (${pct}%)`} value={sale ? formatUSD((sale * pct) / 100) : "—"} />}
+              {roi != null && <Box label="ROI" value={`${roi.toFixed(2)}%`} tone="muted" />}
+            </div>
+            <Button asChild size="sm" variant="outline" className="mt-4 w-full">
+              <Link to="/dashboard/$projectId" params={{ projectId: project.id }}>
+                Ver proyecto <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        );
+      })}
       {visibleRows.map((r) => {
         const base = Number(r.cost_base || 0);
         const roi = base ? ((Number(r.sale_price || 0) - base) / base) * 100 : null;
