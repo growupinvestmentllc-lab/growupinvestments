@@ -681,64 +681,53 @@ function RentalTab() {
             </div>
 
             <div className="mt-4 rounded-xl border border-border bg-muted/30 overflow-hidden">
-              <div className={is2725Embers ? "" : "grid sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-border"}>
-                <div className="p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Contrato de alquiler
-                  </p>
-                  <dl className="mt-2 space-y-1.5 text-sm">
-                    <InfoRow label="Inquilino" value={p.tenant_name || "Sin inquilino"} />
-                    {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
-                    {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
-                    {mine && <InfoRow label="Tu participación" value={`${mine.llc_name} (${pct}%)`} />}
-                  </dl>
-                </div>
-                {!is2725Embers && <div className="p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Costos anuales
-                  </p>
-                  <dl className="mt-2 space-y-1.5 text-sm">
-                    <InfoRow label="Impuesto a la propiedad anual" value={formatUSD((p as any).property_tax_annual)} />
-                    <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
-                    <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
-                    {(p as any).cap_rate && (
-                      <InfoRow label="Cap rate" value={`${Number((p as any).cap_rate)}%`} />
-                    )}
-                  </dl>
-                </div>}
+              <div className="p-4">
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Contrato de alquiler
+                </p>
+                <dl className="mt-2 space-y-1.5 text-sm">
+                  <InfoRow label="Inquilino" value={p.tenant_name || "Sin inquilino"} />
+                  {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
+                  {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
+                  {mine && <InfoRow label="Tu participación" value={`${mine.llc_name} (${pct}%)`} />}
+                </dl>
               </div>
-              {!is2725Embers && (p as any).notes && (
-                <p className="px-4 py-2 text-xs text-muted-foreground border-t border-border">{(p as any).notes}</p>
-              )}
             </div>
 
-            {is2725Embers && (
-              <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
-                <dl className="space-y-2 text-sm">
-                  <InfoRow label="Precio de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} />
-                  <InfoRow label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
-                  <InfoRow label="Alquiler anual bruto" value={formatUSD(Number(p.monthly_rent) * 12)} />
-                </dl>
-                <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
-                <dl className="mt-2 space-y-2 text-sm">
-                  <InfoRow label="Impuesto a la propiedad" value={formatUSD((p as any).property_tax_annual)} />
-                  <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
-                  <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
-                  <InfoRow label="NOI anual estimado" value={formatUSD(20500)} />
-                </dl>
+            <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
+              <dl className="space-y-2 text-sm">
+                <InfoRow label="Precio de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} />
+                <InfoRow label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
+                <InfoRow label="Alquiler anual bruto" value={formatUSD(Number(p.monthly_rent) * 12)} />
+              </dl>
+              <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
+              <dl className="mt-2 space-y-2 text-sm">
+                <InfoRow label="Impuesto a la propiedad" value={formatUSD((p as any).property_tax_annual)} />
+                <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
+                <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
+                <InfoRow
+                  label="NOI anual estimado"
+                  value={
+                    is2725Embers
+                      ? formatUSD(20500)
+                      : formatUSD(
+                          Number(p.monthly_rent) * 12 -
+                            (Number((p as any).property_tax_annual || 0) +
+                              Number((p as any).insurance_annual || 0) +
+                              Number((p as any).management_annual || 0)),
+                        )
+                  }
+                />
+              </dl>
+              {(p as any).cap_rate ? (
                 <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
                   <span className="text-base font-bold">Cap rate</span>
                   <span className="text-2xl font-bold">{Number((p as any).cap_rate).toFixed(2)}%</span>
                 </div>
-                {(p as any).notes && <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">{(p as any).notes}</p>}
-              </div>
-            )}
+              ) : null}
+              {(p as any).notes && <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">{(p as any).notes}</p>}
+            </div>
 
-            {!is2725Embers && <div className="mt-4 grid grid-cols-2 lg:grid-cols-3 gap-3">
-              <Box label="Participación" value={`${Number(p.ownership_pct)}%`} />
-              <Box label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
-              <Box label="Precio estimado de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} tone="muted" />
-            </div>}
 
 
 
