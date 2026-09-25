@@ -141,7 +141,7 @@ function Card({ o }: { o: Offering }) {
       value: o.model?.toLowerCase().includes("ponte vedra") ? `${o.bedrooms} + 1 studio` : String(o.bedrooms),
     });
   if (o.bathrooms != null) specs.push({ label: "Baños", value: String(o.bathrooms) });
-  if (o.sqft_living != null) specs.push({ label: "Superficie living", value: `${o.sqft_living} sqft (${Math.round(o.sqft_living / 10.7639)} m²)` });
+  if (o.sqft_living != null) specs.push({ label: "Superficie cerrada", value: `${o.sqft_living} sqft (${Math.round(o.sqft_living / 10.7639)} m²)` });
   if (o.sqft_total != null) specs.push({ label: "Superficie total", value: `${o.sqft_total} sqft (${Math.round(o.sqft_total / 10.7639)} m²)` });
   if (o.lot_cost != null) specs.push({ label: "Costo lote", value: formatUSD(o.lot_cost) });
   if (o.construction_cost != null) specs.push({ label: "Costo construcción", value: formatUSD(o.construction_cost) });
