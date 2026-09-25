@@ -43,6 +43,7 @@ type Offering = {
   rent_gross: number | null;
   rent_net: number | null;
   proforma_url: string | null;
+  progress_pct: number | null;
 };
 
 const db = supabase as any;
@@ -175,6 +176,17 @@ function Card({ o }: { o: Offering }) {
             {specs.map((s) => (
               <Field key={s.label} {...s} />
             ))}
+          </div>
+        )}
+        {o.progress_pct != null && (
+          <div className="mt-4">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-semibold text-foreground">Avance de la casa</span>
+              <span className="font-semibold text-primary">{Math.round(Number(o.progress_pct))}%</span>
+            </div>
+            <div className="mt-1.5 h-2.5 w-full overflow-hidden rounded-full bg-muted">
+              <div className="h-full rounded-full bg-primary" style={{ width: `${Number(o.progress_pct)}%` }} />
+            </div>
           </div>
         )}
         {o.kind === "lote" && (
