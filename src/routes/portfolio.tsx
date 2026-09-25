@@ -425,27 +425,6 @@ function ConstructionTab() {
         );
       })}
 
-      <div className="card-soft p-6 bg-secondary/30 border-secondary">
-        <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Consolidado en construcción
-        </h3>
-        <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <Box label="Total depositado" value={formatUSD(totals.deposited)} />
-          <Box label="Pendiente de depositar" value={formatUSD(totals.pending)} />
-          <Box label="Total construcción" value={formatUSD(totals.contract)} />
-          <Box label="Venta estimada" value={formatUSD(totals.sale)} tone="muted" />
-        </div>
-        <div className="mt-4 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between flex-wrap gap-3">
-          <div>
-            <p className="text-[10px] uppercase tracking-wide opacity-80">Ganancia estimada total</p>
-            <p className="text-xl font-bold">{formatUSD(totalGain)}</p>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-wide opacity-80">ROI estimado total</p>
-            <p className="text-2xl font-bold">{totalRoi.toFixed(2)}%</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
