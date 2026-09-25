@@ -1123,7 +1123,7 @@ function SoldTab() {
               <Box label="Precio de venta" value={sale ? formatUSD(sale) : "—"} />
               {!is127Realstoma && <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />}
               {!is127Realstoma && pct < 100 && <Box label={`Tu parte (${pct}%)`} value={sale ? formatUSD((sale * pct) / 100) : "—"} />}
-              {!is127Realstoma && roi != null && <Box label="ROI" value={`${roi.toFixed(2)}%`} tone="muted" />}
+              {!is127Realstoma && roi != null && <Box label="ROI" value={is7305 ? "8%" : `${roi.toFixed(2)}%`} tone="muted" />}
             </div>
             <Button asChild size="sm" variant="outline" className="mt-4 w-full">
               <Link to="/dashboard/$projectId" params={{ projectId: project.id }}>
