@@ -336,21 +336,6 @@ function ConstructionTab() {
     return rows.filter((r) => !otherStage.has(r.id));
   }, [rows, ownerships, myLlc, isAdmin]);
 
-  const totals = visibleRows.reduce(
-    (acc, r) => {
-      const contract = contractValue(r);
-      const sale = salePrice(r);
-      acc.deposited += r.deposited;
-      acc.pending += r.pending;
-      acc.contract += contract;
-      acc.sale += sale;
-      return acc;
-    },
-    { deposited: 0, pending: 0, contract: 0, sale: 0 },
-  );
-  const totalGain = totals.sale - totals.contract;
-  const totalRoi = totals.contract ? (totalGain / totals.contract) * 100 : 0;
-
   if (visibleRows.length === 0) {
     return <p className="text-muted-foreground text-center py-12">No hay propiedades en construcción.</p>;
   }
