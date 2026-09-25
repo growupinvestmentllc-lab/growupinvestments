@@ -317,7 +317,7 @@ function MonthlyEntriesDialog({ property, onClose }: { property: any; onClose: (
           <Field label="Otros ingresos" type="number" value={form.income_other} onChange={(v) => setForm({ ...form, income_other: v })} />
           <Field label="Seguro" type="number" value={form.expense_insurance} onChange={(v) => setForm({ ...form, expense_insurance: v })} />
           <Field label="Impuestos" type="number" value={form.expense_taxes} onChange={(v) => setForm({ ...form, expense_taxes: v })} />
-          <Field label="Management fee" type="number" value={form.expense_admin} onChange={(v) => setForm({ ...form, expense_admin: v })} />
+          <Field label="Porperty managment" type="number" value={form.expense_admin} onChange={(v) => setForm({ ...form, expense_admin: v })} />
           <Field label="Reparaciones" type="number" value={form.expense_repairs} onChange={(v) => setForm({ ...form, expense_repairs: v })} />
           <Field label="Otros egresos" type="number" value={form.expense_other} onChange={(v) => setForm({ ...form, expense_other: v })} />
           <Field label="Fecha de pago" type="date" value={form.paid_on} onChange={(v) => setForm({ ...form, paid_on: v })} />
