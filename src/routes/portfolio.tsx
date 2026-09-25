@@ -738,7 +738,7 @@ function RentalTab() {
                     <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
                      {is2725Embers && <InfoRow label="NOI anual estimado" value={formatUSD(20500)} />}
                     {(p as any).cap_rate && (
-                       <InfoRow label="Cap rate" value={`${Number((p as any).cap_rate).toFixed(is2725Embers ? 2 : 0)}%`} />
+                       <InfoRow label="Cap rate" value={`${is2725Embers ? Number((p as any).cap_rate).toFixed(2) : Number((p as any).cap_rate)}%`} />
                     )}
                   </dl>
                 </div>
