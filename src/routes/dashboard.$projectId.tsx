@@ -1023,7 +1023,15 @@ function DocsTab({ projectId }: { projectId: string }) {
   return (
     <div className="space-y-6">
       {groups.map((g) => {
-        const items = docs.filter((d) => d.category === g.key);
+        // Un solo cuadrante por tipo de documento: si hay duplicados (mismo doc_type),
+        // se conserva uno solo, priorizando el que ya tiene archivo cargado.
+        const allItems = docs.filter((d) => d.category === g.key);
+        const byType = new Map<string, any>();
+        for (const d of allItems) {
+          const prev = byType.get(d.doc_type);
+          if (!prev || (!prev.file_path && d.file_path)) byType.set(d.doc_type, d);
+        }
+        const items = [...byType.values()];
         return (
           <div key={g.key} className="card-soft p-6">
             <h3 className="font-semibold text-foreground mb-4">{g.label}</h3>
