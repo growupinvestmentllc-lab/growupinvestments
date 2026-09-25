@@ -768,7 +768,7 @@ function RentalTab() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-foreground uppercase tracking-wide">Egresos</p>
-                  <Row label="Management fee" value={e ? Number(e.expense_admin || 0) : 0} />
+                  <Row label="Porperty managment" value={e ? Number(e.expense_admin || 0) : 0} />
                   <Row label="Seguro (Insurance)" value={e ? Number(e.expense_insurance || 0) : 0} />
                   <Row label="Impuestos / Taxes" value={e ? Number(e.expense_taxes || 0) : 0} />
                   <Row label="Reparaciones" value={e ? Number(e.expense_repairs || 0) : 0} />
