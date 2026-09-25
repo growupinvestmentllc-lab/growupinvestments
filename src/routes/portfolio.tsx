@@ -750,7 +750,7 @@ function RentalTab() {
             {is2725Embers && (
               <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
                 <dl className="space-y-2 text-sm">
-                  <InfoRow label="Precio de venta" value={formatUSD(p.estimated_sale_price ?? 399000)} />
+                  <InfoRow label="Precio de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} />
                   <InfoRow label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
                   <InfoRow label="Alquiler anual bruto" value={formatUSD(Number(p.monthly_rent) * 12)} />
                 </dl>
