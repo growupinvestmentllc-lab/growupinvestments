@@ -281,6 +281,12 @@ function ConstructionTab() {
         .select("project_id,amount,paid")
         .in("project_id", list.map((p) => p.id));
       const allDraws: any[] = drawsData ?? [];
+      // Mismos datos que "Mis proyectos": depósitos y pendientes desde investments
+      const { data: invData } = await db
+        .from("investments")
+        .select("project_id,owner_llc,total_deposited,total_pending")
+        .in("project_id", list.map((p) => p.id));
+      const allInvs: any[] = invData ?? [];
 
       const enriched = list.map((p) => {
         const ps = stages.filter((s) => s.project_id === p.id);
@@ -289,27 +295,35 @@ function ConstructionTab() {
         const activeSt = ps.find((s) => s.active);
         const stage = (activeSt?.stage_group?.startsWith("CO") ? activeSt.stage_group : activeSt?.stage_name) ?? (progress >= 100 ? "Finalizada" : "Por iniciar");
 
-        const draws = new Map<number, { amount: number; completed: boolean }>();
-        ps.forEach((s) => {
-          if (s.draw_number == null) return;
-          const cur = draws.get(s.draw_number) ?? { amount: 0, completed: true };
-          cur.amount = Math.max(cur.amount, Number(s.draw_amount || 0));
-          cur.completed = cur.completed && s.completed;
-          draws.set(s.draw_number, cur);
-        });
         let deposited = 0;
         let pending = 0;
-        const pd = allDraws.filter((d) => d.project_id === p.id);
-        if (pd.length > 0) {
-          pd.forEach((d) => {
-            if (d.paid) deposited += Number(d.amount || 0);
-            else pending += Number(d.amount || 0);
+        const pInvs = allInvs.filter((i) => i.project_id === p.id);
+        if (pInvs.length > 0) {
+          pInvs.forEach((i) => {
+            deposited += Number(i.total_deposited || 0);
+            pending += Number(i.total_pending || 0);
           });
         } else {
-          draws.forEach((d) => {
-            if (d.completed) deposited += d.amount;
-            else pending += d.amount;
+          const draws = new Map<number, { amount: number; completed: boolean }>();
+          ps.forEach((s) => {
+            if (s.draw_number == null) return;
+            const cur = draws.get(s.draw_number) ?? { amount: 0, completed: true };
+            cur.amount = Math.max(cur.amount, Number(s.draw_amount || 0));
+            cur.completed = cur.completed && s.completed;
+            draws.set(s.draw_number, cur);
           });
+          const pd = allDraws.filter((d) => d.project_id === p.id);
+          if (pd.length > 0) {
+            pd.forEach((d) => {
+              if (d.paid) deposited += Number(d.amount || 0);
+              else pending += Number(d.amount || 0);
+            });
+          } else {
+            draws.forEach((d) => {
+              if (d.completed) deposited += d.amount;
+              else pending += d.amount;
+            });
+          }
         }
         return { ...p, progress, stage, deposited, pending };
       });
