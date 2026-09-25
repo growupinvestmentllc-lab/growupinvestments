@@ -309,6 +309,20 @@ function HunterOfferings() {
         items={by("lote")}
         empty="Todavía no hay lotes cargados."
       />
+
+      <section className="mt-16">
+        <h2 className="text-2xl font-extrabold tracking-tight text-foreground border-l-4 border-primary pl-3">
+          Propiedades en preconstrucción
+        </h2>
+        <a
+          href="https://growupinvestments.com/propiedades-en-venta"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 inline-block rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
+        >
+          Ver propiedades en preconstrucción
+        </a>
+      </section>
     </div>
   );
 }
