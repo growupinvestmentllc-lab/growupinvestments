@@ -693,6 +693,7 @@ function RentalTab() {
 
 
       {visibleProps.map((p) => {
+        const is2725Embers = ["2ed1631a-c123-4a77-b538-7d1c04507b84", "139299e6-77d2-43e3-9fe0-622548ce3d13"].includes(p.id);
         const mine = ownerships
           .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
           .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
@@ -732,11 +733,12 @@ function RentalTab() {
                     Costos anuales
                   </p>
                   <dl className="mt-2 space-y-1.5 text-sm">
-                    <InfoRow label="Impuesto a la propiedad anual" value={formatUSD((p as any).property_tax_annual)} />
+                     <InfoRow label={is2725Embers ? "Impuesto a la propiedad" : "Impuesto a la propiedad anual"} value={formatUSD((p as any).property_tax_annual)} />
                     <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
                     <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
+                     {is2725Embers && <InfoRow label="NOI anual estimado" value={formatUSD(20500)} />}
                     {(p as any).cap_rate && (
-                      <InfoRow label="Cap rate" value={`${Number((p as any).cap_rate)}%`} />
+                       <InfoRow label="Cap rate" value={`${Number((p as any).cap_rate).toFixed(is2725Embers ? 2 : 0)}%`} />
                     )}
                   </dl>
                 </div>
