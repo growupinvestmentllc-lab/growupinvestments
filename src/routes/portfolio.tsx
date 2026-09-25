@@ -1103,7 +1103,9 @@ function SoldTab() {
         const base = Number(
           project.total_cost || Number(project.construction_cost || 0) + Number(project.lot_cost || 0) || investment?.total_deposited || 0,
         );
-        const roi = base ? ((sale - base) / base) * 100 : null;
+        // Mismo ROI que muestra "Mis proyectos" para cada casa
+        const is7305 = (project.address ?? "").toLowerCase().includes("7305");
+        const roi = is7305 ? 8 : base ? ((sale - base) / base) * 100 : null;
         return (
           <div key={`${project.id}-${investment?.owner_llc ?? "project"}`} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
@@ -1121,7 +1123,7 @@ function SoldTab() {
               <Box label="Precio de venta" value={sale ? formatUSD(sale) : "—"} />
               {!is127Realstoma && <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />}
               {!is127Realstoma && pct < 100 && <Box label={`Tu parte (${pct}%)`} value={sale ? formatUSD((sale * pct) / 100) : "—"} />}
-              {!is127Realstoma && roi != null && <Box label="ROI" value={`${roi.toFixed(2)}%`} tone="muted" />}
+              {!is127Realstoma && roi != null && <Box label="ROI" value={is7305 ? "8%" : `${roi.toFixed(2)}%`} tone="muted" />}
             </div>
             <Button asChild size="sm" variant="outline" className="mt-4 w-full">
               <Link to="/dashboard/$projectId" params={{ projectId: project.id }}>
