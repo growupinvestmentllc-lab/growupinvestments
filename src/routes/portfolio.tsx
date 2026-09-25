@@ -268,7 +268,7 @@ function ConstructionTab() {
       const { data: projects } = await db
         .from("projects")
         .select("id,address,status,total_cost,construction_cost,lot_cost,expected_sale_price,estimated_sale_price,total_contract_value")
-        .eq("status", "En construcción");
+        .in("status", ["En construcción", "Inicio de obra", "Inspecciones finales", "Obra terminada"]);
       const list: Project[] = (projects ?? []).filter((p: Project) => p.address !== "Nueva propiedad");
       if (list.length === 0) return setRows([]);
       const { data: stagesData } = await db
