@@ -360,7 +360,6 @@ function ConstructionTab() {
         const contract = contractValue(r);
         const sale = salePrice(r);
         const gain = sale - contract;
-        const roi = contract ? (gain / contract) * 100 : 0;
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-4 flex-wrap">
