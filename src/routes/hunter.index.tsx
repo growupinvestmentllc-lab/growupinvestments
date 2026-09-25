@@ -63,7 +63,7 @@ function Field({ label, value, highlighted = false }: { label: string; value: st
   );
 }
 
-function Gallery({ photos, title }: { photos: string[]; title: string }) {
+function Gallery({ photos, title, showFullImage = false }: { photos: string[]; title: string; showFullImage?: boolean }) {
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
   const many = photos.length > 1;
@@ -71,8 +71,8 @@ function Gallery({ photos, title }: { photos: string[]; title: string }) {
 
   return (
     <div>
-      <button type="button" onClick={() => setOpen(true)} className="relative block w-full">
-        <img src={photos[active]} alt={title} className="h-56 w-full object-cover" />
+      <button type="button" onClick={() => setOpen(true)} className={`relative block w-full ${showFullImage ? "bg-muted" : ""}`}>
+        <img src={photos[active]} alt={title} className={showFullImage ? "aspect-[4/3] w-full object-contain sm:aspect-[16/10]" : "h-56 w-full object-cover"} />
         {many && (
           <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md bg-foreground/75 px-2.5 py-1 text-xs font-medium text-background">
             <ImageIcon className="h-3.5 w-3.5" /> {photos.length} fotos
@@ -163,7 +163,7 @@ function Card({ o }: { o: Offering }) {
           Alquilada
         </div>
       )}
-      {photos.length > 0 && <Gallery photos={photos} title={o.title} />}
+      {photos.length > 0 && <Gallery photos={photos} title={o.title} showFullImage={o.title.includes("2812 NW 27th")} />}
       <div className="p-5">
         <h3 className="font-semibold text-foreground">{o.title}</h3>
         {o.location && (
