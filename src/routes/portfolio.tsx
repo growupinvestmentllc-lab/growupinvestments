@@ -718,6 +718,19 @@ function RentalTab() {
                         )
                   }
                 />
+                <InfoRow
+                  label="NOI mensual (alquiler neto mensual)"
+                  value={
+                    is2725Embers
+                      ? formatUSD(20500 / 12)
+                      : formatUSD(
+                          (Number(p.monthly_rent) * 12 -
+                            (Number((p as any).property_tax_annual || 0) +
+                              Number((p as any).insurance_annual || 0) +
+                              Number((p as any).management_annual || 0))) / 12,
+                        )
+                  }
+                />
               </dl>
               {(p as any).cap_rate ? (
                 <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
