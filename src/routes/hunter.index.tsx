@@ -315,7 +315,7 @@ function HunterOfferings() {
           Propiedades en preconstrucción
         </h2>
         <a
-          href="https://growupinvestments.com/propiedades-en-venta"
+          href="https://growupinvestments.com/propiedades-en-venta?tipo=preconstruccion"
           target="_blank"
           rel="noopener noreferrer"
           className="mt-4 inline-block rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition hover:opacity-90"
