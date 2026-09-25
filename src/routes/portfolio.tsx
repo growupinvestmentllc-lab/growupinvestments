@@ -360,7 +360,6 @@ function ConstructionTab() {
         const contract = contractValue(r);
         const sale = salePrice(r);
         const gain = sale - contract;
-        const roi = contract ? (gain / contract) * 100 : 0;
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -408,18 +407,6 @@ function ConstructionTab() {
                 { label: "Ganancia estimada", value: gain },
               ]}
             />
-
-
-            <div className="mt-4 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <p className="text-[10px] uppercase tracking-wide opacity-80">Ganancia estimada</p>
-                <p className="text-xl font-bold">{formatUSD(gain)}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] uppercase tracking-wide opacity-80">ROI estimado</p>
-                <p className="text-2xl font-bold">{roi.toFixed(2)}%</p>
-              </div>
-            </div>
           </div>
         );
       })}
