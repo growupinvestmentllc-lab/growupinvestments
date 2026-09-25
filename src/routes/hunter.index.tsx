@@ -9,7 +9,7 @@ export const Route = createFileRoute("/hunter/")({
   head: () => ({
     meta: [
       { title: "Propuestas para vender | GrowUp Investments" },
-      { name: "description", content: "Casas para construir, lotes disponibles y oportunidades RBI para ofrecer a tus clientes." },
+      { name: "description", content: "Casas propias, casas con contrato de alquiler y lotes para ofrecer a tus clientes." },
       { property: "og:title", content: "Propuestas para vender | GrowUp Investments" },
       { property: "og:description", content: "Casas para construir, lotes disponibles y oportunidades RBI." },
       { property: "og:type", content: "website" },
