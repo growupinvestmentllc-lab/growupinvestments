@@ -1,0 +1,1 @@
+UPDATE public.projects SET hero_image_url = '/__l5e/assets-v1/eb3a46d3-b261-4647-a59f-86a024100de7/710-jaguar-hero-2026-09-28.jpeg', updated_at = now() WHERE id = '6d1ecd13-451b-432c-88a1-7f4b2eef2bab' AND owner_llc = 'LAS TROPAS LLC';
