@@ -170,7 +170,7 @@ function PortfolioSummary() {
       const [{ data: projects }, { data: invs }, { data: rentals }, { data: manualSold }] = await Promise.all([
         db.from("projects").select("id,address,status,estimated_sale_price,expected_sale_price"),
         db.from("investments").select("project_id,owner_llc,percentage,total_deposited,total_pending"),
-        db.from("rental_properties").select("investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct"),
+        db.from("rental_properties").select("id,investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct,property_tax_annual,insurance_annual,management_annual"),
         db.from("portfolio_sold").select("investor_id,project_id,sale_price"),
       ]);
       const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
@@ -214,6 +214,19 @@ function PortfolioSummary() {
         const ok = isAdmin || (r.investor_id ? r.investor_id === user.id : r.project_id && myProjectIds.has(r.project_id));
         if (!ok) return;
         const pct = Number(r.ownership_pct || 0) / 100;
+        if (r.id === KIMBERLY_11224 || r.id === KIMBERLY_11226) {
+          const a = (rentals ?? []).find((unit: any) => unit.id === KIMBERLY_11224);
+          const b = (rentals ?? []).find((unit: any) => unit.id === KIMBERLY_11226);
+          if (a && b) {
+            if (r.id === KIMBERLY_11224) {
+              rentNet += ((Number(a.monthly_rent) + Number(b.monthly_rent)) * 12 -
+                Number(a.property_tax_annual || 0) - Number(a.insurance_annual || 0) -
+                Number(a.management_annual || 0)) * pct;
+            }
+            rentCount++;
+            return;
+          }
+        }
         rentNet += (Number(r.monthly_rent || 0) - Number(r.monthly_expenses || 0)) * 12 * pct;
         rentCount++;
       });
@@ -481,6 +494,46 @@ function formatUSDCents(value: number) {
   });
 }
 
+const KIMBERLY_11224 = "301c6300-f716-4550-a3cf-dcf9e4028817";
+const KIMBERLY_11226 = "635f7904-d067-47f6-881b-4612a68e1df9";
+
+function RentalFinancials({ rental, monthlyRent, is2725Embers = false, combined = false }: {
+  rental: Rental;
+  monthlyRent: number;
+  is2725Embers?: boolean;
+  combined?: boolean;
+}) {
+  const costs = Number((rental as any).property_tax_annual || 0) +
+    Number((rental as any).insurance_annual || 0) +
+    Number((rental as any).management_annual || 0);
+  const annualNoi = is2725Embers ? 20500 : monthlyRent * 12 - costs;
+  return (
+    <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
+      <dl className="space-y-2 text-sm">
+        <InfoRow label="Precio de venta" value={rental.estimated_sale_price ? formatUSD(rental.estimated_sale_price) : "—"} />
+        <InfoRow label="Alquiler mensual bruto" value={formatUSD(monthlyRent)} />
+        <InfoRow label="Alquiler anual bruto" value={formatUSD(monthlyRent * 12)} />
+      </dl>
+      <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
+      <dl className="mt-2 space-y-2 text-sm">
+        <InfoRow label="Impuesto a la propiedad" value={formatUSD((rental as any).property_tax_annual)} />
+        <InfoRow label="Seguro" value={formatUSD((rental as any).insurance_annual)} />
+        <InfoRow label="Administración" value={formatUSD((rental as any).management_annual)} />
+        {combined && <InfoRow label="Total gastos anuales" value={formatUSD(costs)} />}
+        <InfoRow label="NOI anual estimado" value={formatUSD(annualNoi)} />
+        <InfoRow label="NOI mensual (alquiler neto mensual)" value={combined ? formatUSDCents(annualNoi / 12) : formatUSD(annualNoi / 12)} />
+      </dl>
+      {(rental as any).cap_rate ? (
+        <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
+          <span className="text-base font-bold">Cap rate</span>
+          <span className="text-2xl font-bold">{Number((rental as any).cap_rate).toFixed(2)}%</span>
+        </div>
+      ) : null}
+      {!combined && (rental as any).notes && <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">{(rental as any).notes}</p>}
+    </div>
+  );
+}
+
 function RentalTab() {
   const { rows: ownerships, myLlc } = useOwnerships();
   const { user, role } = useAuth();
@@ -552,6 +605,9 @@ function RentalTab() {
   }, [entries]);
 
   const active = visibleProps.filter((p) => p.status !== "vacante");
+  const kimberlyA = visibleProps.find((p) => p.id === KIMBERLY_11224);
+  const kimberlyB = visibleProps.find((p) => p.id === KIMBERLY_11226);
+  const kimberlyPair = kimberlyA && kimberlyB ? { a: kimberlyA, b: kimberlyB } : null;
 
   const visibleEntries = useMemo(
     () => entries.filter((e) => visibleProps.some((p) => p.id === e.property_id)),
@@ -657,6 +713,20 @@ function RentalTab() {
       )}
 
 
+      {kimberlyPair && (
+        <div className="card-soft p-6">
+          <h3 className="text-lg font-semibold text-foreground">11224 &amp; 11226 Kimberly Ave, Englewood, FL</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Ambas unidades · GROWUP INVESTMENTS LLC</p>
+          <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Contrato de alquiler</p>
+            <dl className="mt-2 space-y-1.5 text-sm">
+              {kimberlyPair.a.lease_end && <InfoRow label="Vencimiento según planilla" value={fmtDate(kimberlyPair.a.lease_end)} />}
+            </dl>
+          </div>
+          <RentalFinancials rental={kimberlyPair.a} monthlyRent={Number(kimberlyPair.a.monthly_rent) + Number(kimberlyPair.b.monthly_rent)} combined />
+        </div>
+      )}
+
       {visibleProps.map((p) => {
         const is2725Embers = ["2ed1631a-c123-4a77-b538-7d1c04507b84", "139299e6-77d2-43e3-9fe0-622548ce3d13"].includes(p.id);
         const mine = ownerships
@@ -694,52 +764,9 @@ function RentalTab() {
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
-              <dl className="space-y-2 text-sm">
-                <InfoRow label="Precio de venta" value={p.estimated_sale_price ? formatUSD(p.estimated_sale_price) : "—"} />
-                <InfoRow label="Alquiler mensual bruto" value={formatUSD(p.monthly_rent)} />
-                <InfoRow label="Alquiler anual bruto" value={formatUSD(Number(p.monthly_rent) * 12)} />
-              </dl>
-              <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
-              <dl className="mt-2 space-y-2 text-sm">
-                <InfoRow label="Impuesto a la propiedad" value={formatUSD((p as any).property_tax_annual)} />
-                <InfoRow label="Seguro" value={formatUSD((p as any).insurance_annual)} />
-                <InfoRow label="Administración" value={formatUSD((p as any).management_annual)} />
-                <InfoRow
-                  label="NOI anual estimado"
-                  value={
-                    is2725Embers
-                      ? formatUSD(20500)
-                      : formatUSD(
-                          Number(p.monthly_rent) * 12 -
-                            (Number((p as any).property_tax_annual || 0) +
-                              Number((p as any).insurance_annual || 0) +
-                              Number((p as any).management_annual || 0)),
-                        )
-                  }
-                />
-                <InfoRow
-                  label="NOI mensual (alquiler neto mensual)"
-                  value={
-                    is2725Embers
-                      ? formatUSD(20500 / 12)
-                      : formatUSD(
-                          (Number(p.monthly_rent) * 12 -
-                            (Number((p as any).property_tax_annual || 0) +
-                              Number((p as any).insurance_annual || 0) +
-                              Number((p as any).management_annual || 0))) / 12,
-                        )
-                  }
-                />
-              </dl>
-              {(p as any).cap_rate ? (
-                <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
-                  <span className="text-base font-bold">Cap rate</span>
-                  <span className="text-2xl font-bold">{Number((p as any).cap_rate).toFixed(2)}%</span>
-                </div>
-              ) : null}
-              {(p as any).notes && <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">{(p as any).notes}</p>}
-            </div>
+            {(!kimberlyPair || (p.id !== KIMBERLY_11224 && p.id !== KIMBERLY_11226)) && (
+              <RentalFinancials rental={p} monthlyRent={Number(p.monthly_rent)} is2725Embers={is2725Embers} />
+            )}
 
 
 
