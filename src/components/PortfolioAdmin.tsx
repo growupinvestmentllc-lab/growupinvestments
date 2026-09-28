@@ -56,6 +56,12 @@ const EMPTY_RENTAL = {
 
 const toNum = (v: any) => Number(String(v ?? "").replace(",", ".")) || 0;
 const toNumOrNull = (v: any) => (v === "" || v == null ? null : toNum(v));
+const formatUSDCents = (value: number) => value.toLocaleString("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
 
 function RentalsAdmin() {
   const [rows, setRows] = useState<any[]>([]);

@@ -498,13 +498,12 @@ function formatUSDCents(value: number) {
 const KIMBERLY_11224 = "301c6300-f716-4550-a3cf-dcf9e4028817";
 const KIMBERLY_11226 = "635f7904-d067-47f6-881b-4612a68e1df9";
 
-function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMonthlyExpenses, ownershipPct, is2725Embers = false, combined = false }: {
+function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMonthlyExpenses, ownershipPct, combined = false }: {
   rental: Rental;
   monthlyRent: number;
   monthlyAdministration: number;
   otherMonthlyExpenses: number;
   ownershipPct: number;
-  is2725Embers?: boolean;
   combined?: boolean;
 }) {
   const hasAnnualFinancials = (rental as any).annual_rent != null;
@@ -514,7 +513,7 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
     Number((rental as any).insurance_annual || 0) +
     annualAdministration;
   const annualRent = hasAnnualFinancials ? Number((rental as any).annual_rent) : null;
-  const annualNoi = is2725Embers ? 20500 : annualRent == null ? null : annualRent - costs;
+  const annualNoi = annualRent == null ? null : annualRent - costs;
   const annualValue = (value: unknown) => value == null ? "—" : formatUSD(Number(value));
   return (
     <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
@@ -747,7 +746,6 @@ function RentalTab() {
       )}
 
       {visibleProps.map((p) => {
-        const is2725Embers = ["2ed1631a-c123-4a77-b538-7d1c04507b84", "139299e6-77d2-43e3-9fe0-622548ce3d13"].includes(p.id);
         const mine = ownerships
           .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
           .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
@@ -790,7 +788,6 @@ function RentalTab() {
                 monthlyAdministration={Number(p.monthly_expenses || 0)}
                 otherMonthlyExpenses={Number(p.other_monthly_expenses || 0)}
                 ownershipPct={pct}
-                is2725Embers={is2725Embers}
               />
             )}
 
