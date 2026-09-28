@@ -49,13 +49,19 @@ export function PortfolioAdmin() {
 
 const EMPTY_RENTAL = {
   address: "", owner_name: "", ownership_pct: 100, tenant_name: "",
-  monthly_rent: 0, monthly_expenses: 0, lease_start: "", lease_end: "",
+  monthly_rent: 0, monthly_expenses: 0, other_monthly_expenses: 0, lease_start: "", lease_end: "",
   status: "al_dia", purchase_price: "", estimated_sale_price: "", sort_order: 0,
   annual_rent: "", cap_rate: "", property_tax_annual: "", insurance_annual: "", management_annual: "", notes: "",
 };
 
 const toNum = (v: any) => Number(String(v ?? "").replace(",", ".")) || 0;
 const toNumOrNull = (v: any) => (v === "" || v == null ? null : toNum(v));
+const formatUSDCents = (value: number) => value.toLocaleString("en-US", {
+  style: "currency",
+  currency: "USD",
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
 
 function RentalsAdmin() {
   const [rows, setRows] = useState<any[]>([]);
@@ -90,13 +96,15 @@ function RentalsAdmin() {
   }, [editing, open, paymentMonth]);
 
   const save = async () => {
+    const monthlyAdministration = toNum(form.monthly_expenses);
     const payload = {
       address: form.address,
       owner_name: form.owner_name || null,
       ownership_pct: toNum(form.ownership_pct),
       tenant_name: form.tenant_name || null,
       monthly_rent: toNum(form.monthly_rent),
-      monthly_expenses: toNum(form.monthly_expenses),
+      monthly_expenses: monthlyAdministration,
+      other_monthly_expenses: toNum(form.other_monthly_expenses),
       lease_start: form.lease_start || null,
       lease_end: form.lease_end || null,
       status: form.status,
@@ -107,7 +115,7 @@ function RentalsAdmin() {
       cap_rate: toNumOrNull(form.cap_rate),
       property_tax_annual: toNumOrNull(form.property_tax_annual),
       insurance_annual: toNumOrNull(form.insurance_annual),
-      management_annual: toNumOrNull(form.management_annual),
+      management_annual: monthlyAdministration * 12,
       notes: form.notes || null,
     };
     const { error } = editing
@@ -139,6 +147,17 @@ function RentalsAdmin() {
     setOpen(false); setEditing(null); setForm(EMPTY_RENTAL);
     load();
   };
+
+  const monthlyGross = toNum(form.monthly_rent);
+  const monthlyAdministration = toNum(form.monthly_expenses);
+  const otherMonthlyExpenses = toNum(form.other_monthly_expenses);
+  const ownershipPct = toNum(form.ownership_pct);
+  const ownerMonthlyNet = (monthlyGross - monthlyAdministration - otherMonthlyExpenses) * ownershipPct / 100;
+  const annualAdministration = monthlyAdministration * 12;
+  const totalAnnualExpenses = toNum(form.property_tax_annual) + toNum(form.insurance_annual) + annualAdministration;
+  const annualNoi = form.annual_rent === "" || form.annual_rent == null
+    ? null
+    : toNum(form.annual_rent) - totalAnnualExpenses;
 
   const remove = async (id: string) => {
     const { error } = await db.from("rental_properties").delete().eq("id", id);
@@ -215,13 +234,18 @@ function RentalsAdmin() {
               </select>
             </div>
             <Field label="Fecha de pago alquiler" type="date" value={paymentForm.paid_on} onChange={(v) => setPaymentForm({ ...paymentForm, paid_on: v })} />
-            <Field label="Alquiler mensual" type="number" value={form.monthly_rent} onChange={(v) => setForm({ ...form, monthly_rent: v })} />
-            <Field label="Gastos mensuales" type="number" value={form.monthly_expenses} onChange={(v) => setForm({ ...form, monthly_expenses: v })} />
-            <Field label="Alquiler anual" type="number" value={form.annual_rent} onChange={(v) => setForm({ ...form, annual_rent: v })} />
+            <Field label="Alquiler mensual bruto" type="number" value={form.monthly_rent} onChange={(v) => setForm({ ...form, monthly_rent: v })} />
+            <Field label="Administración mensual" type="number" value={form.monthly_expenses} onChange={(v) => setForm({ ...form, monthly_expenses: v })} />
+            <Field label="Otros gastos" type="number" value={form.other_monthly_expenses} onChange={(v) => setForm({ ...form, other_monthly_expenses: v })} />
+            <CalculatedField label={`Alquiler mensual neto estimado del propietario (${ownershipPct}%)`} value={formatUSDCents(ownerMonthlyNet)} />
+            <Field label="Alquiler anual bruto" type="number" value={form.annual_rent} onChange={(v) => setForm({ ...form, annual_rent: v })} />
             <Field label="Cap rate %" type="number" value={form.cap_rate} onChange={(v) => setForm({ ...form, cap_rate: v })} />
             <Field label="Impuesto a la propiedad anual" type="number" value={form.property_tax_annual} onChange={(v) => setForm({ ...form, property_tax_annual: v })} />
             <Field label="Seguro anual" type="number" value={form.insurance_annual} onChange={(v) => setForm({ ...form, insurance_annual: v })} />
-            <Field label="Administración anual" type="number" value={form.management_annual} onChange={(v) => setForm({ ...form, management_annual: v })} />
+            <CalculatedField label="Administración anual" value={formatUSDCents(annualAdministration)} />
+            <CalculatedField label="Total gastos anuales" value={formatUSDCents(totalAnnualExpenses)} />
+            <CalculatedField label="NOI (Net Operating Income) anual estimado" value={annualNoi == null ? "—" : formatUSDCents(annualNoi)} />
+            <CalculatedField label="NOI mensual estimado (alquiler mensual neto estimado)" value={annualNoi == null ? "—" : formatUSDCents(annualNoi / 12)} />
             <Field label="Inicio contrato" type="date" value={form.lease_start} onChange={(v) => setForm({ ...form, lease_start: v })} />
             <Field label="Vencimiento contrato" type="date" value={form.lease_end} onChange={(v) => setForm({ ...form, lease_end: v })} />
             <Field label="Precio de compra" type="number" value={form.purchase_price} onChange={(v) => setForm({ ...form, purchase_price: v })} />
@@ -521,6 +545,17 @@ function Field({ label, value, onChange, type = "text", className }: {
     <div className={className}>
       <Label>{label}</Label>
       <Input className="mt-1" type={type} value={value ?? ""} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function CalculatedField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div className="mt-1 flex min-h-9 items-center rounded-md border border-input bg-muted/40 px-3 text-sm font-semibold text-foreground">
+        {value}
+      </div>
     </div>
   );
 }
