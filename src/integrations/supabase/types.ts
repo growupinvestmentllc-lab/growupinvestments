@@ -1025,6 +1025,7 @@ export type Database = {
           monthly_expenses: number
           monthly_rent: number
           notes: string | null
+          other_monthly_expenses: number
           owner_name: string | null
           ownership_pct: number
           project_id: string | null
@@ -1050,6 +1051,7 @@ export type Database = {
           monthly_expenses?: number
           monthly_rent?: number
           notes?: string | null
+          other_monthly_expenses?: number
           owner_name?: string | null
           ownership_pct?: number
           project_id?: string | null
@@ -1075,6 +1077,7 @@ export type Database = {
           monthly_expenses?: number
           monthly_rent?: number
           notes?: string | null
+          other_monthly_expenses?: number
           owner_name?: string | null
           ownership_pct?: number
           project_id?: string | null
