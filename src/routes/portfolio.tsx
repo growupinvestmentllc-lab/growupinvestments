@@ -170,7 +170,7 @@ function PortfolioSummary() {
       const [{ data: projects }, { data: invs }, { data: rentals }, { data: manualSold }] = await Promise.all([
         db.from("projects").select("id,address,status,estimated_sale_price,expected_sale_price"),
         db.from("investments").select("project_id,owner_llc,percentage,total_deposited,total_pending"),
-        db.from("rental_properties").select("investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct"),
+        db.from("rental_properties").select("id,investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct,property_tax_annual,insurance_annual,management_annual"),
         db.from("portfolio_sold").select("investor_id,project_id,sale_price"),
       ]);
       const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
@@ -214,6 +214,19 @@ function PortfolioSummary() {
         const ok = isAdmin || (r.investor_id ? r.investor_id === user.id : r.project_id && myProjectIds.has(r.project_id));
         if (!ok) return;
         const pct = Number(r.ownership_pct || 0) / 100;
+        if (r.id === KIMBERLY_11224 || r.id === KIMBERLY_11226) {
+          const a = (rentals ?? []).find((unit: any) => unit.id === KIMBERLY_11224);
+          const b = (rentals ?? []).find((unit: any) => unit.id === KIMBERLY_11226);
+          if (a && b) {
+            if (r.id === KIMBERLY_11224) {
+              rentNet += ((Number(a.monthly_rent) + Number(b.monthly_rent)) * 12 -
+                Number(a.property_tax_annual || 0) - Number(a.insurance_annual || 0) -
+                Number(a.management_annual || 0)) * pct;
+            }
+            rentCount++;
+            return;
+          }
+        }
         rentNet += (Number(r.monthly_rent || 0) - Number(r.monthly_expenses || 0)) * 12 * pct;
         rentCount++;
       });
@@ -707,7 +720,7 @@ function RentalTab() {
           <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Contrato de alquiler</p>
             <dl className="mt-2 space-y-1.5 text-sm">
-              <InfoRow label="Vencimiento" value={fmtDate(kimberlyPair.a.lease_end ?? "2027-06-30")} />
+              {kimberlyPair.a.lease_end && <InfoRow label="Vencimiento según planilla" value={fmtDate(kimberlyPair.a.lease_end)} />}
             </dl>
           </div>
           <RentalFinancials rental={kimberlyPair.a} monthlyRent={Number(kimberlyPair.a.monthly_rent) + Number(kimberlyPair.b.monthly_rent)} combined />
