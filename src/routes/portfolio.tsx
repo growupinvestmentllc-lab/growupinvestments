@@ -503,25 +503,28 @@ function RentalFinancials({ rental, monthlyRent, is2725Embers = false, combined 
   is2725Embers?: boolean;
   combined?: boolean;
 }) {
+  const hasAnnualFinancials = (rental as any).annual_rent != null;
   const costs = Number((rental as any).property_tax_annual || 0) +
     Number((rental as any).insurance_annual || 0) +
     Number((rental as any).management_annual || 0);
-  const annualNoi = is2725Embers ? 20500 : monthlyRent * 12 - costs;
+  const annualRent = hasAnnualFinancials ? Number((rental as any).annual_rent) : null;
+  const annualNoi = is2725Embers ? 20500 : annualRent == null ? null : annualRent - costs;
+  const annualValue = (value: unknown) => value == null ? "—" : formatUSD(Number(value));
   return (
     <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
       <dl className="space-y-2 text-sm">
         <InfoRow label="Precio de venta" value={rental.estimated_sale_price ? formatUSD(rental.estimated_sale_price) : "—"} />
         <InfoRow label="Alquiler mensual bruto" value={formatUSD(monthlyRent)} />
-        <InfoRow label="Alquiler anual bruto" value={formatUSD(monthlyRent * 12)} />
+        <InfoRow label="Alquiler anual bruto" value={annualRent == null ? "—" : formatUSD(annualRent)} />
       </dl>
       <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
       <dl className="mt-2 space-y-2 text-sm">
-        <InfoRow label="Impuesto a la propiedad" value={formatUSD((rental as any).property_tax_annual)} />
-        <InfoRow label="Seguro" value={formatUSD((rental as any).insurance_annual)} />
-        <InfoRow label="Administración" value={formatUSD((rental as any).management_annual)} />
+        <InfoRow label="Impuesto a la propiedad" value={annualValue((rental as any).property_tax_annual)} />
+        <InfoRow label="Seguro" value={annualValue((rental as any).insurance_annual)} />
+        <InfoRow label="Administración" value={annualValue((rental as any).management_annual)} />
         {combined && <InfoRow label="Total gastos anuales" value={formatUSD(costs)} />}
-        <InfoRow label="NOI anual estimado" value={formatUSD(annualNoi)} />
-        <InfoRow label="NOI mensual (alquiler neto mensual)" value={combined ? formatUSDCents(annualNoi / 12) : formatUSD(annualNoi / 12)} />
+        <InfoRow label="NOI anual estimado" value={annualNoi == null ? "—" : formatUSD(annualNoi)} />
+        <InfoRow label="NOI mensual (alquiler neto mensual)" value={annualNoi == null ? "—" : combined ? formatUSDCents(annualNoi / 12) : formatUSD(annualNoi / 12)} />
       </dl>
       {(rental as any).cap_rate ? (
         <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
