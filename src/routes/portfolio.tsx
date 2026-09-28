@@ -62,6 +62,7 @@ type Rental = {
   tenant_name: string | null;
   monthly_rent: number;
   monthly_expenses: number;
+  other_monthly_expenses: number;
   lease_start: string | null;
   lease_end: string | null;
   status: string;
@@ -170,7 +171,7 @@ function PortfolioSummary() {
       const [{ data: projects }, { data: invs }, { data: rentals }, { data: manualSold }] = await Promise.all([
         db.from("projects").select("id,address,status,estimated_sale_price,expected_sale_price"),
         db.from("investments").select("project_id,owner_llc,percentage,total_deposited,total_pending"),
-        db.from("rental_properties").select("id,investor_id,project_id,monthly_rent,monthly_expenses,ownership_pct,property_tax_annual,insurance_annual,management_annual"),
+        db.from("rental_properties").select("id,investor_id,project_id,monthly_rent,monthly_expenses,other_monthly_expenses,ownership_pct,property_tax_annual,insurance_annual,management_annual"),
         db.from("portfolio_sold").select("investor_id,project_id,sale_price"),
       ]);
       const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
@@ -227,7 +228,7 @@ function PortfolioSummary() {
             return;
           }
         }
-        rentNet += (Number(r.monthly_rent || 0) - Number(r.monthly_expenses || 0)) * 12 * pct;
+        rentNet += (Number(r.monthly_rent || 0) - Number(r.monthly_expenses || 0) - Number(r.other_monthly_expenses || 0)) * 12 * pct;
         rentCount++;
       });
       setS({ sold, soldCount, invested, pending, buildCount, rentNet, rentCount });
@@ -497,16 +498,21 @@ function formatUSDCents(value: number) {
 const KIMBERLY_11224 = "301c6300-f716-4550-a3cf-dcf9e4028817";
 const KIMBERLY_11226 = "635f7904-d067-47f6-881b-4612a68e1df9";
 
-function RentalFinancials({ rental, monthlyRent, is2725Embers = false, combined = false }: {
+function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMonthlyExpenses, ownershipPct, is2725Embers = false, combined = false }: {
   rental: Rental;
   monthlyRent: number;
+  monthlyAdministration: number;
+  otherMonthlyExpenses: number;
+  ownershipPct: number;
   is2725Embers?: boolean;
   combined?: boolean;
 }) {
   const hasAnnualFinancials = (rental as any).annual_rent != null;
+  const ownerMonthlyNet = (monthlyRent - monthlyAdministration - otherMonthlyExpenses) * ownershipPct / 100;
+  const annualAdministration = monthlyAdministration * 12;
   const costs = Number((rental as any).property_tax_annual || 0) +
     Number((rental as any).insurance_annual || 0) +
-    Number((rental as any).management_annual || 0);
+    annualAdministration;
   const annualRent = hasAnnualFinancials ? Number((rental as any).annual_rent) : null;
   const annualNoi = is2725Embers ? 20500 : annualRent == null ? null : annualRent - costs;
   const annualValue = (value: unknown) => value == null ? "—" : formatUSD(Number(value));
@@ -515,16 +521,19 @@ function RentalFinancials({ rental, monthlyRent, is2725Embers = false, combined 
       <dl className="space-y-2 text-sm">
         <InfoRow label="Precio de venta" value={rental.estimated_sale_price ? formatUSD(rental.estimated_sale_price) : "—"} />
         <InfoRow label="Alquiler mensual bruto" value={formatUSD(monthlyRent)} />
+        <InfoRow label="Administración mensual" value={formatUSDCents(monthlyAdministration)} />
+        <InfoRow label="Otros gastos" value={formatUSDCents(otherMonthlyExpenses)} />
+        <InfoRow label={`Alquiler mensual neto estimado del propietario (${ownershipPct}%)`} value={formatUSDCents(ownerMonthlyNet)} />
         <InfoRow label="Alquiler anual bruto" value={annualRent == null ? "—" : formatUSD(annualRent)} />
       </dl>
       <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
       <dl className="mt-2 space-y-2 text-sm">
-        <InfoRow label="Impuesto a la propiedad" value={annualValue((rental as any).property_tax_annual)} />
-        <InfoRow label="Seguro" value={annualValue((rental as any).insurance_annual)} />
-        <InfoRow label="Administración" value={annualValue((rental as any).management_annual)} />
-        {combined && <InfoRow label="Total gastos anuales" value={formatUSD(costs)} />}
-        <InfoRow label="NOI anual estimado" value={annualNoi == null ? "—" : formatUSD(annualNoi)} />
-        <InfoRow label="NOI mensual (alquiler neto mensual)" value={annualNoi == null ? "—" : combined ? formatUSDCents(annualNoi / 12) : formatUSD(annualNoi / 12)} />
+        <InfoRow label="Impuesto a la propiedad anual" value={annualValue((rental as any).property_tax_annual)} />
+        <InfoRow label="Seguro anual" value={annualValue((rental as any).insurance_annual)} />
+        <InfoRow label="Administración anual" value={formatUSDCents(annualAdministration)} />
+        <InfoRow label="Total gastos anuales" value={formatUSDCents(costs)} />
+        <InfoRow label="NOI (Net Operating Income) anual estimado" value={annualNoi == null ? "—" : formatUSDCents(annualNoi)} />
+        <InfoRow label="NOI mensual estimado (alquiler mensual neto estimado)" value={annualNoi == null ? "—" : formatUSDCents(annualNoi / 12)} />
       </dl>
       {(rental as any).cap_rate ? (
         <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
@@ -726,7 +735,14 @@ function RentalTab() {
               {kimberlyPair.a.lease_end && <InfoRow label="Vencimiento según planilla" value={fmtDate(kimberlyPair.a.lease_end)} />}
             </dl>
           </div>
-          <RentalFinancials rental={kimberlyPair.a} monthlyRent={Number(kimberlyPair.a.monthly_rent) + Number(kimberlyPair.b.monthly_rent)} combined />
+          <RentalFinancials
+            rental={kimberlyPair.a}
+            monthlyRent={Number(kimberlyPair.a.monthly_rent) + Number(kimberlyPair.b.monthly_rent)}
+            monthlyAdministration={Number(kimberlyPair.a.monthly_expenses) + Number(kimberlyPair.b.monthly_expenses)}
+            otherMonthlyExpenses={Number(kimberlyPair.a.other_monthly_expenses || 0) + Number(kimberlyPair.b.other_monthly_expenses || 0)}
+            ownershipPct={rentalPct(kimberlyPair.a.project_id)}
+            combined
+          />
         </div>
       )}
 
@@ -768,7 +784,14 @@ function RentalTab() {
             </div>
 
             {(!kimberlyPair || (p.id !== KIMBERLY_11224 && p.id !== KIMBERLY_11226)) && (
-              <RentalFinancials rental={p} monthlyRent={Number(p.monthly_rent)} is2725Embers={is2725Embers} />
+              <RentalFinancials
+                rental={p}
+                monthlyRent={Number(p.monthly_rent)}
+                monthlyAdministration={Number(p.monthly_expenses || 0)}
+                otherMonthlyExpenses={Number(p.other_monthly_expenses || 0)}
+                ownershipPct={pct}
+                is2725Embers={is2725Embers}
+              />
             )}
 
 
