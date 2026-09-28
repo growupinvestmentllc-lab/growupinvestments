@@ -1,0 +1,1 @@
+Show combined rental financials for the Kimberly duplex once, while retaining each unit's separate lease and monthly payment history; this prevents double-counting without erasing unit-specific records.
