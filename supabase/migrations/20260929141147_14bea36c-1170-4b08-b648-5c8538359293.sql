@@ -1,0 +1,1 @@
+UPDATE public.hunter_offerings SET rent_gross = 2895, rent_net = 2317, updated_at = now() WHERE id = '04c0afcc-9df8-4c6e-a253-23f4de6bf50d';
