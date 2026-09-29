@@ -8,7 +8,17 @@ import { MapPin, ArrowRight, Home } from "lucide-react";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/dashboard")({ component: Dashboard });
+export const Route = createFileRoute("/dashboard")({
+  head: () => ({ meta: [
+    { title: "Mis proyectos | GrowUp Investments" },
+    { name: "description", content: "Seguimiento de proyectos inmobiliarios e inversiones de GrowUp Investments." },
+    { property: "og:title", content: "Mis proyectos | GrowUp Investments" },
+    { property: "og:description", content: "Seguimiento de proyectos inmobiliarios e inversiones de GrowUp Investments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+  component: Dashboard,
+});
 
 function SpecItem({ label, value }: { label: string; value: string }) {
   return (
