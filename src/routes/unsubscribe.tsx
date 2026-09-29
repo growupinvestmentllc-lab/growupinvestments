@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 export const Route = createFileRoute("/unsubscribe")({
   component: UnsubscribePage,
   validateSearch: (s: Record<string, unknown>) => ({ token: (s.token as string) ?? "" }),
-  head: () => ({ meta: [{ title: "Cancelar suscripción — GrowUp Investments" }] }),
+  head: () => ({ meta: [
+    { title: "Cancelar suscripción — GrowUp Investments" },
+    { name: "description", content: "Gestioná tu suscripción a los correos de GrowUp Investments." },
+    { property: "og:title", content: "Cancelar suscripción — GrowUp Investments" },
+    { property: "og:description", content: "Gestioná tu suscripción a los correos de GrowUp Investments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function UnsubscribePage() {

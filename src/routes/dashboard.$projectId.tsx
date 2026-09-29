@@ -10,7 +10,17 @@ import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/dashboard/$projectId")({ component: ProjectDetail });
+export const Route = createFileRoute("/dashboard/$projectId")({
+  head: () => ({ meta: [
+    { title: "Detalle del proyecto | GrowUp Investments" },
+    { name: "description", content: "Detalles, documentación y avances de tu proyecto inmobiliario en GrowUp Investments." },
+    { property: "og:title", content: "Detalle del proyecto | GrowUp Investments" },
+    { property: "og:description", content: "Detalles, documentación y avances de tu proyecto inmobiliario en GrowUp Investments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+  component: ProjectDetail,
+});
 
 const DOC_LABELS: Record<string, string> = {
   contrato_construccion: "Contrato de Construcción",

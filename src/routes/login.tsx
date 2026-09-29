@@ -8,7 +8,17 @@ import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/use-auth";
 
-export const Route = createFileRoute("/login")({ component: LoginPage });
+export const Route = createFileRoute("/login")({
+  head: () => ({ meta: [
+    { title: "Ingresar | GrowUp Investments" },
+    { name: "description", content: "Ingresá al portal de inversores y Hunter de GrowUp Investments." },
+    { property: "og:title", content: "Ingresar | GrowUp Investments" },
+    { property: "og:description", content: "Ingresá al portal de inversores y Hunter de GrowUp Investments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+  component: LoginPage,
+});
 
 function LoginPage() {
   const navigate = useNavigate();

@@ -29,7 +29,17 @@ const DOC_LABELS: Record<string, string> = {
   ledger_balance: "Ledger Balance Report",
 };
 
-export const Route = createFileRoute("/admin")({ component: AdminPage });
+export const Route = createFileRoute("/admin")({
+  head: () => ({ meta: [
+    { title: "Administración | GrowUp Investments" },
+    { name: "description", content: "Gestión privada de proyectos, oportunidades y portafolio de GrowUp Investments." },
+    { property: "og:title", content: "Administración | GrowUp Investments" },
+    { property: "og:description", content: "Gestión privada de proyectos, oportunidades y portafolio de GrowUp Investments." },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary" },
+  ] }),
+  component: AdminPage,
+});
 
 function AdminPage() {
   const { user, role, loading } = useAuth();
