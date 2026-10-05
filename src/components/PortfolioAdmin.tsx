@@ -132,6 +132,12 @@ function RentalsAdmin() {
         if (uploadError) return toast.error(uploadError.message);
         receiptName = receiptFile.name;
       }
+      // Keep amounts already loaded via "Meses"; only fill them when the period has none yet.
+      const { data: existing } = await db.from("rental_monthly_entries")
+        .select("income_rent,income_other,expense_admin,expense_repairs,expense_other,expense_insurance,expense_taxes")
+        .eq("property_id", editing).eq("month", paymentMonth).eq("year", now.getFullYear()).maybeSingle();
+      const hasAmounts = existing && [existing.income_rent, existing.income_other, existing.expense_admin, existing.expense_repairs, existing.expense_other, existing.expense_insurance, existing.expense_taxes]
+        .some((v: any) => Number(v) !== 0);
       const { error: periodError } = await db.from("rental_monthly_entries").upsert({
         property_id: editing,
         month: paymentMonth,
@@ -140,6 +146,11 @@ function RentalsAdmin() {
         paid_on: paymentForm.paid_on || null,
         receipt_path: receiptPath,
         receipt_name: receiptName,
+        ...(hasAmounts ? {} : {
+          income_rent: toNum(form.monthly_rent),
+          expense_admin: monthlyAdministration,
+          expense_other: toNum(form.other_monthly_expenses),
+        }),
       }, { onConflict: "property_id,month,year" });
       if (periodError) return toast.error(periodError.message);
     }
