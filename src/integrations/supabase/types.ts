@@ -403,6 +403,86 @@ export type Database = {
           },
         ]
       }
+      loans: {
+        Row: {
+          borrower: string
+          borrower_signer: string | null
+          collateral_address: string | null
+          collateral_description: string | null
+          collateral_project_id: string | null
+          created_at: string
+          document_name: string | null
+          document_path: string | null
+          docusign_envelope_id: string | null
+          id: string
+          interest_at_maturity: number
+          investor_id: string
+          issue_date: string
+          lender: string
+          lender_signed_date: string | null
+          maturity_date: string
+          principal: number
+          rate_pct: number
+          status: string
+          total_at_maturity: number
+          updated_at: string
+        }
+        Insert: {
+          borrower: string
+          borrower_signer?: string | null
+          collateral_address?: string | null
+          collateral_description?: string | null
+          collateral_project_id?: string | null
+          created_at?: string
+          document_name?: string | null
+          document_path?: string | null
+          docusign_envelope_id?: string | null
+          id?: string
+          interest_at_maturity: number
+          investor_id: string
+          issue_date: string
+          lender: string
+          lender_signed_date?: string | null
+          maturity_date: string
+          principal: number
+          rate_pct: number
+          status?: string
+          total_at_maturity: number
+          updated_at?: string
+        }
+        Update: {
+          borrower?: string
+          borrower_signer?: string | null
+          collateral_address?: string | null
+          collateral_description?: string | null
+          collateral_project_id?: string | null
+          created_at?: string
+          document_name?: string | null
+          document_path?: string | null
+          docusign_envelope_id?: string | null
+          id?: string
+          interest_at_maturity?: number
+          investor_id?: string
+          issue_date?: string
+          lender?: string
+          lender_signed_date?: string | null
+          maturity_date?: string
+          principal?: number
+          rate_pct?: number
+          status?: string
+          total_at_maturity?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loans_collateral_project_id_fkey"
+            columns: ["collateral_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       opportunities: {
         Row: {
           architect: string | null
