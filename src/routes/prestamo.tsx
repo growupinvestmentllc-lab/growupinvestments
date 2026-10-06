@@ -7,6 +7,7 @@ import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Download, FileText, MapPin, ShieldCheck } from "lucide-react";
+import flamingoPhoto from "@/assets/621-flamingo-2026-09-02.png.asset.json";
 
 export const Route = createFileRoute("/prestamo")({
   head: () => ({
@@ -65,7 +66,7 @@ function LoanPage() {
       setLoan(l);
       if (l?.collateral_project_id) {
         const { data: p } = await supabase.from("projects").select("hero_image_url").eq("id", l.collateral_project_id).maybeSingle();
-        setImage(p?.hero_image_url ?? null);
+        setImage(p?.hero_image_url ?? (l.collateral_project_id === "b525d962-242f-4d8b-b632-c0f061c67dd2" ? flamingoPhoto.url : null));
       }
       if (l?.document_path) {
         const { data: s } = await supabase.storage.from("project-documents").createSignedUrl(l.document_path, 3600);
