@@ -27,6 +27,7 @@ function Index() {
     else if (role === "admin") navigate({ to: "/admin" });
     else if (role === "hunter") navigate({ to: "/hunter" });
     else if (role === "investor") navigate({ to: "/dashboard" });
+    // /dashboard forwards loan-only investors to /prestamo
   }, [user, role, loading, navigate]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">

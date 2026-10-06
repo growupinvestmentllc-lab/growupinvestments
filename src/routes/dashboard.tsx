@@ -94,6 +94,10 @@ function Dashboard() {
         .select("id,address,status,hero_image_url,owner_llc,owner_llc_2,owner_pct_1,owner_pct_2")
         .order("created_at");
       const list = p ?? [];
+      if (list.length === 0) {
+        const { data: myLoans } = await (supabase as any).from("loans").select("id").eq("investor_id", user.id).limit(1);
+        if (myLoans?.length) { navigate({ to: "/prestamo" }); return; }
+      }
       const userLlc = (await supabase
         .from("profiles")
         .select("llc_name")

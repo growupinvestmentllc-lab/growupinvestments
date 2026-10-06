@@ -16,13 +16,13 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as HunterRouteImport } from './routes/hunter'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as PrestamoRouteImport } from './routes/prestamo'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as DashboardProjectIdRouteImport } from './routes/dashboard.$projectId'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as HunterIndexRouteImport } from './routes/hunter.index'
 import { Route as HunterVentasRouteImport } from './routes/hunter.ventas'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
-import { Route as ApiPublicTmpEstebanRouteImport } from './routes/api/public/tmp-esteban'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -63,6 +63,11 @@ const PortfolioRoute = PortfolioRouteImport.update({
   path: '/portfolio',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrestamoRoute = PrestamoRouteImport.update({
+  id: '/prestamo',
+  path: '/prestamo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UnsubscribeRoute = UnsubscribeRouteImport.update({
   id: '/unsubscribe',
   path: '/unsubscribe',
@@ -91,11 +96,6 @@ const HunterVentasRoute = HunterVentasRouteImport.update({
 const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
   id: '/api/public/contact',
   path: '/api/public/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicTmpEstebanRoute = ApiPublicTmpEstebanRouteImport.update({
-  id: '/api/public/tmp-esteban',
-  path: '/api/public/tmp-esteban',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
@@ -130,13 +130,13 @@ export interface FileRoutesByFullPath {
   '/hunter': typeof HunterRouteWithChildren
   '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
+  '/prestamo': typeof PrestamoRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/dashboard/$projectId': typeof DashboardProjectIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/hunter/ventas': typeof HunterVentasRoute
   '/hunter/': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
-  '/api/public/tmp-esteban': typeof ApiPublicTmpEstebanRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -149,13 +149,13 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
+  '/prestamo': typeof PrestamoRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/dashboard/$projectId': typeof DashboardProjectIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/hunter/ventas': typeof HunterVentasRoute
   '/hunter': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
-  '/api/public/tmp-esteban': typeof ApiPublicTmpEstebanRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -170,13 +170,13 @@ export interface FileRoutesById {
   '/hunter': typeof HunterRouteWithChildren
   '/login': typeof LoginRoute
   '/portfolio': typeof PortfolioRoute
+  '/prestamo': typeof PrestamoRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/dashboard/$projectId': typeof DashboardProjectIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/hunter/ventas': typeof HunterVentasRoute
   '/hunter/': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
-  '/api/public/tmp-esteban': typeof ApiPublicTmpEstebanRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -192,13 +192,13 @@ export interface FileRouteTypes {
     | '/hunter'
     | '/login'
     | '/portfolio'
+    | '/prestamo'
     | '/unsubscribe'
     | '/dashboard/$projectId'
     | '/email/unsubscribe'
     | '/hunter/ventas'
     | '/hunter/'
     | '/api/public/contact'
-    | '/api/public/tmp-esteban'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
@@ -211,13 +211,13 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/login'
     | '/portfolio'
+    | '/prestamo'
     | '/unsubscribe'
     | '/dashboard/$projectId'
     | '/email/unsubscribe'
     | '/hunter/ventas'
     | '/hunter'
     | '/api/public/contact'
-    | '/api/public/tmp-esteban'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
@@ -231,13 +231,13 @@ export interface FileRouteTypes {
     | '/hunter'
     | '/login'
     | '/portfolio'
+    | '/prestamo'
     | '/unsubscribe'
     | '/dashboard/$projectId'
     | '/email/unsubscribe'
     | '/hunter/ventas'
     | '/hunter/'
     | '/api/public/contact'
-    | '/api/public/tmp-esteban'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
@@ -252,10 +252,10 @@ export interface RootRouteChildren {
   HunterRoute: typeof HunterRouteWithChildren
   LoginRoute: typeof LoginRoute
   PortfolioRoute: typeof PortfolioRoute
+  PrestamoRoute: typeof PrestamoRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
-  ApiPublicTmpEstebanRoute: typeof ApiPublicTmpEstebanRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -313,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PortfolioRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/prestamo': {
+      id: '/prestamo'
+      path: '/prestamo'
+      fullPath: '/prestamo'
+      preLoaderRoute: typeof PrestamoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/unsubscribe': {
       id: '/unsubscribe'
       path: '/unsubscribe'
@@ -353,13 +360,6 @@ declare module '@tanstack/react-router' {
       path: '/api/public/contact'
       fullPath: '/api/public/contact'
       preLoaderRoute: typeof ApiPublicContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/tmp-esteban': {
-      id: '/api/public/tmp-esteban'
-      path: '/api/public/tmp-esteban'
-      fullPath: '/api/public/tmp-esteban'
-      preLoaderRoute: typeof ApiPublicTmpEstebanRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/suppression': {
@@ -426,10 +426,10 @@ const rootRouteChildren: RootRouteChildren = {
   HunterRoute: HunterRouteWithChildren,
   LoginRoute: LoginRoute,
   PortfolioRoute: PortfolioRoute,
+  PrestamoRoute: PrestamoRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
-  ApiPublicTmpEstebanRoute: ApiPublicTmpEstebanRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
