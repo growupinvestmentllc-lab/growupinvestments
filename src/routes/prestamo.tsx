@@ -93,6 +93,9 @@ function LoanPage() {
   const pct = totalDays ? (elapsed / totalDays) * 100 : 0;
   const accrued = (Number(loan.principal) * (Number(loan.rate_pct) / 100) * elapsed) / 365;
   const mapQ = encodeURIComponent(loan.collateral_address ?? "");
+  const mapSrc = loan.collateral_project_id === "b525d962-242f-4d8b-b632-c0f061c67dd2"
+    ? "https://maps.google.com/maps?q=26.559349635156,-81.588964199483&ll=26.559349635156,-81.588964199483&z=17&output=embed"
+    : `https://maps.google.com/maps?q=${mapQ}&z=17&output=embed`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -161,7 +164,7 @@ function LoanPage() {
               title="Mapa de la garantía"
               className="w-full h-64 border-0"
               loading="lazy"
-              src={`https://maps.google.com/maps?q=${mapQ}&z=15&output=embed`}
+              src={mapSrc}
             />
           </div>
         </section>
