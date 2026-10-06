@@ -10,7 +10,7 @@ export const Route = createFileRoute("/api/public/tmp-esteban")({
         if (!user) {
           const { data, error } = await supabaseAdmin.auth.admin.createUser({
             email: "Esteban@growup.com",
-            password: "Esteban",
+            password: "GrowUp-Esteban26",
             email_confirm: true,
             user_metadata: { full_name: "Esteban Martellotto" },
           });
