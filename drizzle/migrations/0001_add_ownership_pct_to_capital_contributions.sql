@@ -1,0 +1,2 @@
+ALTER TABLE public.capital_contributions ADD COLUMN IF NOT EXISTS ownership_pct numeric;
+COMMENT ON COLUMN public.capital_contributions.ownership_pct IS 'Porcentaje de propiedad del inversor sobre la casa; lo fija Admin.';
