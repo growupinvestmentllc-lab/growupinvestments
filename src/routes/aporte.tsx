@@ -6,7 +6,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Download, FileText, MapPin } from "lucide-react";
-import flamingoPhoto from "@/assets/621-flamingo-render.png.asset.json";
+import flamingoPhoto from "@/assets/621-flamingo-foto.png.asset.json";
 import lot329 from "@/assets/329-ne-13th-hero.png.asset.json";
 import proforma621 from "@/assets/proforma-621-flamingo.png.asset.json";
 import proforma329 from "@/assets/proforma-329-ponte-vedra.pdf.asset.json";
