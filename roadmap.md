@@ -6,3 +6,5 @@
 - [x] Agregar una vista inicial de resumen al entrar a “Mi portafolio”, antes de seleccionar las cuatro secciones.
 - [x] Verificar el recorrido con una cuenta de inversor.
 - [x] Organizar “Mis Ventas” de Hunter por año, con totales y categorías por período.
+- [x] Quitar “Pendiente de carga” de la página de Ignacio y mostrar el 05/09/2025 como fecha del depósito 2.
+- [ ] Cargar los comprobantes de depósito 1 y 2 de Ignacio (los sube él; sin archivo, la ficha no ofrece descarga).

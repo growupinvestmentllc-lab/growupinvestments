@@ -41,10 +41,8 @@ function DocCard({ name, url, image }: { name: string; url: string | null; image
     <div className="card-soft p-4 space-y-3">
       <div className="flex items-center justify-between gap-3">
         <p className="font-medium text-foreground flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /> {name}</p>
-        {url ? (
+        {url && (
           <Button asChild size="sm"><a href={url} download target="_blank" rel="noreferrer"><Download className="h-4 w-4" /> Descargar</a></Button>
-        ) : (
-          <span className="text-xs text-muted-foreground">Pendiente de carga</span>
         )}
       </div>
       {url && image && <img src={url} alt={name} className="w-full rounded-md border border-border" />}
@@ -154,7 +152,7 @@ function AportePage() {
                       <td className="py-2 text-muted-foreground">
                         {d.detail ?? (receiptUrl ? (
                           <a href={receiptUrl} target="_blank" rel="noreferrer" className="text-primary underline">Ver comprobante</a>
-                        ) : "Pendiente de carga")}
+                        ) : "—")}
                       </td>
                     </tr>
                   );
