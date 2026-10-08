@@ -97,6 +97,8 @@ function Dashboard() {
       if (list.length === 0) {
         const { data: myLoans } = await (supabase as any).from("loans").select("id").eq("investor_id", user.id).limit(1);
         if (myLoans?.length) { navigate({ to: "/prestamo" }); return; }
+        const { data: myAportes } = await (supabase as any).from("capital_contributions").select("id").eq("investor_id", user.id).limit(1);
+        if (myAportes?.length) { navigate({ to: "/aporte" }); return; }
       }
       const userLlc = (await supabase
         .from("profiles")

@@ -14,6 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
+      capital_contributions: {
+        Row: {
+          capital: number
+          created_at: string
+          deposits: Json
+          documents: Json
+          id: string
+          investor_id: string
+          profit: number
+          project_id: string | null
+          project_profit: number | null
+          project_roi: number | null
+          project_status: string
+          property_address: string
+          rate_pct: number
+          sale_price: number | null
+          title: string
+          total_cost: number | null
+          total_to_collect: number
+          updated_at: string
+        }
+        Insert: {
+          capital: number
+          created_at?: string
+          deposits?: Json
+          documents?: Json
+          id?: string
+          investor_id: string
+          profit: number
+          project_id?: string | null
+          project_profit?: number | null
+          project_roi?: number | null
+          project_status?: string
+          property_address: string
+          rate_pct: number
+          sale_price?: number | null
+          title: string
+          total_cost?: number | null
+          total_to_collect: number
+          updated_at?: string
+        }
+        Update: {
+          capital?: number
+          created_at?: string
+          deposits?: Json
+          documents?: Json
+          id?: string
+          investor_id?: string
+          profit?: number
+          project_id?: string | null
+          project_profit?: number | null
+          project_roi?: number | null
+          project_status?: string
+          property_address?: string
+          rate_pct?: number
+          sale_price?: number | null
+          title?: string
+          total_cost?: number | null
+          total_to_collect?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capital_contributions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       comparables: {
         Row: {
           address: string
