@@ -22,6 +22,7 @@ export type Database = {
           documents: Json
           id: string
           investor_id: string
+          ownership_pct: number | null
           profit: number
           project_id: string | null
           project_profit: number | null
@@ -42,6 +43,7 @@ export type Database = {
           documents?: Json
           id?: string
           investor_id: string
+          ownership_pct?: number | null
           profit: number
           project_id?: string | null
           project_profit?: number | null
@@ -62,6 +64,7 @@ export type Database = {
           documents?: Json
           id?: string
           investor_id?: string
+          ownership_pct?: number | null
           profit?: number
           project_id?: string | null
           project_profit?: number | null

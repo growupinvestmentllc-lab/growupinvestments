@@ -29,7 +29,7 @@ type Deposit = { date: string | null; amount: number; detail: string | null };
 type Doc = { name: string; path: string | null };
 type Contribution = {
   id: string; title: string; property_address: string; project_status: string; project_id: string | null;
-  sale_price: number | null; total_cost: number | null; project_profit: number | null; project_roi: number | null;
+  sale_price: number | null; total_cost: number | null; project_profit: number | null; project_roi: number | null; ownership_pct: number | null;
   capital: number; rate_pct: number; profit: number; total_to_collect: number;
   deposits: Deposit[]; documents: Doc[];
 };
@@ -117,6 +117,9 @@ function AportePage() {
           <div className="p-6 space-y-4">
             <span className="inline-flex text-xs font-medium px-3 py-1 rounded-full bg-secondary text-secondary-foreground">{c.project_status}</span>
             <p className="font-semibold text-lg text-foreground flex items-start gap-1"><MapPin className="h-5 w-5 mt-0.5 text-primary" /> {c.property_address}</p>
+            {c.ownership_pct != null && (
+              <p className="text-sm font-semibold text-primary">Sos propietario del {Number(c.ownership_pct).toLocaleString("es-AR", { maximumFractionDigits: 2 })}% de la casa</p>
+            )}
             <div className="grid grid-cols-2 gap-3 text-sm">
               {[
                 ["Precio de venta", c.sale_price != null ? formatUSD(Number(c.sale_price)) : "—"],
