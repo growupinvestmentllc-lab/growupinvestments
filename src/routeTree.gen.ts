@@ -23,7 +23,6 @@ import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe
 import { Route as HunterIndexRouteImport } from './routes/hunter.index'
 import { Route as HunterVentasRouteImport } from './routes/hunter.ventas'
 import { Route as ApiPublicContactRouteImport } from './routes/api/public/contact'
-import { Route as ApiPublicTmpIgnacioRouteImport } from './routes/api/public/tmp-ignacio'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -99,11 +98,6 @@ const ApiPublicContactRoute = ApiPublicContactRouteImport.update({
   path: '/api/public/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicTmpIgnacioRoute = ApiPublicTmpIgnacioRouteImport.update({
-  id: '/api/public/tmp-ignacio',
-  path: '/api/public/tmp-ignacio',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -143,7 +137,6 @@ export interface FileRoutesByFullPath {
   '/hunter/ventas': typeof HunterVentasRoute
   '/hunter/': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
-  '/api/public/tmp-ignacio': typeof ApiPublicTmpIgnacioRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -163,7 +156,6 @@ export interface FileRoutesByTo {
   '/hunter/ventas': typeof HunterVentasRoute
   '/hunter': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
-  '/api/public/tmp-ignacio': typeof ApiPublicTmpIgnacioRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -185,7 +177,6 @@ export interface FileRoutesById {
   '/hunter/ventas': typeof HunterVentasRoute
   '/hunter/': typeof HunterIndexRoute
   '/api/public/contact': typeof ApiPublicContactRoute
-  '/api/public/tmp-ignacio': typeof ApiPublicTmpIgnacioRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
@@ -208,7 +199,6 @@ export interface FileRouteTypes {
     | '/hunter/ventas'
     | '/hunter/'
     | '/api/public/contact'
-    | '/api/public/tmp-ignacio'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
@@ -228,7 +218,6 @@ export interface FileRouteTypes {
     | '/hunter/ventas'
     | '/hunter'
     | '/api/public/contact'
-    | '/api/public/tmp-ignacio'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
@@ -249,7 +238,6 @@ export interface FileRouteTypes {
     | '/hunter/ventas'
     | '/hunter/'
     | '/api/public/contact'
-    | '/api/public/tmp-ignacio'
     | '/lovable/email/suppression'
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
@@ -268,7 +256,6 @@ export interface RootRouteChildren {
   UnsubscribeRoute: typeof UnsubscribeRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   ApiPublicContactRoute: typeof ApiPublicContactRoute
-  ApiPublicTmpIgnacioRoute: typeof ApiPublicTmpIgnacioRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -375,13 +362,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/tmp-ignacio': {
-      id: '/api/public/tmp-ignacio'
-      path: '/api/public/tmp-ignacio'
-      fullPath: '/api/public/tmp-ignacio'
-      preLoaderRoute: typeof ApiPublicTmpIgnacioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -450,7 +430,6 @@ const rootRouteChildren: RootRouteChildren = {
   UnsubscribeRoute: UnsubscribeRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   ApiPublicContactRoute: ApiPublicContactRoute,
-  ApiPublicTmpIgnacioRoute: ApiPublicTmpIgnacioRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
