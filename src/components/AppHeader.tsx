@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 
-export function AppHeader({ name }: { name?: string }) {
+export function AppHeader({ name, hidePortfolio }: { name?: string; hidePortfolio?: boolean }) {
   const { signOut, role } = useAuth();
   return (
     <header className="sticky top-0 z-30 bg-background/80 backdrop-blur border-b border-border">
@@ -26,13 +26,15 @@ export function AppHeader({ name }: { name?: string }) {
               >
                 Mis Proyectos
               </Link>
-              <Link
-                to="/portfolio"
-                className="text-sm px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition"
-                activeProps={{ className: "text-sm px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground font-medium" }}
-              >
-                Mi Portafolio
-              </Link>
+              {!hidePortfolio && (
+                <Link
+                  to="/portfolio"
+                  className="text-sm px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition"
+                  activeProps={{ className: "text-sm px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground font-medium" }}
+                >
+                  Mi Portafolio
+                </Link>
+              )}
             </nav>
           )}
           {name && <span className="hidden sm:inline text-sm text-muted-foreground">{name}</span>}

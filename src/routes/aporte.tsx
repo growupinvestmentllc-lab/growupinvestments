@@ -81,7 +81,7 @@ function AportePage() {
   if (!c) {
     return (
       <div className="min-h-screen bg-background">
-        <AppHeader name={name} />
+        <AppHeader name={name} hidePortfolio />
         <main className="max-w-6xl mx-auto px-4 py-16 text-center text-muted-foreground">Cargando…</main>
       </div>
     );
@@ -91,7 +91,7 @@ function AportePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader name={name} />
+      <AppHeader name={name} hidePortfolio />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-8">
         <div>
           <p className="text-sm text-muted-foreground">Hola, {name}</p>
@@ -179,7 +179,6 @@ function AportePage() {
               <Button asChild><Link to="/contact" search={{ opportunity_name: "Nueva oportunidad – 329" } as any}>Me interesa <ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
           </div>
-          <iframe title="Proforma 329" src={proforma329.url} className="w-full h-[500px] rounded-md border border-border" />
         </section>
       </main>
     </div>
