@@ -144,14 +144,21 @@ function AportePage() {
                 <th className="py-2 pr-3">#</th><th className="py-2 pr-3">Fecha</th><th className="py-2 pr-3">Monto</th><th className="py-2">Detalle</th>
               </tr></thead>
               <tbody>
-                {c.deposits.map((d, i) => (
-                  <tr key={i} className="border-b border-border/60 align-top">
-                    <td className="py-2 pr-3">{i + 1}</td>
-                    <td className="py-2 pr-3 whitespace-nowrap">{fmtDate(d.date)}</td>
-                    <td className="py-2 pr-3 font-semibold whitespace-nowrap">{formatUSD(Number(d.amount))}</td>
-                    <td className="py-2 text-muted-foreground">{d.detail ?? "Pendiente"}</td>
-                  </tr>
-                ))}
+                {c.deposits.map((d, i) => {
+                  const receiptUrl = urls[`Comprobante depósito ${i + 1}`] ?? null;
+                  return (
+                    <tr key={i} className="border-b border-border/60 align-top">
+                      <td className="py-2 pr-3">{i + 1}</td>
+                      <td className="py-2 pr-3 whitespace-nowrap">{d.date ? fmtDate(d.date) : "—"}</td>
+                      <td className="py-2 pr-3 font-semibold whitespace-nowrap">{formatUSD(Number(d.amount))}</td>
+                      <td className="py-2 text-muted-foreground">
+                        {d.detail ?? (receiptUrl ? (
+                          <a href={receiptUrl} target="_blank" rel="noreferrer" className="text-primary underline">Ver comprobante</a>
+                        ) : "Pendiente de carga")}
+                      </td>
+                    </tr>
+                  );
+                })}
                 <tr><td /><td className="py-2 font-semibold">Total depositado</td><td className="py-2 font-bold text-primary">{formatUSD(totalDep)}</td><td /></tr>
               </tbody>
             </table>
