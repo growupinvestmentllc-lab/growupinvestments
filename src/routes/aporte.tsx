@@ -81,7 +81,7 @@ function AportePage() {
   if (!c) {
     return (
       <div className="min-h-screen bg-background">
-        <AppHeader name={name} />
+        <AppHeader name={name} hidePortfolio />
         <main className="max-w-6xl mx-auto px-4 py-16 text-center text-muted-foreground">Cargando…</main>
       </div>
     );
@@ -91,7 +91,7 @@ function AportePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader name={name} />
+      <AppHeader name={name} hidePortfolio />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-8">
         <div>
           <p className="text-sm text-muted-foreground">Hola, {name}</p>
