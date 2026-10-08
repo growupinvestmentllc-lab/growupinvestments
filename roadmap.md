@@ -7,4 +7,5 @@
 - [x] Verificar el recorrido con una cuenta de inversor.
 - [x] Organizar “Mis Ventas” de Hunter por año, con totales y categorías por período.
 - [x] Quitar “Pendiente de carga” de la página de Ignacio y mostrar el 05/09/2025 como fecha del depósito 2.
+- [x] Mostrar en la página de Ignacio que es propietario del 16,9% de la casa.
 - [ ] Cargar los comprobantes de depósito 1 y 2 de Ignacio (los sube él; sin archivo, la ficha no ofrece descarga).
