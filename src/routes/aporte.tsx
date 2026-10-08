@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Download, FileText, MapPin } from "lucide-react";
 import flamingoPhoto from "@/assets/621-flamingo-garantia.png.asset.json";
 import lot329 from "@/assets/329-ne-13th-hero.png.asset.json";
+import proforma621 from "@/assets/proforma-621-flamingo.png.asset.json";
 import proforma329 from "@/assets/proforma-329-ponte-vedra.pdf.asset.json";
 
 export const Route = createFileRoute("/aporte")({
@@ -35,7 +36,7 @@ type Contribution = {
 
 const fmtDate = (d: string | null) => (d ? d.split("-").reverse().join("/") : "Pendiente");
 
-function DocCard({ name, url }: { name: string; url: string | null }) {
+function DocCard({ name, url, image }: { name: string; url: string | null; image?: boolean }) {
   return (
     <div className="card-soft p-4 space-y-3">
       <div className="flex items-center justify-between gap-3">
@@ -46,7 +47,8 @@ function DocCard({ name, url }: { name: string; url: string | null }) {
           <span className="text-xs text-muted-foreground">Pendiente de carga</span>
         )}
       </div>
-      {url && <iframe title={name} src={url} className="w-full h-80 rounded-md border border-border" />}
+      {url && image && <img src={url} alt={name} className="w-full rounded-md border border-border" />}
+      {url && !image && <iframe title={name} src={url} className="w-full h-80 rounded-md border border-border" />}
     </div>
   );
 }
@@ -158,7 +160,7 @@ function AportePage() {
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Documentos</h2>
-          {c.documents.map((d) => <DocCard key={d.name} name={d.name} url={urls[d.name] ?? null} />)}
+          {c.documents.map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma 621")} url={d.name.startsWith("Proforma 621") ? proforma621.url : urls[d.name] ?? null} />)}
         </section>
 
         <section className="space-y-3 pt-4">
