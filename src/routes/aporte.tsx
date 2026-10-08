@@ -179,7 +179,6 @@ function AportePage() {
               <Button asChild><Link to="/contact" search={{ opportunity_name: "Nueva oportunidad – 329" } as any}>Me interesa <ArrowRight className="h-4 w-4" /></Link></Button>
             </div>
           </div>
-          <iframe title="Proforma 329" src={proforma329.url} className="w-full h-[500px] rounded-md border border-border" />
         </section>
       </main>
     </div>
