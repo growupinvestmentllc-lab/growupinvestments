@@ -142,7 +142,7 @@ function AportePage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead><tr className="text-left text-muted-foreground border-b border-border">
-                <th className="py-2 pr-3">#</th><th className="py-2 pr-3">Fecha</th><th className="py-2 pr-3">Monto</th><th className="py-2">Detalle</th>
+                <th className="py-2 pr-3">#</th><th className="py-2 pr-3">Fecha</th><th className="py-2 pr-3">Monto</th><th className="py-2 pr-3">Detalle</th><th className="py-2">Comprobante</th>
               </tr></thead>
               <tbody>
                 {c.deposits.map((d, i) => {
@@ -152,15 +152,19 @@ function AportePage() {
                       <td className="py-2 pr-3">{i + 1}</td>
                       <td className="py-2 pr-3 whitespace-nowrap">{d.date ? fmtDate(d.date) : "—"}</td>
                       <td className="py-2 pr-3 font-semibold whitespace-nowrap">{formatUSD(Number(d.amount))}</td>
-                      <td className="py-2 text-muted-foreground">
-                        {d.detail ?? (receiptUrl ? (
-                          <a href={receiptUrl} target="_blank" rel="noreferrer" className="text-primary underline">Ver comprobante</a>
-                        ) : "—")}
+                      <td className="py-2 pr-3 text-muted-foreground">{d.detail ?? "—"}</td>
+                      <td className="py-2 whitespace-nowrap">
+                        {receiptUrl ? (
+                          <span className="flex gap-3">
+                            <a href={receiptUrl} target="_blank" rel="noreferrer" className="text-primary underline">Ver</a>
+                            <a href={receiptUrl} download className="text-primary underline">Descargar</a>
+                          </span>
+                        ) : <span className="text-muted-foreground">Comprobante depósito {i + 1}</span>}
                       </td>
                     </tr>
                   );
                 })}
-                <tr><td /><td className="py-2 font-semibold">Total depositado</td><td className="py-2 font-bold text-primary">{formatUSD(totalDep)}</td><td /></tr>
+                <tr><td /><td className="py-2 font-semibold">Total depositado</td><td className="py-2 font-bold text-primary">{formatUSD(totalDep)}</td><td /><td /></tr>
               </tbody>
             </table>
           </div>
@@ -168,7 +172,7 @@ function AportePage() {
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Documentos</h2>
-          {c.documents.map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma 621")} url={d.name.startsWith("Proforma 621") ? proforma621.url : urls[d.name] ?? null} />)}
+          {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma 621")} url={d.name.startsWith("Proforma 621") ? proforma621.url : urls[d.name] ?? null} />)}
         </section>
 
         <section className="space-y-3 pt-4">
