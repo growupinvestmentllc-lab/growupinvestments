@@ -185,7 +185,6 @@ function AportePage() {
             </div>
 
             <div className="border-t border-primary-foreground/25 pt-4 space-y-3">
-              <p className="text-xs uppercase tracking-wide opacity-70">Costos del proyecto</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   ["Capital aportado", formatUSD(Number(c.capital))],
