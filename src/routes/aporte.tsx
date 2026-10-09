@@ -121,20 +121,6 @@ function AportePage() {
           <h1 className="text-3xl font-bold text-foreground mt-1">{c.title}</h1>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            ["Capital aportado", formatUSD(Number(c.capital))],
-            ["Rentabilidad", `${c.rate_pct}%`],
-            ["Ganancia", formatUSD(Number(c.profit))],
-            ["Total a cobrar", formatUSD(Number(c.total_to_collect))],
-          ].map(([l, v]) => (
-            <div key={l} className="card-soft p-5">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">{l}</p>
-              <p className="text-2xl font-bold text-foreground mt-1">{v}</p>
-            </div>
-          ))}
-        </div>
-
         <section className="card-soft overflow-hidden grid md:grid-cols-2">
           <img src={flamingoPhoto.url} alt={c.property_address} className="w-full h-72 object-cover" />
           <div className="p-6 space-y-4">
