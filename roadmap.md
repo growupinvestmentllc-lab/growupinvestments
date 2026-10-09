@@ -17,3 +17,4 @@
 - [x] Aclarar en la ficha de 567 Flamingo de Ignacio que Precio de venta, Costo total, Ganancia neta y ROI son del 100% de la casa.
 - [x] Quitar la seccion "Documentos" de la pagina de Ignacio (quedaba solo el titulo, sin archivos).
 - [x] Unificar el boton de todas las tarjetas en "Quiero saber mas" (Mis Proyectos, aportes y oportunidades).
+- [x] En la tarjeta de 567 Flamingo de Ignacio, el boton vuelve a decir "Ver informacion"; las oportunidades siguen con "Quiero saber mas".
