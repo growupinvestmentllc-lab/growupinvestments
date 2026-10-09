@@ -200,9 +200,9 @@ function AportePage() {
               <p className="text-xs uppercase tracking-wide opacity-80">Total depositado</p>
               <p className="text-2xl font-bold mt-1">{formatUSD(totalDep)}</p>
             </div>
-            <div className="card-soft p-5">
-              <p className="text-xs uppercase tracking-wide text-muted-foreground">Total a cobrar</p>
-              <p className="text-2xl font-bold text-foreground mt-1">{formatUSD(Number(c.total_to_collect))}</p>
+            <div className="rounded-xl bg-primary p-5 text-primary-foreground">
+              <p className="text-xs uppercase tracking-wide opacity-80">Total a cobrar</p>
+              <p className="text-2xl font-bold mt-1">{formatUSD(Number(c.total_to_collect))}</p>
             </div>
           </div>
 
@@ -213,9 +213,9 @@ function AportePage() {
               ["Rentabilidad", `${c.rate_pct}%`],
               ["Ganancia", formatUSD(Number(c.profit))],
             ].map(([l, v]) => (
-              <div key={l} className="card-soft p-5">
-                <p className="text-xs uppercase tracking-wide text-muted-foreground">{l}</p>
-                <p className="text-2xl font-bold text-foreground mt-1">{v}</p>
+              <div key={l} className="rounded-xl bg-primary p-5 text-primary-foreground">
+                <p className="text-xs uppercase tracking-wide opacity-80">{l}</p>
+                <p className="text-2xl font-bold mt-1">{v}</p>
               </div>
             ))}
           </div>
