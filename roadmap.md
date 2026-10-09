@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Separar Hunter en casas terminadas, casas con contrato, lotes permisados (329 y 35 SW) y sin permisología (3604 y 715), conservando fotos y montos.
+
 - [x] Mostrar las doce oportunidades de Ignacio con sus fotos, separadas en casas terminadas, con alquiler, lotes permisados y sin permisología; verificado con su cuenta, galería y consulta.
 
 - [x] Incorporar el aporte de Ignacio a Mis Proyectos y Mi Portafolio con el formato existente y avance de obra real, conservando montos y privacidad; recorrido verificado con su cuenta.

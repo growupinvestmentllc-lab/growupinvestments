@@ -1,3 +1,4 @@
+Group Hunter's live offerings through a browser-safe classification helper; this separates categories without modifying source records or financial values.
 Show combined rental financials for the Kimberly duplex once, while retaining each unit's separate lease and monthly payment history; this prevents double-counting without erasing unit-specific records.
 Treat `rental_properties.monthly_expenses` as monthly administration and derive annual administration and investor net values in the UI; this keeps Admin and investor views synchronized.
 Center the Flamingo loan guarantee Google Maps embed using Census-geocoded coordinates rather than address search; address search fails to resolve this property and shows the world map.
