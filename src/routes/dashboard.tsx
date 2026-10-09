@@ -80,7 +80,7 @@ function Dashboard() {
   );
   const [profile, setProfile] = useState<{ full_name: string | null; llc_name: string | null } | null>(null);
   const [opps, setOpps] = useState<Opportunity[]>([]);
-  const [contributions, setContributions] = useState<(Contribution & { progress: number })[]>([]);
+  const [contributions, setContributions] = useState<(Contribution & { progress: number | undefined })[]>([]);
 
   useEffect(() => {
     if (loading) return;
@@ -103,7 +103,7 @@ function Dashboard() {
         const { data: stages } = c.project_id
           ? await supabase.from("project_stages").select("completed").eq("project_id", c.project_id)
           : { data: [] };
-        return { ...c, progress: stages?.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : 0 };
+        return { ...c, progress: stages?.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : undefined };
       }));
       setContributions(enrichedContributions);
       if (list.length === 0 && myContributions.length === 0) {

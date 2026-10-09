@@ -72,6 +72,7 @@ function AportePage() {
       const { data } = await (supabase as any).from("capital_contributions").select("*").eq("investor_id", user.id).limit(1);
       const row = (data?.[0] ?? null) as Contribution | null;
       setC(row);
+      setStages([]);
       if (row?.project_id) {
         const { data: projectStages } = await supabase.from("project_stages").select("*").eq("project_id", row.project_id).order("stage_order");
         setStages(projectStages ?? []);
@@ -139,10 +140,10 @@ function AportePage() {
                 <div key={l}><p className="text-xs text-muted-foreground">{l}</p><p className="font-semibold text-foreground">{v}</p></div>
               ))}
             </div>
-            <div>
+            {stages.length > 0 && <div>
               <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Avance de obra</span><span className="font-semibold text-foreground">{progress}%</span></div>
               <progress aria-label="Avance de obra" value={progress} max={100} className="w-full h-2 accent-primary" />
-            </div>
+            </div>}
           </div>
         </section>
 
@@ -172,7 +173,7 @@ function AportePage() {
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Documentos</h2>
-          {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma 621")} url={d.name.startsWith("Proforma 621") ? proforma621.url : urls[d.name] ?? null} />)}
+          {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma ")} url={d.name.startsWith("Proforma ") ? proforma621.url : urls[d.name] ?? null} />)}
         </section>
 
         <section className="space-y-3 pt-4">
