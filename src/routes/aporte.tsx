@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
-import { formatUSD } from "@/lib/stages";
+import { formatUSD, ALL_STAGES } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Download, FileText, MapPin } from "lucide-react";
 import flamingoPhoto from "@/assets/621-flamingo-foto.png.asset.json";
@@ -76,6 +76,13 @@ function AportePage() {
       if (row?.project_id) {
         const { data: projectStages } = await supabase.from("project_stages").select("*").eq("project_id", row.project_id).order("stage_order");
         setStages(projectStages ?? []);
+      } else if (row) {
+        // Obra terminada sin proyecto vinculado: todas las etapas finalizadas (100%).
+        setStages(ALL_STAGES.map((s, i) => ({
+          id: `done-${i}`, project_id: "", stage_order: i + 1, stage_name: s.name, stage_group: s.group,
+          completed: true, active: false, draw_number: null, draw_amount: null, created_at: "",
+          estimated_date: null, estimated_start_date: null, estimated_end_date: null,
+        })) as Tables<"project_stages">[]);
       }
       const out: Record<string, string> = {};
       for (const d of row?.documents ?? []) {
