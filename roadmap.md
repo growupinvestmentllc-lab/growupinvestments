@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Incorporar el aporte de Ignacio a Mis Proyectos y Mi Portafolio con el formato existente y avance de obra real, conservando montos y privacidad.
+- [x] Incorporar el aporte de Ignacio a Mis Proyectos y Mi Portafolio con el formato existente y avance de obra real, conservando montos y privacidad; recorrido verificado con su cuenta.
 
 - [x] Completar alquiler de 11224 y 11226 Kimberly de GROWUP con los valores conjuntos de la planilla, sin alterar los movimientos mensuales de cada unidad.
 - [x] Vincular automáticamente “Mis proyectos” con las secciones de “Mi portafolio”, respetando cada inversor.
