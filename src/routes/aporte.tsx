@@ -180,10 +180,6 @@ function AportePage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="rounded-xl bg-primary p-5 text-primary-foreground">
-              <p className="text-xs uppercase tracking-wide opacity-80">Total depositado</p>
-              <p className="text-2xl font-bold mt-1">{formatUSD(totalDep)}</p>
-            </div>
-            <div className="rounded-xl bg-primary p-5 text-primary-foreground">
               <p className="text-xs uppercase tracking-wide opacity-80">Total a cobrar</p>
               <p className="text-2xl font-bold mt-1">{formatUSD(Number(c.total_to_collect))}</p>
             </div>
