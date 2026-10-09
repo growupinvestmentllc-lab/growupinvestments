@@ -178,23 +178,6 @@ function AportePage() {
         <section className="space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Aporte de capital</h2>
 
-          <div className="rounded-xl bg-primary p-6 text-primary-foreground">
-            <p className="font-semibold mb-4">Rentabilidad del proyecto</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                ["Precio de venta", c.sale_price != null ? formatUSD(Number(c.sale_price)) : "—"],
-                ["Costo total", c.total_cost != null ? formatUSD(Number(c.total_cost)) : "—"],
-                ["Ganancia neta", c.project_profit != null ? formatUSD(Number(c.project_profit)) : "—"],
-                ["ROI estimado", c.project_roi != null ? `${c.project_roi}%` : "—"],
-              ].map(([l, v]) => (
-                <div key={l}>
-                  <p className="text-xs uppercase tracking-wide opacity-80">{l}</p>
-                  <p className="text-xl font-bold mt-1">{v}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="grid md:grid-cols-2 gap-4">
             <div className="rounded-xl bg-primary p-5 text-primary-foreground">
               <p className="text-xs uppercase tracking-wide opacity-80">Total depositado</p>
