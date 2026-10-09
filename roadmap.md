@@ -12,3 +12,4 @@
 - [x] Mostrar en la página de Ignacio que es propietario del 16,9% de la casa.
 - [ ] Cargar los comprobantes de depósito 1 y 2 de Ignacio (los sube él; sin archivo, la ficha no ofrece descarga).
 - [x] Quitar el cuadro vacío del fondo de la página de Ignacio (vista previa de la proforma 329) y el enlace "Mi Portafolio" de su encabezado.
+- [x] Unificar el aporte de capital de Ignacio en un solo recuadro verde (Total a cobrar + Costos del proyecto), sin rectángulos separados ni cambios de montos.
