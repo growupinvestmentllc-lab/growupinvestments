@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
 import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { groupHunterOfferings } from "@/lib/hunter-offering-groups";
 
 export const Route = createFileRoute("/hunter/")({
   head: () => ({
@@ -280,7 +281,7 @@ function HunterOfferings() {
     })();
   }, []);
 
-  const by = (k: string) => items.filter((i) => i.kind === k);
+   const groups = groupHunterOfferings(items);
 
   return (
     <div>
@@ -290,23 +291,31 @@ function HunterOfferings() {
       </p>
 
       <Section
-        title="Casas propias para vender"
+        title="CASAS TERMINADAS"
         subtitle="Casas disponibles para ofrecer a tus clientes."
-        items={by("construccion")}
+        items={groups.completed}
         empty="Todavía no hay casas cargadas."
       />
       <Section
         emphasized
-        title="Posibilidad de vender con contrato de alquiler"
+        title="CASAS TERMINADAS CON CONTRATO DE ALQUILER"
         subtitle="Casas con inquilino y contrato vigente."
-        items={by("rbi")}
+        items={groups.rented}
         empty="Todavía no hay opciones cargadas."
       />
       <Section
         emphasized
-        title="Lotes en venta"
+        title="LOTES EN VENTA PERMISADOS"
         subtitle=""
-        items={by("lote")}
+        items={groups.permitted}
+        empty="Todavía no hay lotes cargados."
+      />
+
+      <Section
+        emphasized
+        title="LOTES EN VENTA SIN PERMISOLOGÍA"
+        subtitle=""
+        items={groups.unpermitted}
         empty="Todavía no hay lotes cargados."
       />
 
