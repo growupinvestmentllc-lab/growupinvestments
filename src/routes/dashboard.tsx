@@ -7,6 +7,8 @@ import { ALL_STAGES } from "@/lib/stages";
 import { MapPin, ArrowRight, Home } from "lucide-react";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
+import { CapitalProjectCard } from "@/components/CapitalProjectCard";
+import { ownContributions, type Contribution } from "@/lib/capital-contributions";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [
@@ -78,6 +80,7 @@ function Dashboard() {
   );
   const [profile, setProfile] = useState<{ full_name: string | null; llc_name: string | null } | null>(null);
   const [opps, setOpps] = useState<Opportunity[]>([]);
+  const [contributions, setContributions] = useState<(Contribution & { progress: number })[]>([]);
 
   useEffect(() => {
     if (loading) return;
@@ -94,11 +97,18 @@ function Dashboard() {
         .select("id,address,status,hero_image_url,owner_llc,owner_llc_2,owner_pct_1,owner_pct_2")
         .order("created_at");
       const list = p ?? [];
-      if (list.length === 0) {
+      const { data: contributionRows } = await supabase.from("capital_contributions").select("*").eq("investor_id", user.id);
+      const myContributions = ownContributions((contributionRows ?? []) as Contribution[], user.id);
+      const enrichedContributions = await Promise.all(myContributions.map(async (c) => {
+        const { data: stages } = c.project_id
+          ? await supabase.from("project_stages").select("completed").eq("project_id", c.project_id)
+          : { data: [] };
+        return { ...c, progress: stages?.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : 0 };
+      }));
+      setContributions(enrichedContributions);
+      if (list.length === 0 && myContributions.length === 0) {
         const { data: myLoans } = await (supabase as any).from("loans").select("id").eq("investor_id", user.id).limit(1);
         if (myLoans?.length) { navigate({ to: "/prestamo" }); return; }
-        const { data: myAportes } = await (supabase as any).from("capital_contributions").select("id").eq("investor_id", user.id).limit(1);
-        if (myAportes?.length) { navigate({ to: "/aporte" }); return; }
       }
       const userLlc = (await supabase
         .from("profiles")
@@ -202,7 +212,7 @@ function Dashboard() {
             </p>
             <h1 className="text-3xl font-bold text-foreground mt-1">Mis Proyectos</h1>
           </div>
-          <span className="text-sm text-muted-foreground">{projects.length} proyecto(s)</span>
+          <span className="text-sm text-muted-foreground">{projects.length + contributions.length} proyecto(s)</span>
         </div>
 
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -290,6 +300,7 @@ function Dashboard() {
             </div>
           </div>
           <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {contributions.map((c) => <CapitalProjectCard key={c.id} contribution={c} progress={c.progress} />)}
             {opps.length === 0 && (
               <p className="text-muted-foreground col-span-full text-center py-12">
                 No hay oportunidades disponibles.
