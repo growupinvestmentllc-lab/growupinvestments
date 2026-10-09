@@ -1,0 +1,1 @@
+CREATE POLICY "capital investors read linked project stages" ON public.project_stages FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.capital_contributions c WHERE c.project_id = project_stages.project_id AND c.investor_id = auth.uid()));

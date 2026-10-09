@@ -10,6 +10,9 @@ import flamingoPhoto from "@/assets/621-flamingo-foto.png.asset.json";
 import lot329 from "@/assets/329-ne-13th-hero.png.asset.json";
 import proforma621 from "@/assets/proforma-621-flamingo.png.asset.json";
 import proforma329 from "@/assets/proforma-329-ponte-vedra.pdf.asset.json";
+import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
+import { GanttChart } from "@/components/GanttChart";
+import type { Tables } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/aporte")({
   head: () => ({
@@ -57,6 +60,7 @@ function AportePage() {
   const [c, setC] = useState<Contribution | null>(null);
   const [name, setName] = useState("");
   const [urls, setUrls] = useState<Record<string, string>>({});
+  const [stages, setStages] = useState<Tables<"project_stages">[]>([]);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [loading, user, navigate]);
 
@@ -68,6 +72,10 @@ function AportePage() {
       const { data } = await (supabase as any).from("capital_contributions").select("*").eq("investor_id", user.id).limit(1);
       const row = (data?.[0] ?? null) as Contribution | null;
       setC(row);
+      if (row?.project_id) {
+        const { data: projectStages } = await supabase.from("project_stages").select("*").eq("project_id", row.project_id).order("stage_order");
+        setStages(projectStages ?? []);
+      }
       const out: Record<string, string> = {};
       for (const d of row?.documents ?? []) {
         if (!d.path) continue;
@@ -81,20 +89,21 @@ function AportePage() {
   if (!c) {
     return (
       <div className="min-h-screen bg-background">
-        <AppHeader name={name} hidePortfolio />
+        <AppHeader name={name} />
         <main className="max-w-6xl mx-auto px-4 py-16 text-center text-muted-foreground">Cargando…</main>
       </div>
     );
   }
 
   const totalDep = c.deposits.reduce((s, d) => s + Number(d.amount), 0);
+  const progress = stages.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : 0;
 
   return (
     <div className="min-h-screen bg-background">
-      <AppHeader name={name} hidePortfolio />
+      <AppHeader name={name} />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-10 space-y-8">
         <div>
-          <p className="text-sm text-muted-foreground">Hola, {name}</p>
+          <Link to="/dashboard" className="text-sm text-muted-foreground inline-flex items-center gap-2"><ArrowRight className="h-4 w-4 rotate-180" /> Mis Proyectos</Link>
           <h1 className="text-3xl font-bold text-foreground mt-1">{c.title}</h1>
         </div>
 
@@ -131,11 +140,13 @@ function AportePage() {
               ))}
             </div>
             <div>
-              <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Avance de obra</span><span className="font-semibold text-foreground">100%</span></div>
-              <div className="h-2 bg-muted rounded-full overflow-hidden"><div className="h-full bg-primary w-full" /></div>
+              <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Avance de obra</span><span className="font-semibold text-foreground">{progress}%</span></div>
+              <progress aria-label="Avance de obra" value={progress} max={100} className="w-full h-2 accent-primary" />
             </div>
           </div>
         </section>
+
+        {stages.length > 0 && <><ConstructionProgressBar stages={stages} /><GanttChart stages={stages} /></>}
 
         <section className="card-soft p-5">
           <h2 className="text-lg font-semibold text-foreground mb-3">Depósitos</h2>

@@ -10,6 +10,8 @@ import { ALL_STAGES, formatUSD } from "@/lib/stages";
 import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin, Eye, Download } from "lucide-react";
 import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { CapitalProjectCard } from "@/components/CapitalProjectCard";
+import { ownContributions, type Contribution } from "@/lib/capital-contributions";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -95,6 +97,7 @@ function PortfolioPage() {
   const navigate = useNavigate();
   const [profileName, setProfileName] = useState<string>("");
   const [portfolioTab, setPortfolioTab] = useState("resumen");
+  const [contributions, setContributions] = useState<Contribution[]>([]);
 
   useEffect(() => {
     if (loading) return;
@@ -105,6 +108,9 @@ function PortfolioPage() {
     if (!user) return;
     supabase.from("profiles").select("full_name").eq("id", user.id).single().then(({ data }) => {
       setProfileName(data?.full_name ?? user.email ?? "");
+    });
+    supabase.from("capital_contributions").select("*").eq("investor_id", user.id).then(({ data }) => {
+      setContributions(ownContributions((data ?? []) as Contribution[], user.id));
     });
   }, [user]);
 
@@ -143,11 +149,11 @@ function PortfolioPage() {
               );
             })}
           </div>
-          {portfolioTab === "resumen" && <PortfolioSummary />}
+          {portfolioTab === "resumen" && (contributions.length > 0 ? <div className="mt-6 grid sm:grid-cols-2 gap-5">{contributions.map((c) => <CapitalProjectCard key={c.id} contribution={c} />)}</div> : <PortfolioSummary />)}
           <TabsContent value="construccion" className="mt-6"><ConstructionTab /></TabsContent>
           <TabsContent value="alquiler" className="mt-6"><RentalTab /></TabsContent>
           <TabsContent value="venta" className="mt-6"><ForSaleTab /></TabsContent>
-          <TabsContent value="vendidas" className="mt-6"><SoldTab /></TabsContent>
+          <TabsContent value="vendidas" className="mt-6"><SoldTab contributions={contributions.filter((c) => ["vendida", "vendido"].includes(c.project_status.toLowerCase()))} /></TabsContent>
         </Tabs>
       </main>
     </div>
@@ -1074,7 +1080,7 @@ function ForSaleTab() {
 
 /* ------------------------------ TAB 4: VENDIDAS ----------------------------- */
 
-function SoldTab() {
+function SoldTab({ contributions }: { contributions: Contribution[] }) {
   const { user, role } = useAuth();
   const { myLlc } = useOwnerships();
   const [rows, setRows] = useState<any[]>([]);
@@ -1109,9 +1115,10 @@ function SoldTab() {
   }, [rows, user, isAdmin]);
   const manualProjectIds = new Set(visibleRows.map((row) => row.project_id).filter(Boolean));
   const automaticRows = soldProjects.filter((project) => !manualProjectIds.has(project.id));
-  if (visibleRows.length === 0 && automaticRows.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
+  if (visibleRows.length === 0 && automaticRows.length === 0 && contributions.length === 0) return <p className="text-muted-foreground text-center py-12">Aún no hay propiedades vendidas.</p>;
   return (
     <div className="grid sm:grid-cols-2 gap-5">
+      {contributions.map((c) => <CapitalProjectCard key={c.id} contribution={c} />)}
       {automaticRows.map((project) => {
         const investment = project.investment;
         const pct = Number(investment?.percentage ?? 100);
