@@ -179,7 +179,7 @@ function AportePage() {
           <h2 className="text-lg font-semibold text-foreground">Aporte de capital</h2>
 
           <div className="rounded-xl bg-primary p-6 text-primary-foreground">
-            <p className="font-semibold mb-4">Rentabilidad esperada</p>
+            <p className="font-semibold mb-4">Rentabilidad del proyecto</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 ["Precio de venta", c.sale_price != null ? formatUSD(Number(c.sale_price)) : "—"],
