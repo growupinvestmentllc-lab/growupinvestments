@@ -22,6 +22,8 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: "Hablemos de tu próxima inversión. Respondemos en menos de 24 horas hábiles." },
       { property: "og:title", content: "Contacto — GrowUp Investments" },
       { property: "og:description", content: "Hablemos de tu próxima inversión." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
 });
