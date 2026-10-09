@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Mostrar las doce oportunidades de Ignacio con sus fotos, separadas en casas terminadas, con alquiler, lotes permisados y sin permisología; verificar con su cuenta.
+
 - [x] Incorporar el aporte de Ignacio a Mis Proyectos y Mi Portafolio con el formato existente y avance de obra real, conservando montos y privacidad; recorrido verificado con su cuenta.
 
 - [x] Completar alquiler de 11224 y 11226 Kimberly de GROWUP con los valores conjuntos de la planilla, sin alterar los movimientos mensuales de cada unidad.
