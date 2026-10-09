@@ -19,7 +19,7 @@ export function CapitalProjectCard({ contribution: c, progress }: { contribution
           {[["Capital aportado", formatUSD(c.capital)], ["Rentabilidad", `${c.rate_pct}%`], ["Ganancia", formatUSD(c.profit)], ["Total a cobrar", formatUSD(c.total_to_collect)]].map(([label, value]) => <div key={label}><p className="text-xs text-muted-foreground">{label}</p><p className="font-semibold text-foreground">{value}</p></div>)}
         </div>
         {progress != null && <div className="mt-5"><div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Avance de obra</span><span className="font-semibold text-foreground">{progress}%</span></div><progress aria-label="Avance de obra" value={progress} max={100} className="w-full h-2 accent-primary" /></div>}
-        <Button asChild className="mt-5 w-full"><Link to="/aporte">Quiero saber más <ArrowRight className="h-4 w-4" /></Link></Button>
+        <Button asChild className="mt-5 w-full"><Link to="/aporte">Ver información <ArrowRight className="h-4 w-4" /></Link></Button>
       </div>
     </div>
   );
