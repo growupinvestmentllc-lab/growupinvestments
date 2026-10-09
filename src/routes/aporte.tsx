@@ -7,9 +7,7 @@ import { formatUSD, ALL_STAGES } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Download, FileText, MapPin } from "lucide-react";
 import flamingoPhoto from "@/assets/621-flamingo-foto.png.asset.json";
-import lot329 from "@/assets/329-ne-13th-hero.png.asset.json";
 import proforma621 from "@/assets/proforma-621-flamingo.png.asset.json";
-import proforma329 from "@/assets/proforma-329-ponte-vedra.pdf.asset.json";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart } from "@/components/GanttChart";
 import type { Tables } from "@/integrations/supabase/types";
@@ -191,22 +189,6 @@ function AportePage() {
           {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma ")} url={d.name.startsWith("Proforma ") ? proforma621.url : urls[d.name] ?? null} />)}
         </section>
 
-        <section className="space-y-3 pt-4">
-          <h2 className="text-2xl font-bold text-foreground">329</h2>
-          <div className="card-soft overflow-hidden grid md:grid-cols-2">
-            <img src={lot329.url} alt="Lote 329 NE 13th St" className="w-full h-72 object-cover" />
-            <div className="p-6 flex flex-col gap-4">
-              <p className="font-semibold text-foreground flex items-center gap-1"><MapPin className="h-4 w-4 text-primary" /> 329 NE 13th St</p>
-              <p className="text-sm text-muted-foreground">Lote + modelo de casa ya permisada y aprobada, lista para comenzar la construcción.</p>
-              <div className="flex flex-wrap gap-2">
-                <Button asChild variant="outline"><a href={proforma329.url} target="_blank" rel="noreferrer"><FileText className="h-4 w-4" /> Ver proforma</a></Button>
-                <Button asChild variant="outline"><a href={proforma329.url} download><Download className="h-4 w-4" /> Descargar</a></Button>
-              </div>
-              <div className="flex-1" />
-              <Button asChild><Link to="/contact" search={{ opportunity_name: "Nueva oportunidad – 329" } as any}>Me interesa <ArrowRight className="h-4 w-4" /></Link></Button>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );
