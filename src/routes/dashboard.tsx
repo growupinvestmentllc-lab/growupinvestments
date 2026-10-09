@@ -281,7 +281,7 @@ function Dashboard() {
                 </div>
                 <Button asChild className="mt-5 w-full">
                   <Link to="/dashboard/$projectId" params={{ projectId: p.id }}>
-                    Ver información <ArrowRight className="h-4 w-4" />
+                    Quiero saber más <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </div>
@@ -377,7 +377,7 @@ function Dashboard() {
                         to="/contact"
                         search={{ opportunity_id: o.id, opportunity_name: o.name }}
                       >
-                        {isLot ? "Consultar" : "Quiero saber más"} <ArrowRight className="h-3 w-3" />
+                        Quiero saber más <ArrowRight className="h-3 w-3" />
                       </Link>
                     </Button>
                   </div>
