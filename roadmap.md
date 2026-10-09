@@ -16,3 +16,4 @@
 - [x] Quitar el rótulo "Costos del proyecto" del recuadro verde del aporte de Ignacio.
 - [x] Aclarar en la ficha de 567 Flamingo de Ignacio que Precio de venta, Costo total, Ganancia neta y ROI son del 100% de la casa.
 - [x] Quitar la seccion "Documentos" de la pagina de Ignacio (quedaba solo el titulo, sin archivos).
+- [x] Unificar el boton de todas las tarjetas en "Quiero saber mas" (Mis Proyectos, aportes y oportunidades).
