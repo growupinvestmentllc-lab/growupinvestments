@@ -175,30 +175,33 @@ function AportePage() {
           {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma ")} url={d.name.startsWith("Proforma ") ? proforma621.url : urls[d.name] ?? null} />)}
         </section>
 
-        <section className="space-y-4">
+        <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Aporte de capital</h2>
 
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="rounded-xl bg-primary p-5 text-primary-foreground">
+          <div className="rounded-xl bg-primary p-5 text-primary-foreground space-y-5">
+            <div>
               <p className="text-xs uppercase tracking-wide opacity-80">Total a cobrar</p>
               <p className="text-2xl font-bold mt-1">{formatUSD(Number(c.total_to_collect))}</p>
             </div>
-          </div>
 
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">Costos del proyecto</p>
-          <div className="grid md:grid-cols-3 gap-4">
-            {[
-              ["Capital aportado", formatUSD(Number(c.capital))],
-              ["Rentabilidad", `${c.rate_pct}%`],
-              ["Ganancia", formatUSD(Number(c.profit))],
-            ].map(([l, v]) => (
-              <div key={l} className="rounded-xl bg-primary p-5 text-primary-foreground">
-                <p className="text-xs uppercase tracking-wide opacity-80">{l}</p>
-                <p className="text-2xl font-bold mt-1">{v}</p>
+            <div className="border-t border-primary-foreground/25 pt-4 space-y-3">
+              <p className="text-xs uppercase tracking-wide opacity-70">Costos del proyecto</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  ["Capital aportado", formatUSD(Number(c.capital))],
+                  ["Rentabilidad", `${c.rate_pct}%`],
+                  ["Ganancia", formatUSD(Number(c.profit))],
+                ].map(([l, v]) => (
+                  <div key={l}>
+                    <p className="text-xs uppercase tracking-wide opacity-80">{l}</p>
+                    <p className="text-xl font-bold mt-1">{v}</p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </section>
+
 
       </main>
     </div>
