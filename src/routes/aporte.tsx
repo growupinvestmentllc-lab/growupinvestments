@@ -175,6 +175,52 @@ function AportePage() {
           {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma ")} url={d.name.startsWith("Proforma ") ? proforma621.url : urls[d.name] ?? null} />)}
         </section>
 
+        <section className="space-y-4">
+          <h2 className="text-lg font-semibold text-foreground">Aporte de capital</h2>
+
+          <div className="rounded-xl bg-primary p-6 text-primary-foreground">
+            <p className="font-semibold mb-4">Rentabilidad esperada</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                ["Precio de venta", c.sale_price != null ? formatUSD(Number(c.sale_price)) : "—"],
+                ["Costo total", c.total_cost != null ? formatUSD(Number(c.total_cost)) : "—"],
+                ["Ganancia neta", c.project_profit != null ? formatUSD(Number(c.project_profit)) : "—"],
+                ["ROI estimado", c.project_roi != null ? `${c.project_roi}%` : "—"],
+              ].map(([l, v]) => (
+                <div key={l}>
+                  <p className="text-xs uppercase tracking-wide opacity-80">{l}</p>
+                  <p className="text-xl font-bold mt-1">{v}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="rounded-xl bg-primary p-5 text-primary-foreground">
+              <p className="text-xs uppercase tracking-wide opacity-80">Total depositado</p>
+              <p className="text-2xl font-bold mt-1">{formatUSD(totalDep)}</p>
+            </div>
+            <div className="card-soft p-5">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Total a cobrar</p>
+              <p className="text-2xl font-bold text-foreground mt-1">{formatUSD(Number(c.total_to_collect))}</p>
+            </div>
+          </div>
+
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Costos del proyecto</p>
+          <div className="grid md:grid-cols-3 gap-4">
+            {[
+              ["Capital aportado", formatUSD(Number(c.capital))],
+              ["Rentabilidad", `${c.rate_pct}%`],
+              ["Ganancia", formatUSD(Number(c.profit))],
+            ].map(([l, v]) => (
+              <div key={l} className="card-soft p-5">
+                <p className="text-xs uppercase tracking-wide text-muted-foreground">{l}</p>
+                <p className="text-2xl font-bold text-foreground mt-1">{v}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
       </main>
     </div>
   );
