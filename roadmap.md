@@ -15,3 +15,4 @@
 - [x] Unificar el aporte de capital de Ignacio en un solo recuadro verde (Total a cobrar + Costos del proyecto), sin rectángulos separados ni cambios de montos.
 - [x] Quitar el rótulo "Costos del proyecto" del recuadro verde del aporte de Ignacio.
 - [x] Aclarar en la ficha de 567 Flamingo de Ignacio que Precio de venta, Costo total, Ganancia neta y ROI son del 100% de la casa.
+- [x] Quitar la seccion "Documentos" de la pagina de Ignacio (quedaba solo el titulo, sin archivos).

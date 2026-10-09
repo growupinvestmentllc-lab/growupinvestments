@@ -4,10 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { formatUSD, ALL_STAGES } from "@/lib/stages";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Download, FileText, MapPin } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
+
 import flamingoPhoto from "@/assets/621-flamingo-foto.png.asset.json";
-import proforma621 from "@/assets/proforma-621-flamingo.png.asset.json";
+
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart } from "@/components/GanttChart";
 import type { Tables } from "@/integrations/supabase/types";
@@ -37,27 +37,13 @@ type Contribution = {
 
 const fmtDate = (d: string | null) => (d ? d.split("-").reverse().join("/") : "Pendiente");
 
-function DocCard({ name, url, image }: { name: string; url: string | null; image?: boolean }) {
-  return (
-    <div className="card-soft p-4 space-y-3">
-      <div className="flex items-center justify-between gap-3">
-        <p className="font-medium text-foreground flex items-center gap-2"><FileText className="h-4 w-4 text-primary" /> {name}</p>
-        {url && (
-          <Button asChild size="sm"><a href={url} download target="_blank" rel="noreferrer"><Download className="h-4 w-4" /> Descargar</a></Button>
-        )}
-      </div>
-      {url && image && <img src={url} alt={name} className="w-full rounded-md border border-border" />}
-      {url && !image && <iframe title={name} src={url} className="w-full h-80 rounded-md border border-border" />}
-    </div>
-  );
-}
 
 function AportePage() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [c, setC] = useState<Contribution | null>(null);
   const [name, setName] = useState("");
-  const [urls, setUrls] = useState<Record<string, string>>({});
+
   const [stages, setStages] = useState<Tables<"project_stages">[]>([]);
 
   useEffect(() => { if (!loading && !user) navigate({ to: "/login" }); }, [loading, user, navigate]);
@@ -90,13 +76,6 @@ function AportePage() {
           estimated_end_date: month(groupMonth[s.group] ?? 8, 28),
         })) as Tables<"project_stages">[]);
       }
-      const out: Record<string, string> = {};
-      for (const d of row?.documents ?? []) {
-        if (!d.path) continue;
-        const { data: s } = await supabase.storage.from("project-documents").createSignedUrl(d.path, 3600);
-        if (s?.signedUrl) out[d.name] = s.signedUrl;
-      }
-      setUrls(out);
     })();
   }, [user]);
 
@@ -174,10 +153,6 @@ function AportePage() {
           </div>
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Documentos</h2>
-          {c.documents.filter((d) => !d.name.startsWith("Comprobante depósito")).map((d) => <DocCard key={d.name} name={d.name} image={d.name.startsWith("Proforma ")} url={d.name.startsWith("Proforma ") ? proforma621.url : urls[d.name] ?? null} />)}
-        </section>
 
         <section className="space-y-3">
           <h2 className="text-lg font-semibold text-foreground">Aporte de capital</h2>
