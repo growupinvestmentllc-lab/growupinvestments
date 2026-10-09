@@ -98,7 +98,7 @@ function Dashboard() {
         .order("created_at");
       const list = p ?? [];
       const { data: contributionRows } = await supabase.from("capital_contributions").select("*").eq("investor_id", user.id);
-      const myContributions = ownContributions((contributionRows ?? []) as Contribution[], user.id);
+      const myContributions = ownContributions((contributionRows ?? []) as unknown as Contribution[], user.id);
       const enrichedContributions = await Promise.all(myContributions.map(async (c) => {
         const { data: stages } = c.project_id
           ? await supabase.from("project_stages").select("completed").eq("project_id", c.project_id)
@@ -216,7 +216,8 @@ function Dashboard() {
         </div>
 
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {projects.length === 0 && (
+          {contributions.map((c) => <CapitalProjectCard key={c.id} contribution={c} progress={c.progress} />)}
+          {projects.length === 0 && contributions.length === 0 && (
             <div className="card-soft p-8 col-span-full text-center text-muted-foreground">
               Aún no tienes proyectos asignados. Contacta al equipo GrowUp.
             </div>
@@ -300,7 +301,6 @@ function Dashboard() {
             </div>
           </div>
           <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {contributions.map((c) => <CapitalProjectCard key={c.id} contribution={c} progress={c.progress} />)}
             {opps.length === 0 && (
               <p className="text-muted-foreground col-span-full text-center py-12">
                 No hay oportunidades disponibles.

@@ -110,7 +110,7 @@ function PortfolioPage() {
       setProfileName(data?.full_name ?? user.email ?? "");
     });
     supabase.from("capital_contributions").select("*").eq("investor_id", user.id).then(({ data }) => {
-      setContributions(ownContributions((data ?? []) as Contribution[], user.id));
+      setContributions(ownContributions((data ?? []) as unknown as Contribution[], user.id));
     });
   }, [user]);
 
