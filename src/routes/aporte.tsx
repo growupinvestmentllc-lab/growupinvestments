@@ -111,6 +111,8 @@ function AportePage() {
 
   const totalDep = c.deposits.reduce((s, d) => s + Number(d.amount), 0);
   const progress = stages.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : 0;
+  const ownPct = c.ownership_pct != null ? Number(c.ownership_pct).toLocaleString("es-AR", { maximumFractionDigits: 2 }) : null;
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -126,10 +128,12 @@ function AportePage() {
           <div className="p-6 space-y-4">
             <span className="inline-flex text-xs font-medium px-3 py-1 rounded-full bg-secondary text-secondary-foreground">{c.project_status}</span>
             <p className="font-semibold text-lg text-foreground flex items-start gap-1"><MapPin className="h-5 w-5 mt-0.5 text-primary" /> {c.property_address}</p>
-            {c.ownership_pct != null && (
-              <p className="text-sm font-semibold text-primary">Sos propietario del {Number(c.ownership_pct).toLocaleString("es-AR", { maximumFractionDigits: 2 })}% de la casa</p>
+            {ownPct != null && (
+              <p className="text-sm font-semibold text-primary">Sos propietario del {ownPct}% de la casa</p>
             )}
+            <p className="text-xs text-muted-foreground">Estos valores son del 100% de la casa{ownPct != null ? `; tu parte es el ${ownPct}%` : ""}.</p>
             <div className="grid grid-cols-2 gap-3 text-sm">
+
               {[
                 ["Precio de venta", c.sale_price != null ? formatUSD(Number(c.sale_price)) : "—"],
                 ["Costo total", c.total_cost != null ? formatUSD(Number(c.total_cost)) : "—"],
