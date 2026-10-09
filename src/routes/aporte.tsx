@@ -78,12 +78,18 @@ function AportePage() {
         setStages(projectStages ?? []);
       } else if (row) {
         // Obra terminada sin proyecto vinculado: todas las etapas finalizadas (100%).
-        // Cronograma terminado en agosto: cada etapa ocupa un mes, de marzo a agosto.
+        // Cronograma terminado en agosto: un mes por grupo de etapas, de marzo a agosto 2026.
+        const groupMonth: Record<string, number> = {
+          "Soft Construction": 3, "Hard Construction 1": 4, "Hard Construction 2": 5,
+          "Hard Construction 3": 6, "Hard Construction 4": 7, "CO (Certificado de Ocupación)": 8,
+        };
         const month = (m: number, day: number) => `2026-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
         setStages(ALL_STAGES.map((s, i) => ({
           id: `done-${i}`, project_id: "", stage_order: i + 1, stage_name: s.name, stage_group: s.group,
           completed: true, active: false, draw_number: null, draw_amount: null, created_at: "",
-          estimated_date: null, estimated_start_date: month(3 + i, 1), estimated_end_date: month(3 + i, 28),
+          estimated_date: null,
+          estimated_start_date: month(groupMonth[s.group] ?? 8, 1),
+          estimated_end_date: month(groupMonth[s.group] ?? 8, 28),
         })) as Tables<"project_stages">[]);
       }
       const out: Record<string, string> = {};
