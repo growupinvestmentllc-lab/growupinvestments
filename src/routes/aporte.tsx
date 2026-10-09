@@ -177,7 +177,7 @@ function AportePage() {
         </section>
 
         <section className="space-y-3 pt-4">
-          <h2 className="text-2xl font-bold text-foreground">Nueva oportunidad – 329</h2>
+          <h2 className="text-2xl font-bold text-foreground">329</h2>
           <div className="card-soft overflow-hidden grid md:grid-cols-2">
             <img src={lot329.url} alt="Lote 329 NE 13th St" className="w-full h-72 object-cover" />
             <div className="p-6 flex flex-col gap-4">
