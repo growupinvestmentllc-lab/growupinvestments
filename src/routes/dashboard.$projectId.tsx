@@ -596,7 +596,7 @@ function ProjectDetail() {
                 )}
               </div>
             </div>}
-            {project.notes && (
+            {project.notes && !isTench && (
               <div className="card-soft p-6">
                 <h3 className="font-semibold text-foreground mb-2">Detalles del Proyecto</h3>
                 <p className="text-sm text-muted-foreground whitespace-pre-line">{project.notes}</p>
