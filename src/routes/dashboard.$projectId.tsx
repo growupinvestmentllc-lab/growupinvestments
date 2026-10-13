@@ -134,11 +134,13 @@ function ProjectDetail() {
   }, [projectId]);
 
   const progress = useMemo(() => {
+    // 1405 Cortez: avance fijo informado por el usuario
+    if (projectId === "ed024506-b782-401f-9fd6-6c6691430a0c") return 31;
     if (!stages.length) return 0;
     const total = ALL_STAGES.length;
     const done = stages.filter((s) => s.completed).length;
     return Math.round((done / total) * 100);
-  }, [stages]);
+  }, [stages, projectId]);
 
   const activeStage = stages.find((s) => s.active);
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
