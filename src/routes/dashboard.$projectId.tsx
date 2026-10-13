@@ -533,7 +533,7 @@ function ProjectDetail() {
                     <Stat dark label="Neto recibido" value={formatUSD(0)} />
                   </>
                 )}
-                {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && (
+                {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && !is1405Cortez && (
                   <>
                     <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
                   </>
