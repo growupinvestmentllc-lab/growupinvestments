@@ -518,7 +518,7 @@ function ProjectDetail() {
                     <Stat dark label="Comisión Venta" value="$19.200,00" />
                     <Stat dark label="Gastos de Cierre" value="$10.898,36" />
                     <Stat dark label="Utilidad Bruta" value="$289.901,64" />
-                    <Stat dark label="Total Costo Inversión" value="-$274.930,92" />
+                    <Stat dark label="Total Costo Inversión" value="$274.930,92" />
                     <Stat dark label="Ganancia Neta" value="$14.970,72" />
                   </>
                 ) : (
