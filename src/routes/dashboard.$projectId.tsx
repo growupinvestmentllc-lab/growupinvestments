@@ -593,11 +593,14 @@ function ProjectDetail() {
                   />
                 )}
                 {is448Rajah && (
-                  <>
-                    <Stat dark label="Rentabilidad total" value={formatUSD(33600)} />
-                    <Stat dark label={`Tu ganancia (${myPct ?? 50}%)`} value={formatUSD(16800)} />
-                  </>
+                  <Stat
+                    dark
+                    label="Rentabilidad total"
+                    value={formatUSD(33600)}
+                    sub={`Tu ganancia ${myPct ?? 50}% = ${formatUSD(16800)}`}
+                  />
                 )}
+
                 </>
                 )}
               </div>
@@ -997,14 +1000,16 @@ function StatCard({ label, value, accent, sub, className, children }: { label: s
   );
 }
 
-function Stat({ label, value, dark }: { label: string; value: string; dark?: boolean }) {
+function Stat({ label, value, dark, sub }: { label: string; value: string; dark?: boolean; sub?: string }) {
   return (
     <div>
       <p className={`text-xs ${dark ? "text-primary-foreground/70" : "text-muted-foreground"} uppercase tracking-wider`}>{label}</p>
       <p className="text-lg font-bold mt-1">{value}</p>
+      {sub && <p className={`text-xs mt-1 ${dark ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{sub}</p>}
     </div>
   );
 }
+
 
 function Spec({ label, value, icon }: { label: string; value: string; icon?: React.ReactNode }) {
   return (
