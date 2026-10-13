@@ -520,6 +520,7 @@ function ProjectDetail() {
                     <Stat dark label="Utilidad Bruta" value="$289.901" />
                     <Stat dark label="Total Costo Inversión" value="$274.930" />
                     <Stat dark label="Ganancia Neta" value="$14.970" />
+                    <Stat dark label="ROI" value={`${((14970.72 / 274930.92) * 100).toLocaleString("es-AR", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`} />
                   </>
                 ) : (
                 <>
