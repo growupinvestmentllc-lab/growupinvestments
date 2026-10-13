@@ -510,16 +510,16 @@ function ProjectDetail() {
             )}
 
             {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
-              <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : "Rentabilidad esperada"}</h3>
+              <h3 className="font-semibold mb-4">{isTench ? "Rentabilidad" : (project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : "Rentabilidad esperada"}</h3>
                 <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127Cape ? "lg:grid-cols-5" : is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
                 {isTench ? (
                   <>
-                    <Stat dark label="Venta" value="$320.000,00" />
-                    <Stat dark label="Comisión Venta" value="$19.200,00" />
-                    <Stat dark label="Gastos de Cierre" value="$10.898,36" />
-                    <Stat dark label="Utilidad Bruta" value="$289.901,64" />
-                    <Stat dark label="Total Costo Inversión" value="$274.930,92" />
-                    <Stat dark label="Ganancia Neta" value="$14.970,72" />
+                    <Stat dark label="Venta" value="$320.000" />
+                    <Stat dark label="Comisión Venta" value="$19.200" />
+                    <Stat dark label="Gastos de Cierre" value="$10.898" />
+                    <Stat dark label="Utilidad Bruta" value="$289.901" />
+                    <Stat dark label="Total Costo Inversión" value="$274.930" />
+                    <Stat dark label="Ganancia Neta" value="$14.970" />
                   </>
                 ) : (
                 <>
