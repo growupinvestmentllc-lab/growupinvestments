@@ -592,6 +592,8 @@ function ProjectDetail() {
                     <Stat dark label={`Tu ganancia (${myPct ?? 50}%)`} value={formatUSD(16800)} />
                   </>
                 )}
+                </>
+                )}
               </div>
             </div>}
             {project.notes && (
