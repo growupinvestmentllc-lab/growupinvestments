@@ -143,6 +143,7 @@ function ProjectDetail() {
   const activeStage = stages.find((s) => s.active);
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
+  const isTench = project?.id === "370b08ed-9b37-4479-a17f-86a999d893c3";
   const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
   const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39";
   const is2812 = (project?.address?.toLowerCase() ?? "").includes("2812 nw 27th");
@@ -510,7 +511,18 @@ function ProjectDetail() {
 
             {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
               <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : "Rentabilidad esperada"}</h3>
-              <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127Cape ? "lg:grid-cols-5" : is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
+                <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127Cape ? "lg:grid-cols-5" : is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
+                {isTench ? (
+                  <>
+                    <Stat dark label="Venta" value="$320.000,00" />
+                    <Stat dark label="Comisión Venta" value="$19.200,00" />
+                    <Stat dark label="Gastos de Cierre" value="$10.898,36" />
+                    <Stat dark label="Utilidad Bruta" value="$289.901,64" />
+                    <Stat dark label="Total Costo Inversión" value="-$274.930,92" />
+                    <Stat dark label="Ganancia Neta" value="$14.970,72" />
+                  </>
+                ) : (
+                <>
                 <Stat dark label="Precio de venta" value={formatUSD(project.expected_sale_price)} />
                 {is127Cape && (
                   <>
@@ -579,6 +591,8 @@ function ProjectDetail() {
                     <Stat dark label="Rentabilidad total" value={formatUSD(33600)} />
                     <Stat dark label={`Tu ganancia (${myPct ?? 50}%)`} value={formatUSD(16800)} />
                   </>
+                )}
+                </>
                 )}
               </div>
             </div>}
