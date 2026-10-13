@@ -1193,6 +1193,7 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
             </div>
           );
         }
+        const is448Rajah = (r.address ?? "").toLowerCase().includes("448") && (r.address ?? "").toLowerCase().includes("rajah");
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
@@ -1204,6 +1205,12 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
             <div className="mt-4 grid grid-cols-2 gap-3">
               <Box label="Precio de venta final" value={formatUSD(r.sale_price)} />
               <Box label="Fecha de venta" value={r.sale_date ? fmtDate(r.sale_date) : "—"} tone="muted" />
+              {is448Rajah && (
+                <>
+                  <Box label="Rentabilidad total" value={formatUSD(33600)} />
+                  <Box label="Tu ganancia (50%)" value={formatUSD(16800)} />
+                </>
+              )}
             </div>
             {roi != null && (
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between">
