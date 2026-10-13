@@ -182,6 +182,9 @@ function Dashboard() {
         if (a.includes("925")) return 4;
         if (a.includes("7305")) return 5;
         if (a.includes("2725")) return 6;
+        if (a.includes("1405")) return 8;
+        if (a.includes("448")) return 9;
+        if (a.includes("1608")) return 10;
         if (a.includes("365") && a.includes("progress")) return 99;
         return 7;
       };
