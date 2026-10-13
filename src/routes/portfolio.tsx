@@ -1131,6 +1131,8 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
         );
         // Mismo ROI que muestra "Mis proyectos" para cada casa
         const is7305 = (project.address ?? "").toLowerCase().includes("7305");
+        const is448RajahProj = (project.address ?? "").toLowerCase().includes("448") && (project.address ?? "").toLowerCase().includes("rajah");
+
         const roi = is7305 ? 8 : base ? ((sale - base) / base) * 100 : null;
         return (
           <div key={`${project.id}-${investment?.owner_llc ?? "project"}`} className="card-soft p-6">
@@ -1150,6 +1152,10 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
               {!is127Realstoma && <Box label="Costo base" value={base ? formatUSD(base) : "—"} tone="muted" />}
               {!is127Realstoma && pct < 100 && <Box label={`Tu parte (${pct}%)`} value={sale ? formatUSD((sale * pct) / 100) : "—"} />}
               {!is127Realstoma && roi != null && <Box label="ROI" value={is7305 ? "8%" : `${roi.toFixed(2)}%`} tone="muted" />}
+              {is448RajahProj && (
+                <Box label="Rentabilidad total" value={formatUSD(33600)} sub={`Tu ganancia ${pct}% = ${formatUSD(16800)}`} />
+              )}
+
             </div>
             <Button asChild size="sm" variant="outline" className="mt-4 w-full">
               <Link to="/dashboard/$projectId" params={{ projectId: project.id }}>
