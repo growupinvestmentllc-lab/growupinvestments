@@ -510,7 +510,7 @@ function ProjectDetail() {
             )}
 
             {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
-              <h3 className="font-semibold mb-4">{(project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : "Rentabilidad esperada"}</h3>
+              <h3 className="font-semibold mb-4">{isTench ? "Rentabilidad" : (project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : "Rentabilidad esperada"}</h3>
                 <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127Cape ? "lg:grid-cols-5" : is127 ? "lg:grid-cols-3" : "lg:grid-cols-5"}`}>
                 {isTench ? (
                   <>
