@@ -864,6 +864,14 @@ function DrawSchedule({
   if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
   // 365 Progress: draws 0 a 3 ya abonados
   if (is365Progress) list = list.map((d) => (d.num <= 3 ? { ...d, completed: true, active: false } : d));
+  // 1405 Cortez: HC4 y C.O. se muestran como una sola etapa, con montos y fechas
+  const is1405 = projectId === "ed024506-b782-401f-9fd6-6c6691430a0c";
+  const DATES_1405: Record<number, string> = { 0: "01-01-26", 1: "16-01-26", 2: "16-05-26", 3: "30-06-26", 4: "29-08-26", 5: "17-11-26" };
+  if (is1405) {
+    list = list
+      .filter((d) => d.group !== "C.O")
+      .map((d) => (d.group === "Hard Construction 4" ? { ...d, group: "Hard Construction 4 + CO" } : d));
+  }
   if (!list.length) return null;
   return (
     <div className="card-soft p-6">
@@ -886,8 +894,12 @@ function DrawSchedule({
                   <p className="text-sm font-medium text-foreground truncate">
                     {d.displayNum == null ? d.group : `Draw ${d.displayNum} — ${d.group}`}
                   </p>
-
-                  {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
+                  {is1405 && (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {formatUSD(d.amount)} · {DATES_1405[d.num]}
+                    </p>
+                  )}
+                   {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
                     <p className="text-xs text-foreground mt-0.5">
                       en esta etapa se abonó el steamwall ({formatUSD(61200)} Draw 3 + {formatUSD(5006)} Steamwall)
                     </p>
