@@ -557,6 +557,8 @@ function ProjectDetail() {
                   <Stat dark label="ROI estimado" value="8.77%" />
                 ) : is477 ? (
                   <Stat dark label="ROI estimado" value="6.15%" />
+                ) : is448Rajah ? (
+                  <Stat dark label="ROI real" value={`${totalCost ? (((Number(project.expected_sale_price) - totalCost) / totalCost) * 100).toFixed(1) : "—"}%`} />
                 ) : is365Progress ? (
                   <Stat dark label="ROI estimado" value="8.77%" />
                 ) : is621Flamingo ? (
