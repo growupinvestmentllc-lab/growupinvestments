@@ -578,7 +578,10 @@ function ProjectDetail() {
                   <Stat dark label="ROI estimado" value="8.77%" />
                 ) : is621Flamingo ? (
                   <Stat dark label="ROI estimado" value="9.51%" />
+                ) : is1405Cortez ? (
+                  <Stat dark label="ROI estimado" value="9%" />
                 ) : (
+
                   <Stat
                     dark
                     label="ROI estimado"
