@@ -894,8 +894,12 @@ function DrawSchedule({
                   <p className="text-sm font-medium text-foreground truncate">
                     {d.displayNum == null ? d.group : `Draw ${d.displayNum} — ${d.group}`}
                   </p>
-
-                  {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
+                  {is1405 && (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {formatUSD(d.amount)} · {DATES_1405[d.num]}
+                    </p>
+                  )}
+                   {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
                     <p className="text-xs text-foreground mt-0.5">
                       en esta etapa se abonó el steamwall ({formatUSD(61200)} Draw 3 + {formatUSD(5006)} Steamwall)
                     </p>
