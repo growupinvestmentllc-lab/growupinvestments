@@ -593,11 +593,14 @@ function ProjectDetail() {
                   />
                 )}
                 {is448Rajah && (
-                  <>
-                    <Stat dark label="Rentabilidad total" value={formatUSD(33600)} />
-                    <Stat dark label={`Tu ganancia (${myPct ?? 50}%)`} value={formatUSD(16800)} />
-                  </>
+                  <Stat
+                    dark
+                    label="Rentabilidad total"
+                    value={formatUSD(33600)}
+                    sub={`Tu ganancia ${myPct ?? 50}% = ${formatUSD(16800)}`}
+                  />
                 )}
+
                 </>
                 )}
               </div>
