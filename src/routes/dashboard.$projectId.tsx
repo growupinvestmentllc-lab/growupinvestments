@@ -508,7 +508,7 @@ function ProjectDetail() {
             )}
 
             {!is2217Embers && !is14Trout && !is5963Virtudes && !is127Realstoma && (
-              <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is35SW ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} />
+              <DrawSchedule stages={stages} lotCost={Number(project.lot_cost || 0)} myPct={myPct} hasMultipleOwners={hasMultipleOwners} projectId={project.id} maxDraw={is35SW ? 1 : undefined} is365Progress={is365Progress} is621Flamingo={is621Flamingo} deposited={deposited} />
             )}
 
             {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
@@ -821,6 +821,7 @@ function DrawSchedule({
   maxDraw,
   is365Progress,
   is621Flamingo,
+  deposited = 0,
 }: {
   stages: Stage[];
   lotCost?: number;
@@ -830,6 +831,7 @@ function DrawSchedule({
   maxDraw?: number;
   is365Progress?: boolean;
   is621Flamingo?: boolean;
+  deposited?: number;
 }) {
   const DRAW_GROUPS = [
     "Soft Construction",
@@ -864,20 +866,26 @@ function DrawSchedule({
   if (typeof maxDraw === "number") list = list.filter((d) => d.num <= maxDraw);
   // 365 Progress: draws 0 a 3 ya abonados
   if (is365Progress) list = list.map((d) => (d.num <= 3 ? { ...d, completed: true, active: false } : d));
-  // 1405 Cortez: HC4 y C.O. se muestran como una sola etapa, con montos y fechas
+  // 1405 Cortez: HC4 y C.O. se muestran como una sola etapa
   const is1405 = projectId === "ed024506-b782-401f-9fd6-6c6691430a0c";
-  const DATES_1405: Record<number, string> = { 0: "01-01-26", 1: "16-01-26", 2: "16-05-26", 3: "30-06-26", 4: "29-08-26", 5: "17-11-26" };
   if (is1405) {
     list = list
       .filter((d) => d.group !== "C.O")
       .map((d) => (d.group === "Hard Construction 4" ? { ...d, group: "Hard Construction 4 + CO" } : d));
   }
-  if (!list.length) return null;
+  // Lo depositado se aplica en orden a cada draw; el draw en curso queda con el saldo pendiente
+  let remaining = deposited;
+  const rows = list.map((d) => {
+    const paidHere = Math.max(0, Math.min(remaining, d.amount));
+    remaining -= paidHere;
+    return { ...d, pending: Math.max(0, d.amount - paidHere) };
+  });
+  if (!rows.length) return null;
   return (
     <div className="card-soft p-6">
       <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Cronograma de Draws</h3>
       <div className="space-y-2">
-        {list.map((d) => {
+        {rows.map((d) => {
           const status = d.completed ? "completado" : d.active ? "en-progreso" : "pendiente";
           const badge =
             status === "completado"
@@ -896,7 +904,12 @@ function DrawSchedule({
                   </p>
                   {is1405 && (
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {formatUSD(d.amount)} · {DATES_1405[d.num]}
+                      {formatUSD(d.amount)}
+                    </p>
+                  )}
+                  {is1405 && d.active && d.pending > 0 && (
+                    <p className="text-xs font-semibold text-primary mt-0.5">
+                      Pendiente por depositar: {formatUSD(d.pending)}
                     </p>
                   )}
                    {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
