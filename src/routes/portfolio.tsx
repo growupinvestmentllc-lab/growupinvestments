@@ -266,14 +266,16 @@ function PortfolioSummary() {
 
 /* --------------------------- TAB 1: CONSTRUCCIÓN --------------------------- */
 
-function Box({ label, value, tone }: { label: string; value: string; tone?: "muted" }) {
+function Box({ label, value, tone, sub }: { label: string; value: string; tone?: "muted"; sub?: string }) {
   return (
     <div className={`rounded-xl border border-border px-3 py-2.5 ${tone === "muted" ? "bg-muted/40" : "bg-card"}`}>
       <p className="text-[10px] uppercase tracking-wide text-muted-foreground leading-tight">{label}</p>
       <p className="text-sm font-bold text-foreground mt-1">{value}</p>
+      {sub && <p className="text-[10px] text-muted-foreground mt-1 leading-tight">{sub}</p>}
     </div>
   );
 }
+
 
 function ConstructionTab() {
   const { rows: ownerships, myLlc } = useOwnerships();
@@ -1206,11 +1208,13 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
               <Box label="Precio de venta final" value={formatUSD(r.sale_price)} />
               <Box label="Fecha de venta" value={r.sale_date ? fmtDate(r.sale_date) : "—"} tone="muted" />
               {is448Rajah && (
-                <>
-                  <Box label="Rentabilidad total" value={formatUSD(33600)} />
-                  <Box label="Tu ganancia (50%)" value={formatUSD(16800)} />
-                </>
+                <Box
+                  label="Rentabilidad total"
+                  value={formatUSD(33600)}
+                  sub={`Tu ganancia 50% = ${formatUSD(16800)}`}
+                />
               )}
+
             </div>
             {roi != null && (
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between">
