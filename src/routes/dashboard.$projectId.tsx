@@ -926,12 +926,6 @@ function DrawSchedule({
             </div>
           );
         })}
-        {is1405 && (
-          <div className="flex items-center justify-between gap-3 p-3 rounded-lg border border-dashed border-border bg-muted/30">
-            <p className="text-sm font-medium text-foreground">Construcción</p>
-            <p className="text-sm font-semibold text-foreground whitespace-nowrap">$55.000 + $230.000 + $2.000 = $287.000</p>
-          </div>
-        )}
       </div>
 
     </div>
