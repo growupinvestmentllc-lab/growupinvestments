@@ -188,7 +188,7 @@ function ProjectDetail() {
         : activeStage?.stage_group?.startsWith("CO")
           ? activeStage.stage_group
           : progress >= 100
-            ? "Finalizada"
+            ? "Obra 100% completada y entregada"
             : activeStage?.stage_name ?? "Finalizada";
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
