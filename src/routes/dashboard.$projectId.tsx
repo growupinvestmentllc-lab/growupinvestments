@@ -904,9 +904,9 @@ function DrawSchedule({
                   </p>
                   {is1405 && (
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {formatUSD(d.amount)}
+                      {d.num === 0 ? "Lote $32.500 + $2.500 DD = $35.000" : formatUSD(d.amount)}
                     </p>
-                  )}
+                 )}
                   {is1405 && d.active && d.pending > 0 && (
                     <p className="text-xs font-semibold text-primary mt-0.5">
                       Pendiente por depositar: {formatUSD(d.pending)}
