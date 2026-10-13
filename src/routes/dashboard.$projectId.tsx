@@ -863,9 +863,6 @@ function DrawSchedule({
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {formatUSD(d.amount)}
-                    {hasMultipleOwners && myPct != null && (
-                      <span className="text-foreground ml-1">· Participación {myPct}% = {formatUSD(d.amount * (myPct / 100))}</span>
-                    )}
                   </p>
                   {d.num === 3 && projectId === "f6705699-6576-4ecf-99eb-8d54b41d382e" && (
                     <p className="text-xs text-foreground mt-0.5">
