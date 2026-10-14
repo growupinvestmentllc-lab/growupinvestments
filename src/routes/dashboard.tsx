@@ -200,7 +200,19 @@ function Dashboard() {
         .from("opportunities")
         .select("*")
         .order("created_at", { ascending: false });
-      setOpps((o ?? []) as Opportunity[]);
+      const oppOrder = (n: string | null) => {
+        if (!n) return 99;
+        if (n.includes("329")) return 1;
+        if (n.includes("35")) return 2;
+        if (n.includes("3604")) return 3;
+        if (n.includes("715")) return 4;
+        return 99;
+      };
+      setOpps(
+        ((o ?? []) as Opportunity[]).sort(
+          (a, b) => oppOrder(a.name) - oppOrder(b.name)
+        )
+      );
     })();
   }, [user, location.pathname]);
 
