@@ -540,10 +540,10 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
         <InfoRow label="Seguro anual" value={annualValue((rental as any).insurance_annual)} />
         <InfoRow label="Administración anual" value={formatUSDCents(annualAdministration)} />
         <InfoRow label="Total gastos anuales" value={formatUSDCents(costs)} />
-        {!simple && <InfoRow label="NOI (Net Operating Income) anual estimado" value={annualNoi == null ? "—" : formatUSDCents(annualNoi)} />}
-        {!simple && <InfoRow label="NOI mensual estimado (alquiler mensual neto estimado)" value={annualNoi == null ? "—" : formatUSDCents(annualNoi / 12)} />}
+        <InfoRow label="NOI anual estimado (alquiler anual bruto - total gastos anuales)" value={annualNoi == null ? "—" : formatUSDCents(annualNoi)} />
+        <InfoRow label="NOI mensual estimado" value={annualNoi == null ? "—" : formatUSDCents(annualNoi / 12)} />
       </dl>
-      {!simple && (rental as any).cap_rate ? (
+      {(rental as any).cap_rate ? (
         <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
           <span className="text-base font-bold">Cap rate</span>
           <span className="text-2xl font-bold">{Number((rental as any).cap_rate).toFixed(2)}%</span>
