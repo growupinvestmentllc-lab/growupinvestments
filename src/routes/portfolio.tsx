@@ -523,14 +523,15 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
   const annualRent = hasAnnualFinancials ? Number((rental as any).annual_rent) : null;
   const annualNoi = annualRent == null ? null : annualRent - costs;
   const annualValue = (value: unknown) => value == null ? "—" : formatUSD(Number(value));
+  const simple = /477/.test(rental.address ?? "") && /rayford/i.test(rental.address ?? "");
   return (
     <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
       <dl className="space-y-2 text-sm">
         <InfoRow label="Precio de venta" value={rental.estimated_sale_price ? formatUSD(rental.estimated_sale_price) : "—"} />
         <InfoRow label="Alquiler mensual bruto" value={formatUSD(monthlyRent)} />
-        <InfoRow label="Administración mensual" value={formatUSDCents(monthlyAdministration)} />
-        <InfoRow label="Otros gastos" value={formatUSDCents(otherMonthlyExpenses)} />
-        <InfoRow label={`Alquiler mensual neto estimado del propietario (${ownershipPct}%)`} value={formatUSDCents(ownerMonthlyNet)} />
+        {!simple && <InfoRow label="Administración mensual" value={formatUSDCents(monthlyAdministration)} />}
+        {!simple && <InfoRow label="Otros gastos" value={formatUSDCents(otherMonthlyExpenses)} />}
+        {!simple && <InfoRow label={`Alquiler mensual neto estimado del propietario (${ownershipPct}%)`} value={formatUSDCents(ownerMonthlyNet)} />}
         <InfoRow label="Alquiler anual bruto" value={annualRent == null ? "—" : formatUSD(annualRent)} />
       </dl>
       <p className="mt-5 border-t border-border pt-4 text-xs font-semibold uppercase text-muted-foreground">Costos anuales</p>
@@ -539,10 +540,10 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
         <InfoRow label="Seguro anual" value={annualValue((rental as any).insurance_annual)} />
         <InfoRow label="Administración anual" value={formatUSDCents(annualAdministration)} />
         <InfoRow label="Total gastos anuales" value={formatUSDCents(costs)} />
-        <InfoRow label="NOI (Net Operating Income) anual estimado" value={annualNoi == null ? "—" : formatUSDCents(annualNoi)} />
-        <InfoRow label="NOI mensual estimado (alquiler mensual neto estimado)" value={annualNoi == null ? "—" : formatUSDCents(annualNoi / 12)} />
+        {!simple && <InfoRow label="NOI (Net Operating Income) anual estimado" value={annualNoi == null ? "—" : formatUSDCents(annualNoi)} />}
+        {!simple && <InfoRow label="NOI mensual estimado (alquiler mensual neto estimado)" value={annualNoi == null ? "—" : formatUSDCents(annualNoi / 12)} />}
       </dl>
-      {(rental as any).cap_rate ? (
+      {!simple && (rental as any).cap_rate ? (
         <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
           <span className="text-base font-bold">Cap rate</span>
           <span className="text-2xl font-bold">{Number((rental as any).cap_rate).toFixed(2)}%</span>
