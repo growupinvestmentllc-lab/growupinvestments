@@ -759,7 +759,13 @@ function RentalTab() {
           .filter((o) => o.project_id === p.project_id && o.stage === "alquiler" && !o.to_date)
           .find((o) => myLlc && o.llc_name.toUpperCase() === myLlc.toUpperCase());
         const pct = mine ? Number(mine.percentage) : 100;
-        const e = periodEntries.find((x) => x.property_id === p.id);
+        const stored = periodEntries.find((x) => x.property_id === p.id);
+        // Sin carga para el período: se completa con los datos de la ficha de Admin
+        const e: any = stored ?? {
+          income_rent: Number(p.monthly_rent || 0), income_other: 0,
+          expense_admin: Number(p.monthly_expenses || 0), expense_other: Number(p.other_monthly_expenses || 0),
+          expense_repairs: 0, expense_insurance: 0, expense_taxes: 0,
+        };
         const meta = STATUS_META[e?.payment_status ?? ""] ?? STATUS_META[p.status] ?? STATUS_META.proximo_a_pagar;
         const income = e ? Number(e.income_rent || 0) + Number(e.income_other || 0) : 0;
         const expenses = e
