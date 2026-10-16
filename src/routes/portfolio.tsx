@@ -523,7 +523,7 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
   const annualRent = hasAnnualFinancials ? Number((rental as any).annual_rent) : null;
   const annualNoi = annualRent == null ? null : annualRent - costs;
   const annualValue = (value: unknown) => value == null ? "—" : formatUSD(Number(value));
-  const simple = /477/.test(rental.address ?? "") && /rayford/i.test(rental.address ?? "");
+  const simple = true;
   return (
     <div className="mt-4 rounded-xl border border-border bg-muted/30 p-4 sm:p-5">
       <dl className="space-y-2 text-sm">
