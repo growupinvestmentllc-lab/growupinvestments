@@ -1,8 +1,17 @@
 import { test } from "node:test";
 import { deepStrictEqual } from "node:assert";
-import { groupHunterOfferings } from "./hunter-offering-groups";
+import { groupHunterOfferings, visibleHunterOfferings } from "./hunter-offering-groups";
 
 const lots = ["329 NE 13th St", "35 SW 19th Ct", "3604 74th St W", "715 Little Rock St E"].map((title) => ({ title, kind: "lote" }));
+
+test("Guzman no ve 448 Rajah, pero Ferreyra la conserva y las otras propuestas no cambian", () => {
+  const rajah = { title: "448 Rajah St", kind: "construccion" };
+  const other = { title: "2130 NE 26th St", kind: "construccion" };
+  const items = [rajah, other];
+  deepStrictEqual(visibleHunterOfferings(items, "7a5fb21e-e8ce-46df-8847-8bf3940d9ab2"), [other]);
+  deepStrictEqual(visibleHunterOfferings(items, "243bed34-113d-4e9e-a53c-6a3dacee5211"), [rajah, other]);
+  deepStrictEqual(items, [rajah, other]);
+});
 
 test("Hunter separa 329 y 35 SW como lotes permisados", () => {
   deepStrictEqual(groupHunterOfferings(lots).permitted.map((o) => o.title), ["329 NE 13th St", "35 SW 19th Ct"]);
