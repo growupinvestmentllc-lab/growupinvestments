@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
 import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { groupHunterOfferings, visibleHunterOfferings } from "@/lib/hunter-offering-groups";
+import { groupHunterOfferings, isSoldHunterOffering, visibleHunterOfferings } from "@/lib/hunter-offering-groups";
 import { useAuth } from "@/lib/use-auth";
 
 export const Route = createFileRoute("/hunter/")({
