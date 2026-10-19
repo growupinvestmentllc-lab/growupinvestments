@@ -135,7 +135,7 @@ function Gallery({ photos, title, showFullImage = false }: { photos: string[]; t
   );
 }
 
-function Card({ o }: { o: Offering }) {
+function Card({ o, sold = false }: { o: Offering; sold?: boolean }) {
   const specs: { label: string; value: string; highlighted?: boolean }[] = [];
   if (o.model) specs.push({ label: "Modelo", value: o.model });
   if (o.bedrooms != null)
@@ -160,9 +160,9 @@ function Card({ o }: { o: Offering }) {
 
   return (
     <div className="card-soft relative overflow-hidden">
-      {o.kind === "rbi" && (
+      {(o.kind === "rbi" || sold) && (
         <div className="pointer-events-none absolute -left-12 top-6 z-10 w-44 -rotate-45 bg-red-600 py-1 text-center text-xs font-bold uppercase tracking-widest text-white shadow-md">
-          Alquilada
+          {sold ? "Vendida" : "Alquilada"}
         </div>
       )}
       {photos.length > 0 && <Gallery photos={photos} title={o.title} showFullImage={o.title.includes("2812 NW 27th")} />}
@@ -237,6 +237,7 @@ function Section({
   items,
   empty,
   emphasized,
+  userId,
 }: {
   icon?: React.ReactNode;
   title: string;
@@ -244,6 +245,7 @@ function Section({
   items: Offering[];
   empty: string;
   emphasized?: boolean;
+  userId?: string;
 }) {
   return (
     <section className={emphasized ? "mt-16 first:mt-0" : "mt-10 first:mt-0"}>
@@ -259,7 +261,7 @@ function Section({
       ) : (
         <div className="mt-4 grid md:grid-cols-2 gap-5">
           {items.map((o) => (
-            <Card key={o.id} o={o} />
+            <Card key={o.id} o={o} sold={isSoldHunterOffering(o, userId)} />
           ))}
         </div>
       )}
