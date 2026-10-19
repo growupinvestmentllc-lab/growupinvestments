@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatUSD } from "@/lib/stages";
 import { ChevronLeft, ChevronRight, Image as ImageIcon, MapPin, Sparkles } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { groupHunterOfferings } from "@/lib/hunter-offering-groups";
+import { groupHunterOfferings, visibleHunterOfferings } from "@/lib/hunter-offering-groups";
+import { useAuth } from "@/lib/use-auth";
 
 export const Route = createFileRoute("/hunter/")({
   head: () => ({
@@ -267,6 +268,7 @@ function Section({
 }
 
 function HunterOfferings() {
+  const { user } = useAuth();
   const [items, setItems] = useState<Offering[]>([]);
 
   useEffect(() => {
@@ -281,7 +283,7 @@ function HunterOfferings() {
     })();
   }, []);
 
-   const groups = groupHunterOfferings(items);
+   const groups = groupHunterOfferings(visibleHunterOfferings(items, user?.id));
 
   return (
     <div>
