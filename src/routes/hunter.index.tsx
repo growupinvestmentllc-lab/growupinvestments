@@ -299,6 +299,7 @@ function HunterOfferings() {
         subtitle="Casas disponibles para ofrecer a tus clientes."
         items={groups.completed}
         empty="Todavía no hay casas cargadas."
+        userId={user?.id}
       />
       <Section
         emphasized
@@ -306,6 +307,7 @@ function HunterOfferings() {
         subtitle="Casas con inquilino y contrato vigente."
         items={groups.rented}
         empty="Todavía no hay opciones cargadas."
+        userId={user?.id}
       />
       <Section
         emphasized
@@ -313,6 +315,7 @@ function HunterOfferings() {
         subtitle=""
         items={groups.permitted}
         empty="Todavía no hay lotes cargados."
+        userId={user?.id}
       />
 
       <Section
@@ -321,6 +324,7 @@ function HunterOfferings() {
         subtitle=""
         items={groups.unpermitted}
         empty="Todavía no hay lotes cargados."
+        userId={user?.id}
       />
 
       <section className="mt-16">
