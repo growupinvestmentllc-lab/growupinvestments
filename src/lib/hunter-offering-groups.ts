@@ -1,8 +1,14 @@
 type CategorizedOffering = { kind: string; title: string };
 
+const FERREYRA_USER_ID = "243bed34-113d-4e9e-a53c-6a3dacee5211";
+
 export function visibleHunterOfferings<T extends CategorizedOffering>(items: T[], userId: string | undefined) {
   if (userId !== "7a5fb21e-e8ce-46df-8847-8bf3940d9ab2") return items;
   return items.filter((o) => o.title !== "448 Rajah St");
+}
+
+export function isSoldHunterOffering(o: CategorizedOffering, userId: string | undefined) {
+  return userId === FERREYRA_USER_ID && o.title === "448 Rajah St";
 }
 
 export function groupHunterOfferings<T extends CategorizedOffering>(items: T[]) {
