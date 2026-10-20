@@ -187,7 +187,9 @@ export function ConstructionProgressBar({ stages, amounts }: { stages: Stage[]; 
                   >
                     {g.label}
                   </p>
-                  {g.date ? (
+                  {g.amount ? (
+                    <p className="text-[10px] text-muted-foreground text-center mt-0.5">{g.amount}</p>
+                  ) : g.date ? (
                     <p className="text-[10px] text-muted-foreground text-center mt-0.5">
                       {isCompleted ? "✓ " : ""}
                       {formatDate(g.date)}
