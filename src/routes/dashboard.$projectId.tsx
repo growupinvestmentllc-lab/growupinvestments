@@ -908,6 +908,13 @@ function DrawSchedule({
                   <p className="text-sm font-medium text-foreground truncate">
                     {d.displayNum == null ? d.group : `Draw ${d.displayNum} — ${d.group}`}
                   </p>
+                  {projectId === "a19e25f7-1524-4109-b1b2-a13dc19f45fa" && (() => {
+                    const t: Record<number, [number, string]> = { 0: [24500, "8%"], 1: [55000, "19%"], 2: [66250, "23%"], 3: [46375, "16%"], 4: [46375, "16%"], 5: [46375, "16%"], 6: [6625, "2%"] };
+                    const v = t[d.num];
+                    return v ? (
+                      <p className="text-xs text-muted-foreground mt-0.5">{formatUSD(v[0])} · {v[1]} del proyecto</p>
+                    ) : null;
+                  })()}
                   {is1405 && (
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {d.num === 0 ? "Lote $32.500 + $2.500 DD = $35.000" : formatUSD(d.amount)}
