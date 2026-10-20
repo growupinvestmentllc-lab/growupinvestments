@@ -362,7 +362,23 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is127 && <ConstructionProgressBar stages={stages} />}
+            {!is127 && (
+              <ConstructionProgressBar
+                stages={stages}
+                amounts={
+                  projectId === "a19e25f7-1524-4109-b1b2-a13dc19f45fa"
+                    ? {
+                        "Soft Construction": "$55.000",
+                        "Hard Construction 1": "$66.250",
+                        "Hard Construction 2": "$46.375",
+                        "Hard Construction 3": "$46.375",
+                        "Hard Construction 4": "$46.375",
+                        "CO (Certificado de Ocupación)": "$6.625",
+                      }
+                    : undefined
+                }
+              />
+            )}
 
             {!is127 && !is14Trout && !is5963Virtudes && !isTench && (
             <div className="grid sm:grid-cols-2 gap-4">
