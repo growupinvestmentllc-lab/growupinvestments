@@ -146,12 +146,13 @@ function GroupCircle({
   );
 }
 
-export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
+export function ConstructionProgressBar({ stages, amounts }: { stages: Stage[]; amounts?: Record<string, string> }) {
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT_LABELS[g.group] ?? g.group,
     status: getGroupStatus(stages, g.group),
     date: getGroupEstimatedDate(stages, g.group),
+    amount: amounts?.[g.group],
   }));
 
   return (
