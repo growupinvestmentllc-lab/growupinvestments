@@ -256,11 +256,15 @@ export function ConstructionProgressBar({ stages, amounts }: { stages: Stage[]; 
                     </span>
                   )}
                 </div>
-                {g.date && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {isCompleted ? "Completado · " : "Est. "}
-                    {formatDate(g.date)}
-                  </p>
+                {g.amount ? (
+                  <p className="text-xs text-muted-foreground mt-0.5">{g.amount}</p>
+                ) : (
+                  g.date && (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {isCompleted ? "Completado · " : "Est. "}
+                      {formatDate(g.date)}
+                    </p>
+                  )
                 )}
               </div>
             </div>
