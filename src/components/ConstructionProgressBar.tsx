@@ -146,12 +146,13 @@ function GroupCircle({
   );
 }
 
-export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
+export function ConstructionProgressBar({ stages, amounts }: { stages: Stage[]; amounts?: Record<string, string> }) {
   const groups = STAGE_GROUPS.map((g) => ({
     group: g.group,
     label: GROUP_SHORT_LABELS[g.group] ?? g.group,
     status: getGroupStatus(stages, g.group),
     date: getGroupEstimatedDate(stages, g.group),
+    amount: amounts?.[g.group],
   }));
 
   return (
@@ -186,7 +187,9 @@ export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
                   >
                     {g.label}
                   </p>
-                  {g.date ? (
+                  {g.amount ? (
+                    <p className="text-[10px] text-muted-foreground text-center mt-0.5">{g.amount}</p>
+                  ) : g.date ? (
                     <p className="text-[10px] text-muted-foreground text-center mt-0.5">
                       {isCompleted ? "✓ " : ""}
                       {formatDate(g.date)}
@@ -253,11 +256,15 @@ export function ConstructionProgressBar({ stages }: { stages: Stage[] }) {
                     </span>
                   )}
                 </div>
-                {g.date && (
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {isCompleted ? "Completado · " : "Est. "}
-                    {formatDate(g.date)}
-                  </p>
+                {g.amount ? (
+                  <p className="text-xs text-muted-foreground mt-0.5">{g.amount}</p>
+                ) : (
+                  g.date && (
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {isCompleted ? "Completado · " : "Est. "}
+                      {formatDate(g.date)}
+                    </p>
+                  )
                 )}
               </div>
             </div>
