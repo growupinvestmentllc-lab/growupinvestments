@@ -572,7 +572,9 @@ function ProjectDetail() {
                   />
                 )}
                 {is568Cypress ? (
-                  <Stat dark label="ROI estimado" value={`${totalCost ? (((Number(project.expected_sale_price) - totalCost) / totalCost) * 100).toFixed(1) : 0}%`} />
+                  <Stat dark label="ROI estimado" value="11,2%" />
+                ) : normalizedAddress.includes("2130") ? (
+                  <Stat dark label="ROI estimado" value="6,2%" />
                 ) : is127Cape ? (
                   <Stat dark label="ROI estimado" value="0%" />
                 ) : is35SW ? (
