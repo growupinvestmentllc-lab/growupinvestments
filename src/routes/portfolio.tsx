@@ -793,7 +793,7 @@ function RentalTab() {
                   {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
                   {mine && <InfoRow label="Tu participación" value={`${mine.llc_name} (${pct}%)`} />}
                   {p.address.toLowerCase().startsWith("2725 embers") && myLlc?.toUpperCase() === "BLUE COAST REALTY LLC" && (
-                    <InfoRow label="Fin contrato alquiler" value="01/02" />
+                    <InfoRow label="Fin contrato alquiler" value="28/02/2027" />
                   )}
                 </dl>
               </div>
