@@ -1121,7 +1121,9 @@ function DocsTab({ projectId }: { projectId: string }) {
           const prev = byType.get(d.doc_type);
           if (!prev || (!prev.file_path && d.file_path)) byType.set(d.doc_type, d);
         }
-        const items = [...byType.values()];
+        const items = [...byType.values()].sort((a, b) =>
+          (DOC_LABELS[a.doc_type] ?? a.doc_type).localeCompare(DOC_LABELS[b.doc_type] ?? b.doc_type, "es")
+        );
         return (
           <div key={g.key} className="card-soft p-6">
             <h3 className="font-semibold text-foreground mb-4">{g.label}</h3>
