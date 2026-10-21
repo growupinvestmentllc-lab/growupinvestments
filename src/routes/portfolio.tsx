@@ -181,7 +181,7 @@ function PortfolioSummary() {
         db.from("portfolio_sold").select("investor_id,project_id,sale_price"),
       ]);
       const pMap = new Map<string, any>((projects ?? []).map((p: any) => [p.id, p]));
-      const constructionStatuses = new Set(["En construcción", "Inicio de obra", "Inspecciones finales", "Obra terminada"]);
+      const constructionStatuses = new Set(["En construcción", "Inicio de obra", "Inspecciones finales", "Obra terminada", "Obra finalizada"]);
       const mine = (invs ?? []).filter(
         (i: any) => isAdmin || (myLlc && String(i.owner_llc).trim().toUpperCase() === myLlc.trim().toUpperCase()),
       );
@@ -290,7 +290,7 @@ function ConstructionTab() {
       const { data: projects } = await db
         .from("projects")
         .select("id,address,status,total_cost,construction_cost,lot_cost,expected_sale_price,estimated_sale_price,total_contract_value")
-        .in("status", ["En construcción", "Inicio de obra", "Inspecciones finales", "Obra terminada"]);
+        .in("status", ["En construcción", "Inicio de obra", "Inspecciones finales", "Obra terminada", "Obra finalizada"]);
       const list: Project[] = (projects ?? []).filter((p: Project) => p.address !== "Nueva propiedad");
       if (list.length === 0) return setRows([]);
       const { data: stagesData } = await db
