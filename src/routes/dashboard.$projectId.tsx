@@ -136,6 +136,8 @@ function ProjectDetail() {
   const progress = useMemo(() => {
     // 1405 Cortez: avance fijo informado por el usuario
     if (projectId === "ed024506-b782-401f-9fd6-6c6691430a0c") return 31;
+    // 708 Jaguar: Compra Lote 8% + Soft 19% realizados
+    if (projectId === "a19e25f7-1524-4109-b1b2-a13dc19f45fa") return 27;
     if (!stages.length) return 0;
     const total = ALL_STAGES.length;
     const done = stages.filter((s) => s.completed).length;
