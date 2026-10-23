@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Agregar Limpieza de lote realizada Sí/No (inicial No) en Admin; sumar 3% dentro de HC1 sin duplicarlo y sincronizar avance y etiqueta en todos los portales, sin tocar otros datos.
+
 - [x] Unificar avance automático por etapas completas en las vistas de inversor y corregir las siete casas a Soft aprobada, sin tocar datos financieros, draws ni documentos; 21 pruebas aprobadas y 925 verificada como DAVI con 17% idéntico en listado y ficha. 329 conserva etapas compartidas, pero no muestra avance mientras sea lote en venta.
 
 - [x] Ordenar las casas en Mis Proyectos, Mi Portafolio, Admin y Hunter: vendidas primero y construcción de mayor a menor avance, sin tocar montos; 15 pruebas aprobadas. Verificación visual con sesión pendiente porque no hay cuenta asociada al solicitante.
