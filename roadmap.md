@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Agregar Limpieza de lote realizada Sí/No (inicial No) en Admin; sumar 3% dentro de HC1 sin duplicarlo y sincronizar avance y etiqueta en todos los portales, sin tocar otros datos.
+- [x] Agregar Limpieza de lote realizada Sí/No (inicial No) en Admin; sumar 3% dentro de HC1 sin duplicarlo y sincronizar avance y etiqueta en todos los portales, sin tocar otros datos. 23 pruebas aprobadas; guardado en Admin y 20% con etiqueta verificados en listado y ficha de DAVI/925; restaurado No en todas las casas.
 
 - [x] Unificar avance automático por etapas completas en las vistas de inversor y corregir las siete casas a Soft aprobada, sin tocar datos financieros, draws ni documentos; 21 pruebas aprobadas y 925 verificada como DAVI con 17% idéntico en listado y ficha. 329 conserva etapas compartidas, pero no muestra avance mientras sea lote en venta.
 
