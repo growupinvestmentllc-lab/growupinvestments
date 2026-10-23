@@ -33,3 +33,15 @@ test("448 Rajah se marca VENDIDA solo para Ferreyra, no para otros hunters", () 
   deepStrictEqual(isSoldHunterOffering({ title: "477 Rayford St", kind: "rbi" }, "243bed34-113d-4e9e-a53c-6a3dacee5211"), false);
   deepStrictEqual(isSoldHunterOffering(rajah, undefined), false);
 });
+
+test("Hunter ordena primero la vendida y después las casas de mayor a menor avance sin mezclar lotes", () => {
+  const rows = [
+    { title: "Casa inicial", kind: "construccion", progress_pct: 20 },
+    { title: "Casa avanzada", kind: "construccion", progress_pct: 90 },
+    { title: "448 Rajah St", kind: "construccion", progress_pct: 0 },
+    ...lots,
+  ];
+  const groups = groupHunterOfferings(rows, "243bed34-113d-4e9e-a53c-6a3dacee5211");
+  deepStrictEqual(groups.completed.map((o) => o.title), ["448 Rajah St", "Casa avanzada", "Casa inicial"]);
+  deepStrictEqual(groups.permitted.map((o) => o.title), ["329 NE 13th St", "35 SW 19th Ct"]);
+});

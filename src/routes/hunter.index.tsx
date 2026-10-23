@@ -285,7 +285,7 @@ function HunterOfferings() {
     })();
   }, []);
 
-   const groups = groupHunterOfferings(visibleHunterOfferings(items, user?.id));
+   const groups = groupHunterOfferings(visibleHunterOfferings(items, user?.id), user?.id);
 
   return (
     <div>
