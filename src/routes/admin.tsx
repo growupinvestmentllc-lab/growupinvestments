@@ -17,6 +17,7 @@ import { Plus, Trash2, Edit, X, ListChecks } from "lucide-react";
 import { toast } from "sonner";
 import { PortfolioAdmin } from "@/components/PortfolioAdmin";
 import { adminExists, bootstrapAdmin, createInvestor, deleteInvestor, updateInvestorPassword } from "@/lib/admin.functions";
+import { orderProjectsWithStages } from "@/lib/project-order";
 
 const DOC_LABELS: Record<string, string> = {
   contrato_construccion: "Contrato de Construcción",
@@ -200,7 +201,8 @@ function ProjectsTab() {
 
   const load = async () => {
     const { data: p } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-    setProjects(p ?? []);
+    const { data: stages } = await supabase.from("project_stages").select("project_id,completed");
+    setProjects(orderProjectsWithStages(p ?? [], stages ?? []));
     const { data: r } = await supabase.from("user_roles").select("user_id").eq("role", "investor");
     const ids = (r ?? []).map((x) => x.user_id);
     if (ids.length) {

@@ -12,6 +12,7 @@ import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { CapitalProjectCard } from "@/components/CapitalProjectCard";
 import { ownContributions, type Contribution } from "@/lib/capital-contributions";
+import { sortProjects } from "@/lib/project-order";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -128,10 +129,10 @@ function PortfolioPage() {
         <Tabs value={portfolioTab} onValueChange={setPortfolioTab} className="mt-8">
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
+              { value: "vendidas", label: "Vendidas", icon: CheckCircle2 },
               { value: "construccion", label: "En Construcción", icon: HardHat },
               { value: "alquiler", label: "En Alquiler", icon: Home },
               { value: "venta", label: "A la Venta", icon: Tag },
-              { value: "vendidas", label: "Vendidas", icon: CheckCircle2 },
             ].map((item) => {
               const Icon = item.icon;
               const selected = portfolioTab === item.value;
@@ -349,8 +350,7 @@ function ConstructionTab() {
         }
         return { ...p, progress, stage, deposited, pending };
       });
-      enriched.sort((a, b) => a.address.localeCompare(b.address));
-      setRows(enriched);
+      setRows(sortProjects(enriched));
     })();
   }, []);
 

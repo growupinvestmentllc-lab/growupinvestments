@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 import { formatUSD } from "@/lib/stages";
 import { Plus, Trash2, Edit, CalendarDays, Upload } from "lucide-react";
 import { toast } from "sonner";
+import { orderProjectsWithStages } from "@/lib/project-order";
 
 const db = supabase as any;
 
@@ -27,10 +28,10 @@ export function PortfolioAdmin() {
   return (
     <Tabs defaultValue="rentals">
       <TabsList className="bg-muted/60 flex-wrap h-auto">
-        <TabsTrigger value="rentals">Alquileres</TabsTrigger>
-        <TabsTrigger value="construction">Construcción</TabsTrigger>
-        <TabsTrigger value="forsale">A la venta</TabsTrigger>
         <TabsTrigger value="sold">Vendidas</TabsTrigger>
+        <TabsTrigger value="construction">Construcción</TabsTrigger>
+        <TabsTrigger value="rentals">Alquileres</TabsTrigger>
+        <TabsTrigger value="forsale">A la venta</TabsTrigger>
         <TabsTrigger value="draws">Draws</TabsTrigger>
         <TabsTrigger value="ownership">Titularidad</TabsTrigger>
       </TabsList>
@@ -393,11 +394,12 @@ function ConstructionAdmin() {
   const load = async () => {
     const { data } = await db
       .from("projects")
-      .select("id,address,total_cost,construction_cost,lot_cost,expected_sale_price,estimated_sale_price,total_contract_value")
+      .select("id,address,status,total_cost,construction_cost,lot_cost,expected_sale_price,estimated_sale_price,total_contract_value")
       .eq("status", "En construcción")
       .order("address");
     const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
-    setRows(list);
+    const { data: stages } = await db.from("project_stages").select("project_id,completed");
+    setRows(orderProjectsWithStages(list, stages ?? []));
     const d: Record<string, { sale: string; contract: string }> = {};
     list.forEach((p: any) => {
       d[p.id] = {
@@ -574,12 +576,14 @@ function DrawsAdmin() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    db.from("projects").select("id,address,total_cost,construction_cost,lot_cost,amount_deposited")
+    db.from("projects").select("id,address,status,total_cost,construction_cost,lot_cost,amount_deposited")
       .order("address")
-      .then(({ data }: any) => {
+      .then(async ({ data }: any) => {
         const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
-        setProjects(list);
-        if (list.length && !projectId) setProjectId(list[0].id);
+        const { data: stages } = await db.from("project_stages").select("project_id,completed");
+        const ordered = orderProjectsWithStages(list, stages ?? []);
+        setProjects(ordered);
+        if (ordered.length && !projectId) setProjectId(ordered[0].id);
       });
   }, []);
 
@@ -716,10 +720,12 @@ function OwnershipAdmin() {
   const [editing, setEditing] = useState<string | null>(null);
 
   useEffect(() => {
-    db.from("projects").select("id,address").order("address").then(({ data }: any) => {
+    db.from("projects").select("id,address,status").order("address").then(async ({ data }: any) => {
       const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
-      setProjects(list);
-      if (list.length) setProjectId((cur) => cur || list[0].id);
+      const { data: stages } = await db.from("project_stages").select("project_id,completed");
+      const ordered = orderProjectsWithStages(list, stages ?? []);
+      setProjects(ordered);
+      if (ordered.length) setProjectId((cur) => cur || ordered[0].id);
     });
   }, []);
 
