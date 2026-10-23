@@ -201,7 +201,7 @@ function ProjectsTab() {
 
   const load = async () => {
     const { data: p } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-    const { data: stages } = await supabase.from("project_stages").select("project_id,stage_group,completed");
+    const { data: stages } = await supabase.from("project_stages").select("project_id,stage_group,stage_name,completed,lot_clearing_completed");
     setProjects(orderProjectsWithStages(p ?? [], stages ?? []));
     const { data: r } = await supabase.from("user_roles").select("user_id").eq("role", "investor");
     const ids = (r ?? []).map((x) => x.user_id);
@@ -567,6 +567,23 @@ function OpportunitiesTab() {
 
 /* ---------------- STAGES ---------------- */
 function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any[]) => void }) {
+  const [savingClearing, setSavingClearing] = useState(false);
+  const clearing = stages.find((s) => s.stage_group === "Hard Construction 1" && s.stage_name === "Limpieza de lote");
+  const saveClearing = async (value: boolean) => {
+    if (!clearing || savingClearing) return;
+    setSavingClearing(true);
+    try {
+      const { error } = await supabase.from("project_stages")
+        .update({ lot_clearing_completed: value }).eq("id", clearing.id);
+      if (error) throw error;
+      setStages(stages.map((s) => s.id === clearing.id ? { ...s, lot_clearing_completed: value } : s));
+      toast.success("Limpieza de lote guardada");
+    } catch (error: unknown) {
+      toast.error(error instanceof Error ? error.message : "No se pudo guardar la limpieza de lote");
+    } finally {
+      setSavingClearing(false);
+    }
+  };
   const saveOne = async (s: any) => {
     await supabase.from("project_stages").update({
       draw_amount: s.draw_amount, completed: s.completed, active: s.active,
@@ -602,6 +619,18 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
         <p className="text-xs text-muted-foreground">Marca completadas y la etapa actual</p>
       </div>
       <div className="space-y-3 max-h-[28rem] overflow-y-auto pr-1">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+          <Label id="lot-clearing-label">Limpieza de lote realizada</Label>
+          <div role="group" aria-labelledby="lot-clearing-label" className="flex gap-1">
+            {[false, true].map((value) => (
+              <Button key={String(value)} size="sm"
+                variant={Boolean(clearing?.lot_clearing_completed) === value ? "default" : "outline"}
+                aria-pressed={Boolean(clearing?.lot_clearing_completed) === value}
+                disabled={!clearing || savingClearing}
+                onClick={() => saveClearing(value)}>{value ? "Sí" : "No"}</Button>
+            ))}
+          </div>
+        </div>
         {STAGE_GROUPS.map((g) => {
           const groupStages = stages.filter((s) => s.stage_group === g.group);
           if (groupStages.length === 0) return null;

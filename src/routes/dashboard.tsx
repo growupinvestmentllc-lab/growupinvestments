@@ -104,7 +104,7 @@ function Dashboard() {
       const myContributions = ownContributions((contributionRows ?? []) as unknown as Contribution[], user.id);
       const enrichedContributions = await Promise.all(myContributions.map(async (c) => {
         const { data: stages } = c.project_id
-          ? await supabase.from("project_stages").select("completed,stage_group").eq("project_id", c.project_id)
+          ? await supabase.from("project_stages").select("completed,stage_group,stage_name,lot_clearing_completed").eq("project_id", c.project_id)
           : { data: [] };
         return { ...c, progress: stages?.length ? constructionProgress(stages) : undefined };
       }));
@@ -135,7 +135,7 @@ function Dashboard() {
         list.map(async (proj) => {
           const { data: stages } = await supabase
             .from("project_stages")
-            .select("completed,active,stage_name,stage_group")
+            .select("completed,active,stage_name,stage_group,lot_clearing_completed")
             .eq("project_id", proj.id);
           const activeStage = constructionStageLabel(stages ?? []);
           const inv = invByProject.get(proj.id);

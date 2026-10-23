@@ -398,7 +398,7 @@ function ConstructionAdmin() {
       .eq("status", "En construcción")
       .order("address");
     const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
-    const { data: stages } = await db.from("project_stages").select("project_id,stage_group,completed");
+    const { data: stages } = await db.from("project_stages").select("project_id,stage_group,stage_name,completed,lot_clearing_completed");
     setRows(orderProjectsWithStages(list, stages ?? []));
     const d: Record<string, { sale: string; contract: string }> = {};
     list.forEach((p: any) => {
@@ -580,7 +580,7 @@ function DrawsAdmin() {
       .order("address")
       .then(async ({ data }: any) => {
         const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
-        const { data: stages } = await db.from("project_stages").select("project_id,stage_group,completed");
+        const { data: stages } = await db.from("project_stages").select("project_id,stage_group,stage_name,completed,lot_clearing_completed");
         const ordered = orderProjectsWithStages(list, stages ?? []);
         setProjects(ordered);
         if (ordered.length && !projectId) setProjectId(ordered[0].id);
@@ -722,7 +722,7 @@ function OwnershipAdmin() {
   useEffect(() => {
     db.from("projects").select("id,address,status").order("address").then(async ({ data }: any) => {
       const list = (data ?? []).filter((p: any) => p.address !== "Nueva propiedad");
-      const { data: stages } = await db.from("project_stages").select("project_id,stage_group,completed");
+      const { data: stages } = await db.from("project_stages").select("project_id,stage_group,stage_name,completed,lot_clearing_completed");
       const ordered = orderProjectsWithStages(list, stages ?? []);
       setProjects(ordered);
       if (ordered.length) setProjectId((cur) => cur || ordered[0].id);

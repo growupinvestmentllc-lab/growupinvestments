@@ -1,4 +1,4 @@
-import { constructionProgress } from "./construction-progress";
+import { constructionProgress, type ConstructionStage } from "./construction-progress";
 
 type OrderedProperty = { status?: string | null; progress?: number | null };
 
@@ -22,7 +22,7 @@ export function sortProjects<T extends OrderedProperty>(rows: readonly T[]): T[]
 
 // Read-only enrichment for admin lists; never persist presentation fields.
 export function orderProjectsWithStages<T extends { id: string; address: string; status?: string | null }>(
-  rows: T[], stages: { project_id: string; stage_group: string | null; completed: boolean }[],
+  rows: T[], stages: (ConstructionStage & { project_id: string })[],
 ) {
   const byProject = new Map<string, typeof stages>();
   stages.forEach((stage) => {
