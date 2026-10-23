@@ -53,6 +53,7 @@ type Stage = {
   stage_name: string;
   stage_group: string | null;
   completed: boolean;
+  lot_clearing_completed?: boolean;
   active: boolean;
   draw_number: number | null;
   draw_amount: number | null;
@@ -297,7 +298,7 @@ function ConstructionTab() {
       if (list.length === 0) return setRows([]);
       const { data: stagesData } = await db
         .from("project_stages")
-        .select("project_id,stage_name,stage_group,completed,active,draw_number,draw_amount")
+        .select("project_id,stage_name,stage_group,completed,active,draw_number,draw_amount,lot_clearing_completed")
         .in("project_id", list.map((p) => p.id));
       const stages: Stage[] = stagesData ?? [];
       const { data: drawsData } = await db

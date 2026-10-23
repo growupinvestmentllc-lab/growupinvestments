@@ -5,6 +5,7 @@ export type ConstructionStage = {
   completed: boolean;
   active?: boolean;
   stage_name?: string;
+  lot_clearing_completed?: boolean;
 };
 
 export const CONSTRUCTION_WEIGHTS: Readonly<Record<string, number>> = {
@@ -22,12 +23,20 @@ export function isConstructionGroupCompleted(stages: readonly ConstructionStage[
   return rows.length >= (expected?.stages.length ?? 1) && rows.every((stage) => stage.completed);
 }
 
+export function isLotClearingCompleted(stages: readonly ConstructionStage[]): boolean {
+  return stages.some((stage) => stage.stage_group === "Hard Construction 1" &&
+    stage.stage_name === "Limpieza de lote" && stage.lot_clearing_completed === true);
+}
+
 export function constructionProgress(stages: readonly ConstructionStage[]): number {
-  return Object.entries(CONSTRUCTION_WEIGHTS).reduce((sum, [group, weight]) =>
+  const completedProgress = Object.entries(CONSTRUCTION_WEIGHTS).reduce((sum, [group, weight]) =>
     sum + (isConstructionGroupCompleted(stages, group) ? weight : 0), 0);
+  return completedProgress + (isLotClearingCompleted(stages) &&
+    !isConstructionGroupCompleted(stages, "Hard Construction 1") ? 3 : 0);
 }
 
 export function constructionStageLabel(stages: readonly ConstructionStage[]): string {
+  if (isLotClearingCompleted(stages)) return "Limpieza de lote realizada";
   const progress = constructionProgress(stages);
   if (progress === 100) return "Obra 100% completada y entregada";
   if (progress === 17 && isConstructionGroupCompleted(stages, "Soft Construction")) return "Soft aprobada";

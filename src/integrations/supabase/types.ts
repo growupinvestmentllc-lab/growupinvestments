@@ -860,6 +860,7 @@ export type Database = {
           estimated_end_date: string | null
           estimated_start_date: string | null
           id: string
+          lot_clearing_completed: boolean
           project_id: string
           stage_group: string | null
           stage_name: string
@@ -875,6 +876,7 @@ export type Database = {
           estimated_end_date?: string | null
           estimated_start_date?: string | null
           id?: string
+          lot_clearing_completed?: boolean
           project_id: string
           stage_group?: string | null
           stage_name: string
@@ -890,6 +892,7 @@ export type Database = {
           estimated_end_date?: string | null
           estimated_start_date?: string | null
           id?: string
+          lot_clearing_completed?: boolean
           project_id?: string
           stage_group?: string | null
           stage_name?: string

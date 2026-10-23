@@ -11,3 +11,4 @@ Verify a private-bucket document upload by capturing the app's own `/object/sign
 Stage uploaded files larger than 10MB in `/tmp` before pushing them to storage; the repository rejects files over that size.
 Use the shared browser-safe project-order helper for project lists and Admin selectors; this keeps status and visible-progress ordering consistent without changing stored data or financials.
 Derive investor construction progress and stage labels through the shared browser-safe construction-progress helper from project_stages by project_id; this prevents manual overrides and keeps co-investor portals, listings, details and ordering synchronized without changing financials.
+Store the explicit lot-clearing flag on the shared HC1 Limpieza de lote stage, independently from its existing completed/active fields; include the flag and stage name in progress projections so every portal uses the same admin decision without changing existing tasks or financial records.
