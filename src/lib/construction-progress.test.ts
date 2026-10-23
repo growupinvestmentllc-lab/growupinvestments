@@ -39,3 +39,26 @@ test("los lotes en venta no muestran avance, pero sí una casa en construcción"
   strictEqual(isLotForSale({ address: "329 NE 13th St", status: "En construcción" }), false);
   strictEqual(isLotForSale({ address: "477 Rayford St", status: "A la venta" }), false);
 });
+
+const withClearing = (completed: string[] = [], cleared = true) => stages(completed).map((stage) => ({
+  ...stage, lot_clearing_completed: stage.stage_name === "Limpieza de lote" && cleared,
+}));
+test("limpieza inicial No no suma aunque la tarea antigua esté completa", () => {
+  const rows = withClearing(["Soft Construction"], false);
+  const clearing = rows.find((s) => s.stage_name === "Limpieza de lote");
+  if (clearing) clearing.completed = true;
+  strictEqual(constructionProgress(rows), 17);
+});
+test("limpieza Sí suma exactamente 3% sin HC1 completa", () => strictEqual(constructionProgress(withClearing()), 3));
+test("Soft 17% más limpieza 3% da 20%", () => strictEqual(constructionProgress(withClearing(["Soft Construction"])), 20));
+test("HC1 completa incluye limpieza sin duplicar: Soft más HC1 da 34%", () => strictEqual(constructionProgress(withClearing(["Soft Construction", "Hard Construction 1"])), 34));
+test("todas las etapas y limpieza completas dan 100%, no 103%", () => strictEqual(constructionProgress(withClearing(ALL_STAGES.map((s) => s.group))), 100));
+test("limpieza Sí determina la etapa actual", () => strictEqual(constructionStageLabel(withClearing(["Soft Construction"])), "Limpieza de lote realizada"));
+test("volver a No quita solo los 3% y mantiene Soft", () => strictEqual(constructionProgress(withClearing(["Soft Construction"], false)), 17));
+test("calcular limpieza no modifica ningún registro", () => {
+  const rows = withClearing(["Soft Construction"]);
+  const before = structuredClone(rows);
+  constructionProgress(rows);
+  constructionStageLabel(rows);
+  deepStrictEqual(rows, before);
+});
