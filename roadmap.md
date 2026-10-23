@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Ordenar las casas en todas las páginas: vendidas primero y construcción de mayor a menor avance, sin tocar montos.
+
 - [x] Crear el acceso de Hguzman con las mismas propuestas de Hunter y verificar su ingreso y ventas separadas.
 
 - [x] Separar Hunter en casas terminadas, casas con contrato, lotes permisados (329 y 35 SW) y sin permisología (3604 y 715), conservando fotos y montos.
