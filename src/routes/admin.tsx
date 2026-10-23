@@ -201,7 +201,7 @@ function ProjectsTab() {
 
   const load = async () => {
     const { data: p } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-    const { data: stages } = await supabase.from("project_stages").select("project_id,completed");
+    const { data: stages } = await supabase.from("project_stages").select("project_id,stage_group,completed");
     setProjects(orderProjectsWithStages(p ?? [], stages ?? []));
     const { data: r } = await supabase.from("user_roles").select("user_id").eq("role", "investor");
     const ids = (r ?? []).map((x) => x.user_id);
