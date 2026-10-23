@@ -57,6 +57,7 @@ type Project = {
 type Stage = {
   id: string; stage_order: number; stage_name: string; stage_group: string | null;
   draw_number: number | null; draw_amount: number; completed: boolean; active: boolean;
+  lot_clearing_completed?: boolean;
   estimated_date?: string | null;
   estimated_start_date?: string | null;
   estimated_end_date?: string | null;
