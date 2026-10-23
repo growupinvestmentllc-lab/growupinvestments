@@ -1,4 +1,4 @@
-import { ALL_STAGES } from "./stages";
+import { constructionProgress } from "./construction-progress";
 
 type OrderedProperty = { status?: string | null; progress?: number | null };
 
@@ -22,15 +22,16 @@ export function sortProjects<T extends OrderedProperty>(rows: readonly T[]): T[]
 
 // Read-only enrichment for admin lists; never persist presentation fields.
 export function orderProjectsWithStages<T extends { id: string; address: string; status?: string | null }>(
-  rows: T[], stages: { project_id: string; completed: boolean }[],
+  rows: T[], stages: { project_id: string; stage_group: string | null; completed: boolean }[],
 ) {
-  const completed = new Map<string, number>();
+  const byProject = new Map<string, typeof stages>();
   stages.forEach((stage) => {
-    if (stage.completed) completed.set(stage.project_id, (completed.get(stage.project_id) ?? 0) + 1);
+    const rows = byProject.get(stage.project_id) ?? [];
+    rows.push(stage);
+    byProject.set(stage.project_id, rows);
   });
-  const progress = (row: T) => row.address.toLowerCase().includes("1405")
-    ? 31 : Math.round((completed.get(row.id) ?? 0) / ALL_STAGES.length * 100);
   return [...rows].sort((a, b) => compareProjectOrder(
-    { status: a.status, progress: progress(a) }, { status: b.status, progress: progress(b) },
+    { status: a.status, progress: constructionProgress(byProject.get(a.id) ?? []) },
+    { status: b.status, progress: constructionProgress(byProject.get(b.id) ?? []) },
   ));
 }

@@ -23,11 +23,11 @@ test("las casas en construcción se ordenan de mayor a menor avance y conservan 
   deepStrictEqual(sortProjects(rows).map((r) => r.id), ["avanzada", "media", "empate", "inicio"]);
 });
 
-test("Admin usa las etapas realizadas y el mismo avance visible de 1405 sin modificar registros", () => {
+test("Admin usa el avance automático de etapas completas sin modificar registros", () => {
   const rows = [
     { id: "inicio", address: "708 Jaguar", status: "En construcción" },
     { id: "cortez", address: "1405 Cortez", status: "En construcción" },
   ];
-  deepStrictEqual(orderProjectsWithStages(rows, []).map((r) => r.id), ["cortez", "inicio"]);
+  deepStrictEqual(orderProjectsWithStages(rows, [{ project_id: "cortez", stage_group: "Soft Construction", completed: true }]).map((r) => r.id), ["cortez", "inicio"]);
   deepStrictEqual(Object.keys(rows[0]), ["id", "address", "status"]);
 });

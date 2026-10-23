@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
-import { ALL_STAGES } from "@/lib/stages";
+import { constructionProgress, constructionStageLabel, isLotForSale } from "@/lib/construction-progress";
 import { MapPin, ArrowRight, Home } from "lucide-react";
 import { formatUSD } from "@/lib/stages";
 import { Button } from "@/components/ui/button";
@@ -104,9 +104,9 @@ function Dashboard() {
       const myContributions = ownContributions((contributionRows ?? []) as unknown as Contribution[], user.id);
       const enrichedContributions = await Promise.all(myContributions.map(async (c) => {
         const { data: stages } = c.project_id
-          ? await supabase.from("project_stages").select("completed").eq("project_id", c.project_id)
+          ? await supabase.from("project_stages").select("completed,stage_group").eq("project_id", c.project_id)
           : { data: [] };
-        return { ...c, progress: stages?.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : undefined };
+        return { ...c, progress: stages?.length ? constructionProgress(stages) : undefined };
       }));
       setContributions(enrichedContributions);
       if (list.length === 0 && myContributions.length === 0) {
@@ -137,17 +137,7 @@ function Dashboard() {
             .from("project_stages")
             .select("completed,active,stage_name,stage_group")
             .eq("project_id", proj.id);
-          const total = ALL_STAGES.length;
-          const done = (stages ?? []).filter((s) => s.completed).length;
-          const active = (stages ?? []).find((s) => s.active);
-          let activeStage = active?.stage_name ?? "Por iniciar";
-          if (active?.stage_group?.startsWith("CO")) activeStage = active.stage_group;
-          if (
-            proj.address.toLowerCase().includes("365") &&
-            proj.address.toLowerCase().includes("progress")
-          ) {
-            activeStage = "Colocando trusses";
-          }
+          const activeStage = constructionStageLabel(stages ?? []);
           const inv = invByProject.get(proj.id);
           const myOwnerships = ownerships.filter(
             (ownership) =>
@@ -168,7 +158,7 @@ function Dashboard() {
           return {
             ...proj,
             status: displayStatus,
-            progress: proj.address.toLowerCase().includes("1405") ? 31 : total ? Math.round((done / total) * 100) : 0,
+            progress: constructionProgress(stages ?? []),
             activeStage,
             myPct,
           };
@@ -263,7 +253,7 @@ function Dashboard() {
                 <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
                   <MapPin className="h-3 w-3" /> Florida, USA
                 </p>
-                <div className="mt-5">
+                {!isLotForSale(p) && <div className="mt-5">
                   <div className="flex justify-between text-xs text-muted-foreground mb-1">
                     <span>Avance de obra</span>
                     <span className="font-semibold text-foreground">{p.progress}%</span>
@@ -280,7 +270,7 @@ function Dashboard() {
                       {p.progress >= 100 ? "Obra 100% completada y entregada" : p.activeStage}
                     </span>
                   </p>
-                </div>
+                </div>}
                 <Button asChild className="mt-5 w-full">
                   <Link to="/dashboard/$projectId" params={{ projectId: p.id }}>
                     Quiero saber más <ArrowRight className="h-4 w-4" />
