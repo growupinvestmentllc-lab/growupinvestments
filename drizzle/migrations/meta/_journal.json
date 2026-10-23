@@ -50,6 +50,13 @@
       "when": 1792616998600,
       "tag": "0006_add_doc_type_contrato_alquiler",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792772387028,
+      "tag": "0007_add_lot_clearing_completed",
+      "breakpoints": true
     }
   ]
 }

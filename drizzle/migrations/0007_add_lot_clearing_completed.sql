@@ -1,0 +1,1 @@
+ALTER TABLE public.project_stages ADD COLUMN lot_clearing_completed boolean NOT NULL DEFAULT false; COMMENT ON COLUMN public.project_stages.lot_clearing_completed IS 'Explicit admin yes/no for lot clearing, stored on the HC1 Limpieza de lote task; contributes 3 percent within HC1, never in addition to a completed HC1.';
