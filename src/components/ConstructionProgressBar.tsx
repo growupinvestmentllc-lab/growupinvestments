@@ -1,4 +1,5 @@
 import { STAGE_GROUPS } from "@/lib/stages";
+import { isConstructionGroupCompleted } from "@/lib/construction-progress";
 import { Check } from "lucide-react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -18,7 +19,7 @@ type GroupStatus = "completed" | "active" | "pending";
 function getGroupStatus(stages: Stage[], group: string): GroupStatus {
   const gs = stages.filter((s) => s.stage_group === group);
   if (gs.length === 0) return "pending";
-  if (gs.every((s) => s.completed)) return "completed";
+  if (isConstructionGroupCompleted(stages, group)) return "completed";
   if (gs.some((s) => s.active || s.completed)) return "active";
   return "pending";
 }
@@ -28,7 +29,8 @@ function getGroupEstimatedDate(stages: Stage[], group: string): string | null {
     .filter((s) => s.stage_group === group)
     .sort((a, b) => a.stage_order - b.stage_order);
   for (let i = gs.length - 1; i >= 0; i--) {
-    if (gs[i].estimated_date) return gs[i].estimated_date!;
+    const date = gs[i]?.estimated_date;
+    if (date) return date;
   }
   return null;
 }
