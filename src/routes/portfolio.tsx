@@ -6,13 +6,14 @@ import { AppHeader } from "@/components/AppHeader";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { ALL_STAGES, formatUSD } from "@/lib/stages";
+import { formatUSD } from "@/lib/stages";
 import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin, Eye, Download } from "lucide-react";
 import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { CapitalProjectCard } from "@/components/CapitalProjectCard";
 import { ownContributions, type Contribution } from "@/lib/capital-contributions";
 import { sortProjects } from "@/lib/project-order";
+import { constructionProgress, constructionStageLabel, isLotForSale } from "@/lib/construction-progress";
 
 export const Route = createFileRoute("/portfolio")({
   head: () => ({
@@ -313,10 +314,8 @@ function ConstructionTab() {
 
       const enriched = list.map((p) => {
         const ps = stages.filter((s) => s.project_id === p.id);
-        const done = ps.filter((s) => s.completed).length;
-        const progress = p.address.toLowerCase().includes("1405") ? 31 : ALL_STAGES.length ? Math.round((done / ALL_STAGES.length) * 100) : 0;
-        const activeSt = ps.find((s) => s.active);
-        const stage = (activeSt?.stage_group?.startsWith("CO") ? activeSt.stage_group : activeSt?.stage_name) ?? (progress >= 100 ? "Finalizada" : "Por iniciar");
+        const progress = constructionProgress(ps);
+        const stage = constructionStageLabel(ps);
 
         let deposited = 0;
         let pending = 0;
@@ -398,7 +397,7 @@ function ConstructionTab() {
               </Button>
             </div>
 
-            <div className="mt-4">
+            {!isLotForSale(r) && <div className="mt-4">
               <div className="flex justify-between text-xs text-muted-foreground mb-1">
                 <span>Avance de obra</span>
                 <span className="font-semibold text-foreground">{r.progress}%</span>
@@ -409,7 +408,7 @@ function ConstructionTab() {
               <p className="mt-2 text-xs text-muted-foreground">
                 Etapa actual: <span className="text-foreground font-medium">{r.stage}</span>
               </p>
-            </div>
+            </div>}
 
             <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
               <Box label="Total depositado a la fecha" value={formatUSD(r.deposited)} />

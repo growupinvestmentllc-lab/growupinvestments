@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
-import { formatUSD, ALL_STAGES } from "@/lib/stages";
+import { formatUSD } from "@/lib/stages";
+import { constructionProgress, isLotForSale } from "@/lib/construction-progress";
 import { ArrowRight, MapPin } from "lucide-react";
 
 import flamingoPhoto from "@/assets/621-flamingo-foto.png.asset.json";
@@ -60,21 +61,6 @@ function AportePage() {
       if (row?.project_id) {
         const { data: projectStages } = await supabase.from("project_stages").select("*").eq("project_id", row.project_id).order("stage_order");
         setStages(projectStages ?? []);
-      } else if (row) {
-        // Obra terminada sin proyecto vinculado: todas las etapas finalizadas (100%).
-        // Cronograma terminado en agosto: un mes por grupo de etapas, de marzo a agosto 2026.
-        const groupMonth: Record<string, number> = {
-          "Soft Construction": 3, "Hard Construction 1": 4, "Hard Construction 2": 5,
-          "Hard Construction 3": 6, "Hard Construction 4": 7, "CO (Certificado de Ocupación)": 8,
-        };
-        const month = (m: number, day: number) => `2026-${String(m).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        setStages(ALL_STAGES.map((s, i) => ({
-          id: `done-${i}`, project_id: "", stage_order: i + 1, stage_name: s.name, stage_group: s.group,
-          completed: true, active: false, draw_number: null, draw_amount: null, created_at: "",
-          estimated_date: null,
-          estimated_start_date: month(groupMonth[s.group] ?? 8, 1),
-          estimated_end_date: month(groupMonth[s.group] ?? 8, 28),
-        })) as Tables<"project_stages">[]);
       }
     })();
   }, [user]);
@@ -89,7 +75,7 @@ function AportePage() {
   }
 
   const totalDep = c.deposits.reduce((s, d) => s + Number(d.amount), 0);
-  const progress = stages.length ? Math.round(stages.filter((s) => s.completed).length / stages.length * 100) : 0;
+  const progress = constructionProgress(stages);
   const ownPct = c.ownership_pct != null ? Number(c.ownership_pct).toLocaleString("es-AR", { maximumFractionDigits: 2 }) : null;
 
 
@@ -122,14 +108,14 @@ function AportePage() {
                 <div key={l}><p className="text-xs text-muted-foreground">{l}</p><p className="font-semibold text-foreground">{v}</p></div>
               ))}
             </div>
-            {stages.length > 0 && <div>
+            {!isLotForSale({ address: c.property_address, status: c.project_status }) && stages.length > 0 && <div>
               <div className="flex justify-between text-xs text-muted-foreground mb-1"><span>Avance de obra</span><span className="font-semibold text-foreground">{progress}%</span></div>
               <progress aria-label="Avance de obra" value={progress} max={100} className="w-full h-2 accent-primary" />
             </div>}
           </div>
         </section>
 
-        {stages.length > 0 && <><ConstructionProgressBar stages={stages} /><GanttChart stages={stages} /></>}
+        {!isLotForSale({ address: c.property_address, status: c.project_status }) && stages.length > 0 && <><ConstructionProgressBar stages={stages} /><GanttChart stages={stages} /></>}
 
         <section className="card-soft p-5">
           <h2 className="text-lg font-semibold text-foreground mb-3">Depósitos</h2>

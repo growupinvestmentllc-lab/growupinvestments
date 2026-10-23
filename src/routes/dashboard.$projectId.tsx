@@ -3,12 +3,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
-import { ALL_STAGES, formatUSD, STAGE_GROUPS } from "@/lib/stages";
+import { formatUSD, STAGE_GROUPS } from "@/lib/stages";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download, Upload } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 import { Button } from "@/components/ui/button";
+import { constructionProgress, constructionStageLabel, isLotForSale } from "@/lib/construction-progress";
 
 export const Route = createFileRoute("/dashboard/$projectId")({
   head: () => ({ meta: [
@@ -134,18 +135,8 @@ function ProjectDetail() {
     })();
   }, [projectId]);
 
-  const progress = useMemo(() => {
-    // 1405 Cortez: avance fijo informado por el usuario
-    if (projectId === "ed024506-b782-401f-9fd6-6c6691430a0c") return 31;
-    // 708 Jaguar: Compra Lote 8% + Soft 19% realizados
-    if (projectId === "a19e25f7-1524-4109-b1b2-a13dc19f45fa") return 27;
-    if (!stages.length) return 0;
-    const total = ALL_STAGES.length;
-    const done = stages.filter((s) => s.completed).length;
-    return Math.round((done / total) * 100);
-  }, [stages, projectId]);
-
-  const activeStage = stages.find((s) => s.active);
+  const progress = useMemo(() => constructionProgress(stages), [stages]);
+  const hideConstructionProgress = isLotForSale(project ?? {});
   const is2446 = project?.id === "f6705699-6576-4ecf-99eb-8d54b41d382e";
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
   const isTench = project?.id === "370b08ed-9b37-4479-a17f-86a999d893c3";
@@ -186,16 +177,7 @@ function ProjectDetail() {
   const deposited = Number(project?.amount_deposited) || 0;
   const pending = totalCost - deposited;
   const overDeposited = deposited > totalCost && totalCost > 0;
-  const activeStageLabel =
-    is1153Chalmer
-      ? "Obra 100% completada y entregada"
-      : is365Progress
-        ? "Colocando trusses"
-        : activeStage?.stage_group?.startsWith("CO")
-          ? activeStage.stage_group
-          : progress >= 100
-            ? "Obra 100% completada y entregada"
-            : activeStage?.stage_name ?? "Finalizada";
+  const activeStageLabel = constructionStageLabel(stages);
   const is2217Embers = projectId === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     project?.id === "d7e72435-c615-4524-a338-b936e6e10c58" ||
     (normalizedAddress.includes("2217") && normalizedAddress.includes("embers"));
@@ -306,7 +288,7 @@ function ProjectDetail() {
 
           {/* OVERVIEW */}
           <TabsContent value="overview" className="mt-6 space-y-6">
-            {is127 ? null : simpleProgress ? (
+            {is127 || hideConstructionProgress ? null : simpleProgress ? (
               <div className="card-soft p-6 flex flex-col items-center">
                 <h3 className="text-center text-sm font-semibold text-muted-foreground uppercase tracking-wider">Avance de Obra</h3>
                 <div className="mt-2 flex flex-row items-center justify-center gap-6">
@@ -365,7 +347,7 @@ function ProjectDetail() {
               </div>
             )}
 
-            {!is127 && (
+            {!is127 && !hideConstructionProgress && (
               <ConstructionProgressBar
                 stages={stages}
                 amounts={

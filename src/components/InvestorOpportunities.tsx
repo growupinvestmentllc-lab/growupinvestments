@@ -67,7 +67,6 @@ function OpportunityCard({ offering: o }: { offering: InvestorOffering }) {
           {o.rent_net != null && <div><p className="text-xs text-muted-foreground">Alquiler neto mensual</p><p className="text-lg font-bold text-primary">{money(o.rent_net)}</p></div>}
         </div>}
         {o.rent_net != null && <p className="mt-3 border-l-2 border-primary pl-3 text-xs text-primary">El alquiler neto incluye property management, property tax y seguro.</p>}
-        {o.progress_pct != null && <div className="mt-4"><div className="mb-1 flex justify-between text-xs text-muted-foreground"><span>Avance de la casa</span><span>{Number(o.progress_pct)}%</span></div><progress value={Number(o.progress_pct)} max={100} aria-label={`Avance de ${o.title}`} className="h-2 w-full accent-primary" /></div>}
         {o.kind === "lote" && <div className="mt-4"><div className="mb-1 flex justify-between text-xs text-muted-foreground"><span>Fondeado</span><span>0%</span></div><progress value={0} max={100} aria-label={`Fondeado de ${o.title}`} className="h-2 w-full accent-primary" /></div>}
         {o.notes && o.kind !== "lote" && <p className="mt-4 whitespace-pre-line text-xs text-muted-foreground">{o.notes}</p>}
         <div className="flex-1" />

@@ -10,3 +10,4 @@ Keep the investor opportunity catalog as a presentation-only snapshot of selecte
 Verify a private-bucket document upload by capturing the app's own `/object/sign` response and downloading `storageUrl + signedURL`; a hand-built sign request returns a `%2F`-encoded path that fails with 400/404 and does not prove the file opens.
 Stage uploaded files larger than 10MB in `/tmp` before pushing them to storage; the repository rejects files over that size.
 Use the shared browser-safe project-order helper for project lists and Admin selectors; this keeps status and visible-progress ordering consistent without changing stored data or financials.
+Derive investor construction progress and stage labels through the shared browser-safe construction-progress helper from project_stages by project_id; this prevents manual overrides and keeps co-investor portals, listings, details and ordering synchronized without changing financials.
