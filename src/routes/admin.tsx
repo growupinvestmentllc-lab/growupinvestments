@@ -356,7 +356,7 @@ function ProjectEditor({ project, investors, onClose }: { project: any; investor
           </section>
 
           {/* Stages */}
-          <StagesEditor stages={stages} setStages={setStages} />
+          <StagesEditor projectId={project.id} stages={stages} setStages={setStages} />
           <DrawCostsEditor project={p} setProject={setP} stages={stages} setStages={setStages} />
 
           {/* Comparables */}
@@ -566,17 +566,27 @@ function OpportunitiesTab() {
 }
 
 /* ---------------- STAGES ---------------- */
-function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any[]) => void }) {
+function StagesEditor({ projectId, stages, setStages }: { projectId: string; stages: any[]; setStages: (s: any[]) => void }) {
   const [savingClearing, setSavingClearing] = useState(false);
   const clearing = stages.find((s) => s.stage_group === "Hard Construction 1" && s.stage_name === "Limpieza de lote");
   const saveClearing = async (value: boolean) => {
-    if (!clearing || savingClearing) return;
+    if (savingClearing) return;
     setSavingClearing(true);
     try {
-      const { error } = await supabase.from("project_stages")
-        .update({ lot_clearing_completed: value }).eq("id", clearing.id);
-      if (error) throw error;
-      setStages(stages.map((s) => s.id === clearing.id ? { ...s, lot_clearing_completed: value } : s));
+      if (clearing) {
+        const { error } = await supabase.from("project_stages")
+          .update({ lot_clearing_completed: value }).eq("id", clearing.id);
+        if (error) throw error;
+        setStages(stages.map((s) => s.id === clearing.id ? { ...s, lot_clearing_completed: value } : s));
+      } else if (value) {
+        const { data, error } = await supabase.from("project_stages").insert({
+          project_id: projectId, stage_order: 2, stage_group: "Hard Construction 1",
+          stage_name: "Limpieza de lote", lot_clearing_completed: true,
+          completed: false, active: false,
+        }).select().single();
+        if (error) throw error;
+        setStages([...stages, data]);
+      }
       toast.success("Limpieza de lote guardada");
     } catch (error: unknown) {
       toast.error(error instanceof Error ? error.message : "No se pudo guardar la limpieza de lote");
@@ -626,7 +636,7 @@ function StagesEditor({ stages, setStages }: { stages: any[]; setStages: (s: any
               <Button key={String(value)} size="sm"
                 variant={Boolean(clearing?.lot_clearing_completed) === value ? "default" : "outline"}
                 aria-pressed={Boolean(clearing?.lot_clearing_completed) === value}
-                disabled={!clearing || savingClearing}
+                disabled={savingClearing}
                 onClick={() => saveClearing(value)}>{value ? "Sí" : "No"}</Button>
             ))}
           </div>
@@ -718,7 +728,7 @@ function StagesDialog({ project, onClose }: { project: any; onClose: () => void 
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader><DialogTitle>Etapas · {project.address}</DialogTitle></DialogHeader>
-        <StagesEditor stages={stages} setStages={setStages} />
+        <StagesEditor projectId={project.id} stages={stages} setStages={setStages} />
         <DrawCostsEditor project={project} stages={stages} setStages={setStages} />
         <DialogFooter><Button variant="outline" onClick={onClose}>Cerrar</Button></DialogFooter>
       </DialogContent>
