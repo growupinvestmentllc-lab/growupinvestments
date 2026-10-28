@@ -1074,7 +1074,11 @@ function DocsTab({ projectId }: { projectId: string }) {
                     <FileText className="h-5 w-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground truncate">Registro de la Venta</p>
+                    <p className="text-sm font-medium text-foreground truncate">
+                      {String(d.file_path).endsWith("registro_de_venta.pdf")
+                        ? "Registro de la Venta"
+                        : DOC_LABELS[d.doc_type] ?? d.doc_type}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {d.llc_name ? `${d.llc_name} · ` : ""}
                       {uploaded ? "Cargado" : "Pendiente"}
