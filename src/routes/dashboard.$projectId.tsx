@@ -1053,6 +1053,12 @@ function DocsTab({ projectId }: { projectId: string }) {
   // 127 NW 24th Pl — venta de lote: solo el registro de la venta
   if (projectId === "2f2c8509-18d0-489c-b5bb-758120a21e3b") {
     const uploadedDocs = docs.filter((d) => !!d.file_path && d.doc_type !== "proforma");
+    for (const t of ["structural_plan", "certificado_ocupacion"]) {
+      if (!uploadedDocs.some((d) => d.doc_type === t)) {
+        const empty = docs.find((d) => d.doc_type === t && !d.file_path);
+        if (empty) uploadedDocs.push(empty);
+      }
+    }
     return (
       <div className="card-soft p-6 space-y-4">
         <h3 className="font-semibold text-foreground">Documentos</h3>
