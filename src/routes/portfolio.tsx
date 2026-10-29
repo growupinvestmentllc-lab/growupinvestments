@@ -1,3 +1,4 @@
+import { InvestorMetric } from "@/components/InvestorPrivacy";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -275,7 +276,7 @@ function Box({ label, value, tone, sub }: { label: string; value: string; tone?:
   return (
     <div className={`rounded-xl border border-border px-3 py-2.5 ${tone === "muted" ? "bg-muted/40" : "bg-card"}`}>
       <p className="text-[10px] uppercase tracking-wide text-muted-foreground leading-tight">{label}</p>
-      <p className="text-sm font-bold text-foreground mt-1">{value}</p>
+      <p className="text-sm font-bold text-foreground mt-1"><InvestorMetric label={label} value={value} /></p>
       {sub && <p className="text-[10px] text-muted-foreground mt-1 leading-tight">{sub}</p>}
     </div>
   );
@@ -480,7 +481,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-3">
       <dt className="text-muted-foreground">{label}</dt>
-      <dd className="font-medium text-foreground text-right">{value}</dd>
+      <dd className="font-medium text-foreground text-right"><InvestorMetric label={label} value={value} /></dd>
     </div>
   );
 }
@@ -550,7 +551,7 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
       {(rental as any).cap_rate ? (
         <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-border pt-4 text-primary">
           <span className="text-base font-bold">Cap rate</span>
-          <span className="text-2xl font-bold">{Number((rental as any).cap_rate).toFixed(2)}%</span>
+          <span className="text-2xl font-bold"><InvestorMetric label="Cap rate" value={`${Number((rental as any).cap_rate).toFixed(2)}%`} /></span>
         </div>
       ) : null}
       {!combined && (rental as any).notes && <p className="mt-4 border-t border-border pt-3 text-xs text-muted-foreground">{(rental as any).notes}</p>}
@@ -988,7 +989,7 @@ function ForSaleTab() {
             {base > 0 && price > 0 && (
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between">
                 <span className="text-xs uppercase tracking-wide opacity-80">ROI estimado</span>
-                <span className="text-xl font-bold">{roi.toFixed(2)}%</span>
+                <span className="text-xl font-bold"><InvestorMetric label="ROI" value={`${roi.toFixed(2)}%`} /></span>
               </div>
             )}
             <Button asChild size="sm" variant="outline" className="mt-4 w-full">
@@ -1023,7 +1024,7 @@ function ForSaleTab() {
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (2%)</span><span className="font-semibold">({formatUSD(1200)})</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(58800)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(50000)}</span></div>
-                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">17.60%</span></div>
+                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold"><InvestorMetric label="ROI" value="17.60%" /></span></div>
               </div>
               {r.project_id && (
                 <Button asChild size="sm" variant="outline" className="mt-4 w-full">
@@ -1054,7 +1055,7 @@ function ForSaleTab() {
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(381800)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost</span><span className="font-semibold">{formatUSD(55000)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Construction cost</span><span className="font-semibold">{formatUSD(296000)}</span></div>
-                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">8.77%</span></div>
+                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold"><InvestorMetric label="ROI" value="8.77%" /></span></div>
               </div>
               {r.project_id && (
                 <Button asChild size="sm" variant="outline" className="mt-4 w-full">
@@ -1081,7 +1082,7 @@ function ForSaleTab() {
             </div>
             <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between">
               <span className="text-xs uppercase tracking-wide opacity-80">ROI estimado</span>
-              <span className="text-xl font-bold">{roi.toFixed(2)}%</span>
+              <span className="text-xl font-bold"><InvestorMetric label="ROI" value={`${roi.toFixed(2)}%`} /></span>
             </div>
             {r.project_id && (
               <Button asChild size="sm" variant="outline" className="mt-4 w-full">
@@ -1207,7 +1208,7 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Closing costs (7,83%)</span><span className="font-semibold">({formatUSD(4854.58)})</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Net sales proceeds</span><span className="font-semibold">{formatUSD(57145.42)}</span></div>
                 <div className="flex justify-between border-b border-white/20 pb-2"><span>Land cost (costo original)</span><span className="font-semibold">{formatUSD(50000)}</span></div>
-                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold">14.29%</span></div>
+                <div className="flex justify-between pt-1 text-base"><span className="font-semibold">ROI estimado</span><span className="font-bold"><InvestorMetric label="ROI" value="14.29%" /></span></div>
               </div>
               {r.project_id && (
                 <Button asChild size="sm" variant="outline" className="mt-4 w-full">
@@ -1243,7 +1244,7 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
             {roi != null && (
               <div className="mt-3 rounded-xl bg-primary text-primary-foreground p-4 flex items-center justify-between">
                 <span className="text-xs uppercase tracking-wide opacity-80">ROI realizado</span>
-                <span className="text-xl font-bold">{roi.toFixed(2)}%</span>
+                <span className="text-xl font-bold"><InvestorMetric label="ROI" value={`${roi.toFixed(2)}%`} /></span>
               </div>
             )}
           </div>

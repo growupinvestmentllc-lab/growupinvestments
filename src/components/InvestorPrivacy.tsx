@@ -19,3 +19,15 @@ export function InvestorAddress({ children }: { children: string | null | undefi
   const { user } = useAuth();
   return <span className={isDemoInvestor(user?.email) ? "demo-address" : undefined}>{children}</span>;
 }
+export const DEMO_PERCENT = "00,0%";
+
+/** ROI / NOI / cap rate: en la demo se reemplaza por un valor ficticio difuminado. */
+export function isSensitiveMetric(label: string) {
+  return /\b(ROI|NOI|cap rate)\b/i.test(label);
+}
+
+export function InvestorMetric({ label, value }: { label: string; value: string }) {
+  const { user } = useAuth();
+  if (isDemoInvestor(user?.email) && isSensitiveMetric(label)) return <span className="demo-address">{DEMO_PERCENT}</span>;
+  return <>{value}</>;
+}

@@ -1,3 +1,4 @@
+import { InvestorMetric } from "@/components/InvestorPrivacy";
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ChevronLeft, ChevronRight, Images, MapPin } from "lucide-react";
@@ -60,7 +61,7 @@ function OpportunityCard({ offering: o }: { offering: InvestorOffering }) {
         {o.location && <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3 w-3" />{o.location}</p>}
         {o.price != null && <div className="mt-4"><p className="text-xs text-muted-foreground">Precio</p><p className="text-2xl font-bold text-primary">{money(o.price)}</p></div>}
         {specs.length > 0 && <dl className="mt-4 grid grid-cols-2 gap-x-3 gap-y-4 border-t border-border pt-4">
-          {specs.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-[10px] uppercase text-muted-foreground">{label}</dt><dd className="mt-0.5 break-words text-sm font-semibold text-foreground">{value}</dd></div>)}
+          {specs.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-[10px] uppercase text-muted-foreground">{label}</dt><dd className="mt-0.5 break-words text-sm font-semibold text-foreground"><InvestorMetric label={label} value={value} /></dd></div>)}
         </dl>}
         {o.rent_gross != null && <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-4">
           <div><p className="text-xs text-muted-foreground">Alquiler bruto mensual</p><p className="text-lg font-bold text-primary">{money(o.rent_gross)}</p></div>

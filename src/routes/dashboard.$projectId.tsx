@@ -1,3 +1,4 @@
+import { InvestorMetric } from "@/components/InvestorPrivacy";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -1009,7 +1010,7 @@ function StatCard({ label, value, accent, sub, className, children }: { label: s
   return (
     <div className={`card-soft p-5 ${cls} ${className || ""}`}>
       <p className={`text-xs uppercase tracking-wider ${accent === "primary" ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{label}</p>
-      <p className="text-2xl font-bold mt-2">{value}</p>
+      <p className="text-2xl font-bold mt-2"><InvestorMetric label={label} value={value} /></p>
       {sub && (
         <p className={`text-xs mt-2 ${accent === "primary" ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{sub}</p>
       )}
@@ -1022,7 +1023,7 @@ function Stat({ label, value, dark, sub }: { label: string; value: string; dark?
   return (
     <div>
       <p className={`text-xs ${dark ? "text-primary-foreground/70" : "text-muted-foreground"} uppercase tracking-wider`}>{label}</p>
-      <p className="text-lg font-bold mt-1">{value}</p>
+      <p className="text-lg font-bold mt-1"><InvestorMetric label={label} value={value} /></p>
       {sub && <p className={`text-xs mt-1 ${dark ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{sub}</p>}
     </div>
   );
