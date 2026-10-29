@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Agregar segundo proyecto independiente en construcción a Ejemplo inversor, conservando participación y avance parcial, fotos reales de proceso con nombres neutros y documentos anonimizados; verificar dos proyectos y privacidad sin cambiar el existente.
+- [x] Agregar segundo proyecto independiente en construcción a Ejemplo inversor, basado en 710 Jaguar: 34% y etapa Instalación ventanas y puertas, participación 100%, tres fotos reales de trusses con archivos independientes sin metadatos y Structural Plan ilustrativo anonimizado. Verificados dos proyectos, ficha, fotos, ampliación, PDF firmado, privacidad y Mi Portafolio; proyecto existente y original intactos.
 
 - [x] Crear y verificar cuenta demo independiente de BLUE COAST, con direcciones ficticias difuminadas, importes $XXXX y documentos anonimizados, sin tocar el original; ingreso con credenciales, cuatro secciones, ficha, documentos y gráfico verificados, rol investor sin acceso al proyecto original.
 
