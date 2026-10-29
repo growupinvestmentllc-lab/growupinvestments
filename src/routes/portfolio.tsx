@@ -6,7 +6,8 @@ import { AppHeader } from "@/components/AppHeader";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { formatUSD } from "@/lib/stages";
+import { InvestorAddress, useInvestorMoney } from "@/components/InvestorPrivacy";
+import { DEMO_LLC } from "@/lib/demo-investor";
 import { HardHat, Home, Tag, CheckCircle2, ArrowRight, MapPin, Eye, Download } from "lucide-react";
 import { OwnershipPanel, useOwnerships } from "@/components/OwnershipPanel";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
@@ -166,6 +167,7 @@ function PortfolioPage() {
 /* ------------------------------ MINI RESUMEN ------------------------------ */
 
 function PortfolioSummary() {
+  const { formatUSD, formatUSDCents, demo } = useInvestorMoney();
   const { role, user } = useAuth();
   const { myLlc } = useOwnerships();
   const isAdmin = role === "admin";
@@ -281,6 +283,7 @@ function Box({ label, value, tone, sub }: { label: string; value: string; tone?:
 
 
 function ConstructionTab() {
+  const { formatUSD, formatUSDCents, demo } = useInvestorMoney();
   const { rows: ownerships, myLlc } = useOwnerships();
   const { role, user } = useAuth();
   const [rows, setRows] = useState<
@@ -386,7 +389,7 @@ function ConstructionTab() {
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+                <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{r.address}</InvestorAddress></h3>
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                   <MapPin className="h-3 w-3" /> Florida, USA
                 </p>
@@ -514,6 +517,7 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
   ownershipPct: number;
   combined?: boolean;
 }) {
+  const { formatUSD, formatUSDCents } = useInvestorMoney();
   const hasAnnualFinancials = (rental as any).annual_rent != null;
   const ownerMonthlyNet = (monthlyRent - monthlyAdministration - otherMonthlyExpenses) * ownershipPct / 100;
   const annualAdministration = monthlyAdministration * 12;
@@ -555,6 +559,7 @@ function RentalFinancials({ rental, monthlyRent, monthlyAdministration, otherMon
 }
 
 function RentalTab() {
+  const { formatUSD, formatUSDCents, demo } = useInvestorMoney();
   const { rows: ownerships, myLlc } = useOwnerships();
   const { user, role } = useAuth();
   const now = new Date();
@@ -709,7 +714,7 @@ function RentalTab() {
           {extraRented.map((p) => (
             <div key={p.id} className="card-soft p-6">
               <div className="flex items-start justify-between gap-3 flex-wrap">
-                <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
+                <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{p.address}</InvestorAddress></h3>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
                   🏠 {p.status}
                 </span>
@@ -776,7 +781,7 @@ function RentalTab() {
         return (
           <div key={p.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3 flex-wrap">
-              <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
+              <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{p.address}</InvestorAddress></h3>
               <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${meta.cls}`}>
                 {meta.dot} {meta.label}
               </span>
@@ -792,7 +797,7 @@ function RentalTab() {
                   {p.lease_start && <InfoRow label="Inicio" value={fmtDate(p.lease_start)} />}
                   {p.lease_end && <InfoRow label="Vencimiento" value={fmtDate(p.lease_end)} />}
                   {mine && <InfoRow label="Tu participación" value={`${mine.llc_name} (${pct}%)`} />}
-                  {p.address.toLowerCase().startsWith("2725 embers") && myLlc?.toUpperCase() === "BLUE COAST REALTY LLC" && (
+                  {(p.address.toLowerCase().startsWith("2725 embers") && myLlc?.toUpperCase() === "BLUE COAST REALTY LLC") || myLlc === DEMO_LLC && (
                     <InfoRow label="Fin contrato alquiler" value="28/02/2027" />
                   )}
                 </dl>
@@ -885,7 +890,7 @@ function RentalTab() {
             <BarChart data={chartData}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => demo ? "$XXXX" : `$${(v / 1000).toFixed(0)}k`} />
               <Tooltip formatter={(v: any) => formatUSD(Number(v))} />
               <Bar dataKey="total" fill="#1B4332" radius={[4, 4, 0, 0]} />
             </BarChart>
@@ -897,6 +902,7 @@ function RentalTab() {
 }
 
 function Row({ label, value, strong }: { label: string; value: number; strong?: boolean }) {
+  const { formatUSD } = useInvestorMoney();
   return (
     <div className={`flex justify-between mt-1 ${strong ? "font-semibold text-foreground border-t border-border pt-1 mt-2" : "text-muted-foreground"}`}>
       <span>{label}</span>
@@ -913,6 +919,7 @@ function fmtDate(d: string) {
 /* ----------------------------- TAB 3: A LA VENTA ---------------------------- */
 
 function ForSaleTab() {
+  const { formatUSD, formatUSDCents, demo } = useInvestorMoney();
   const { user, role } = useAuth();
   const { rows: ownerships, myLlc } = useOwnerships();
   const [rows, setRows] = useState<any[]>([]);
@@ -969,7 +976,7 @@ function ForSaleTab() {
         return (
           <div key={p.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="text-lg font-semibold text-foreground">{p.address}</h3>
+              <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{p.address}</InvestorAddress></h3>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
                 🟠 En venta
               </span>
@@ -1001,7 +1008,7 @@ function ForSaleTab() {
           return (
             <div key={r.id} className="card-soft p-6">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+                <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{r.address}</InvestorAddress></h3>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
                   🟠 En venta
                 </span>
@@ -1032,7 +1039,7 @@ function ForSaleTab() {
           return (
             <div key={r.id} className="card-soft p-6">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+                <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{r.address}</InvestorAddress></h3>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
                   🟠 En venta
                 </span>
@@ -1062,7 +1069,7 @@ function ForSaleTab() {
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+              <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{r.address}</InvestorAddress></h3>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-orange-100 text-orange-800 whitespace-nowrap">
                 🟠 En venta
               </span>
@@ -1093,6 +1100,7 @@ function ForSaleTab() {
 /* ------------------------------ TAB 4: VENDIDAS ----------------------------- */
 
 function SoldTab({ contributions }: { contributions: Contribution[] }) {
+  const { formatUSD } = useInvestorMoney();
   const { user, role } = useAuth();
   const { myLlc } = useOwnerships();
   const [rows, setRows] = useState<any[]>([]);
@@ -1148,7 +1156,7 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
           <div key={`${project.id}-${investment?.owner_llc ?? "project"}`} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-lg font-semibold text-foreground">{project.address}</h3>
+                <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{project.address}</InvestorAddress></h3>
                 {investment?.owner_llc && (
                   <p className="mt-1 text-xs font-medium text-muted-foreground">{investment.owner_llc} · {pct}%</p>
                 )}
@@ -1184,7 +1192,7 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
           return (
             <div key={r.id} className="card-soft p-6">
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+                <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{r.address}</InvestorAddress></h3>
                 <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
                   ✅ Vendida
                 </span>
@@ -1215,7 +1223,7 @@ function SoldTab({ contributions }: { contributions: Contribution[] }) {
         return (
           <div key={r.id} className="card-soft p-6">
             <div className="flex items-start justify-between gap-3">
-              <h3 className="text-lg font-semibold text-foreground">{r.address}</h3>
+              <h3 className="text-lg font-semibold text-foreground"><InvestorAddress>{r.address}</InvestorAddress></h3>
               <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-primary/10 text-primary whitespace-nowrap">
                 ✅ Vendida
               </span>

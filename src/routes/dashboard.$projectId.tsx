@@ -3,7 +3,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
-import { formatUSD, STAGE_GROUPS } from "@/lib/stages";
+import { STAGE_GROUPS } from "@/lib/stages";
+import { InvestorAddress, useInvestorMoney } from "@/components/InvestorPrivacy";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Check, MapPin, Bed, Bath, Car, Home, FileText, Download, Upload } from "lucide-react";
 import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
@@ -75,6 +76,7 @@ const RAJAH_472_PROJECT_ID = "97dacb6f-4145-402a-941b-9fd4c4ff73ff";
 const RAJAH_472_SELLERS = new Set(["ALMERIA LLC", "DAVI LLC"]);
 
 function ProjectDetail() {
+  const { formatUSD, demo } = useInvestorMoney();
   const { projectId } = useParams({ from: "/dashboard/$projectId" });
   const { user, loading, role } = useAuth();
   const navigate = useNavigate();
@@ -142,7 +144,7 @@ function ProjectDetail() {
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
   const isTench = project?.id === "370b08ed-9b37-4479-a17f-86a999d893c3";
   const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
-  const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39";
+  const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39" || demo;
   const is2812 = (project?.address?.toLowerCase() ?? "").includes("2812 nw 27th");
   const is14Trout = (project?.address?.toLowerCase() ?? "").includes("14 trout");
   const is5963Virtudes = (project?.address?.toLowerCase() ?? "").includes("5963") && (project?.address?.toLowerCase() ?? "").includes("virtudes");
@@ -265,7 +267,7 @@ function ProjectDetail() {
         </div>
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-foreground">{project.address}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold text-foreground"><InvestorAddress>{project.address}</InvestorAddress></h1>
             <p className="mt-2 text-sm text-muted-foreground flex items-center gap-1"><MapPin className="h-4 w-4" /> Florida, USA</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
@@ -514,7 +516,7 @@ function ProjectDetail() {
             )}
 
             {!is127Realstoma && <div className="card-soft p-6 bg-primary text-primary-foreground">
-              <h3 className="font-semibold mb-4">{isTench ? "Rentabilidad" : (project.address?.toLowerCase().includes("7305") || (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember"))) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : is448Rajah ? "Rentabilidad obtenida" : "Rentabilidad esperada"}</h3>
+              <h3 className="font-semibold mb-4">{isTench ? "Rentabilidad" : (project.address?.toLowerCase().includes("7305") || (is2725Embers)) ? "Rentabilidad final" : is127Cape ? "Resultado de la venta" : is448Rajah ? "Rentabilidad obtenida" : "Rentabilidad esperada"}</h3>
                 <div className={`grid sm:grid-cols-2 gap-4 text-sm ${is127Cape ? "lg:grid-cols-5" : is127 ? "lg:grid-cols-3" : isTench ? "lg:grid-cols-4" : "lg:grid-cols-5"}`}>
                 {isTench ? (
                   <>
@@ -537,7 +539,7 @@ function ProjectDetail() {
                 )}
                 {!is127 && !is14Trout && !is5963Virtudes && !is448Rajah && !is1405Cortez && (
                   <>
-                    <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember")) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
+                    <Stat dark label={project.address?.toLowerCase().includes("7305") ? "Alquiler (mensual)" : (is2725Embers) ? "Alquiler mensual neto" : "Alquiler est. (mensual)"} value={formatUSD(project.expected_rent_price ?? 0)} />
                   </>
                 )}
                 <Stat dark label="Costo total" value={formatUSD(totalCost)} />
@@ -564,7 +566,7 @@ function ProjectDetail() {
                   <Stat dark label="ROI estimado" value="17.60%" />
                 ) : is127 ? (
                   <Stat dark label="ROI estimado" value={`${project.lot_cost ? (((Number(project.expected_sale_price || 0) - Number(project.lot_cost)) / Number(project.lot_cost)) * 100).toFixed(1) : 0}%`} />
-                ) : project.address?.toLowerCase().includes("2725") && project.address?.toLowerCase().includes("ember") ? (
+                ) : is2725Embers ? (
                   <Stat dark label="NOI" value="6.34%" />
                 ) : project.address?.toLowerCase().includes("710") ? (
                   <Stat dark label="ROI estimado" value="11%" />
@@ -843,6 +845,7 @@ function DrawSchedule({
   is621Flamingo?: boolean;
   deposited?: number;
 }) {
+  const { formatUSD } = useInvestorMoney();
   const DRAW_GROUPS = [
     "Soft Construction",
     "Hard Construction 1",

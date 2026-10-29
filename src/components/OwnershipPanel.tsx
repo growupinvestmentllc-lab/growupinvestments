@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { formatUSD } from "@/lib/stages";
+import { useInvestorMoney } from "@/components/InvestorPrivacy";
 import { Badge } from "@/components/ui/badge";
 import { Users } from "lucide-react";
 
@@ -64,6 +64,7 @@ export function OwnershipPanel({
   /** Totales de la casa; se muestra también la parte proporcional del usuario */
   amounts?: { label: string; value: number }[];
 }) {
+  const { formatUSD } = useInvestorMoney();
   if (ownerships.length === 0) return null;
 
   const current = ownerships.filter((o) => o.stage === stage && !o.to_date);

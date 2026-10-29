@@ -1,4 +1,6 @@
 Group Hunter's live offerings through a browser-safe classification helper; this separates categories without modifying source records or financial values.
+Keep demo investor records physically independent, sanitize stored private text and files, and format money through the account-scoped privacy hook; this prevents demo access from exposing original investor data.
+Scope opportunities by nullable investor_id and exclude globally unassigned portfolio rows only for the demo LLC; this isolates its catalog while preserving existing investor access.
 Serve all Hunter accounts through the shared Hunter routes and live offerings catalog, keeping sales scoped to each Hunter's user ID; this avoids duplicated catalogs and exposes no other Hunter's sales.
 Apply account-specific catalog presentation exclusions through the browser-safe offering helper before grouping; this preserves shared source records and other Hunters' catalogs.
 Show combined rental financials for the Kimberly duplex once, while retaining each unit's separate lease and monthly payment history; this prevents double-counting without erasing unit-specific records.

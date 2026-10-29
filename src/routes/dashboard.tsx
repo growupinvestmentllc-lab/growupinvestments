@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/use-auth";
 import { AppHeader } from "@/components/AppHeader";
 import { constructionProgress, constructionStageLabel, isLotForSale } from "@/lib/construction-progress";
 import { MapPin, ArrowRight, Home } from "lucide-react";
-import { formatUSD } from "@/lib/stages";
+import { InvestorAddress, useInvestorMoney } from "@/components/InvestorPrivacy";
 import { Button } from "@/components/ui/button";
 import { CapitalProjectCard } from "@/components/CapitalProjectCard";
 import { ownContributions, type Contribution } from "@/lib/capital-contributions";
@@ -75,6 +75,7 @@ type Opportunity = {
 };
 
 function Dashboard() {
+  const { formatUSD } = useInvestorMoney();
   const { user, role, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -248,7 +249,7 @@ function Dashboard() {
                   </Link>
                 </div>
                 <h3 className="mt-4 text-lg font-semibold text-foreground leading-snug">
-                  {p.address}
+                  <InvestorAddress>{p.address}</InvestorAddress>
                 </h3>
                 <p className="mt-1 text-xs text-muted-foreground flex items-center gap-1">
                   <MapPin className="h-3 w-3" /> Florida, USA
@@ -314,10 +315,10 @@ function Dashboard() {
                     <span className="self-start text-xs font-medium px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground">
                       {o.status}
                     </span>
-                    <h3 className="mt-2 font-semibold text-foreground">{o.name}</h3>
+                    <h3 className="mt-2 font-semibold text-foreground"><InvestorAddress>{o.name}</InvestorAddress></h3>
                     <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
                       <MapPin className="h-3 w-3" />
-                      {o.location}
+                      <InvestorAddress>{o.location}</InvestorAddress>
                     </p>
                     {isLot ? (
                       <div className="mt-3 rounded-lg border border-border bg-muted/40 p-3">
