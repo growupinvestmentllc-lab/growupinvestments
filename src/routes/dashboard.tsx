@@ -1,3 +1,4 @@
+import { InvestorMetric } from "@/components/InvestorPrivacy";
 import { createFileRoute, Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -353,7 +354,7 @@ function Dashboard() {
                         <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
                           <div>
                             <p className="text-xs text-muted-foreground">ROI esperado</p>
-                            <p className="font-semibold text-primary">{o.expected_roi}%</p>
+                            <p className="font-semibold text-primary"><InvestorMetric label="ROI" value={`${o.expected_roi}%`} /></p>
                           </div>
                           <div>
                             <p className="text-xs text-muted-foreground">Inversión</p>
