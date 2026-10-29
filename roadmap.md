@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Crear y verificar cuenta demo independiente de BLUE COAST, con direcciones ficticias difuminadas, importes $XXXX y documentos anonimizados, sin tocar el original.
+- [x] Crear y verificar cuenta demo independiente de BLUE COAST, con direcciones ficticias difuminadas, importes $XXXX y documentos anonimizados, sin tocar el original; ingreso con credenciales, cuatro secciones, ficha, documentos y gráfico verificados, rol investor sin acceso al proyecto original.
 
 - [x] Agregar Limpieza de lote realizada Sí/No (inicial No) en Admin; sumar 3% dentro de HC1 sin duplicarlo y sincronizar avance y etiqueta en todos los portales, sin tocar otros datos. 23 pruebas aprobadas; guardado en Admin y 20% con etiqueta verificados en listado y ficha de DAVI/925; restaurado No en todas las casas.
 
