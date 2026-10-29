@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const InvestorSchema = z.object({
   email: z.string().email().max(255),
@@ -9,8 +9,12 @@ const InvestorSchema = z.object({
 });
 
 export const createInvestor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((d) => InvestorSchema.parse(d))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { data: admin } = await context.supabase.rpc("has_role", { _user_id: context.userId, _role: "admin" });
+    if (!admin) throw new Error("Forbidden");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
@@ -19,13 +23,15 @@ export const createInvestor = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
     // Trigger creates profile + investor role automatically.
-    return { id: created.user!.id };
+    if (!created.user) throw new Error("Account creation failed");
+    return { id: created.user.id };
   });
 
 const DeleteSchema = z.object({ userId: z.string().uuid() });
 export const deleteInvestor = createServerFn({ method: "POST" })
   .inputValidator((d) => DeleteSchema.parse(d))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -35,6 +41,7 @@ const UpdatePwSchema = z.object({ userId: z.string().uuid(), password: z.string(
 export const updateInvestorPassword = createServerFn({ method: "POST" })
   .inputValidator((d) => UpdatePwSchema.parse(d))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
       password: data.password,
     });
@@ -49,6 +56,7 @@ const BootstrapSchema = z.object({
 export const bootstrapAdmin = createServerFn({ method: "POST" })
   .inputValidator((d) => BootstrapSchema.parse(d))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     // Only allowed if no admin exists yet
     const { data: existing, error: e1 } = await supabaseAdmin
       .from("user_roles")
@@ -66,7 +74,8 @@ export const bootstrapAdmin = createServerFn({ method: "POST" })
       user_metadata: { full_name: "Admin" },
     });
     if (error) throw new Error(error.message);
-    const uid = created.user!.id;
+    if (!created.user) throw new Error("Account creation failed");
+    const uid = created.user.id;
     // Replace investor role with admin
     await supabaseAdmin.from("user_roles").delete().eq("user_id", uid);
     const { error: e2 } = await supabaseAdmin
@@ -85,6 +94,7 @@ const HunterSchema = z.object({
 export const createHunter = createServerFn({ method: "POST" })
   .inputValidator((d) => HunterSchema.parse(d))
   .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 1000 });
     const existing = (list?.users ?? []).find(
       (u) => (u.email ?? "").toLowerCase() === data.email.toLowerCase(),
@@ -104,7 +114,8 @@ export const createHunter = createServerFn({ method: "POST" })
         user_metadata: { full_name: data.fullName },
       });
       if (error) throw new Error(error.message);
-      uid = created.user!.id;
+      if (!created.user) throw new Error("Account creation failed");
+      uid = created.user.id;
     }
     await supabaseAdmin.from("profiles").upsert({ id: uid, email: data.email, full_name: data.fullName });
     await supabaseAdmin.from("user_roles").delete().eq("user_id", uid);
@@ -116,6 +127,7 @@ export const createHunter = createServerFn({ method: "POST" })
   });
 
 export const adminExists = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
     .from("user_roles")
     .select("id")
