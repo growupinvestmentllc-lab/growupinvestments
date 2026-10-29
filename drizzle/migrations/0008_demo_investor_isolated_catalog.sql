@@ -1,0 +1,5 @@
+ALTER TABLE public.opportunities ADD COLUMN investor_id uuid DEFAULT NULL REFERENCES public.profiles(id);
+ALTER POLICY "all auth see opportunities" ON public.opportunities TO authenticated USING (has_role(auth.uid(), 'admin'::app_role) OR investor_id = auth.uid() OR (investor_id IS NULL AND current_user_llc() IS DISTINCT FROM 'EJEMPLO INVERSOR LLC'));
+ALTER POLICY "rental_properties_select" ON public.rental_properties TO authenticated USING (has_role(auth.uid(), 'admin'::app_role) OR investor_id = auth.uid() OR (investor_id IS NULL AND current_user_llc() IS DISTINCT FROM 'EJEMPLO INVERSOR LLC'));
+ALTER POLICY "sold_select" ON public.portfolio_sold TO authenticated USING (has_role(auth.uid(), 'admin'::app_role) OR investor_id = auth.uid() OR (investor_id IS NULL AND current_user_llc() IS DISTINCT FROM 'EJEMPLO INVERSOR LLC'));
+ALTER POLICY "for_sale_select" ON public.portfolio_for_sale TO authenticated USING (has_role(auth.uid(), 'admin'::app_role) OR investor_id = auth.uid() OR (investor_id IS NULL AND current_user_llc() IS DISTINCT FROM 'EJEMPLO INVERSOR LLC'));

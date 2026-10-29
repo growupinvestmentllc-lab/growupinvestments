@@ -569,6 +569,7 @@ export type Database = {
           garage: string | null
           id: string
           image_url: string | null
+          investor_id: string | null
           location: string
           model: string | null
           name: string
@@ -589,6 +590,7 @@ export type Database = {
           garage?: string | null
           id?: string
           image_url?: string | null
+          investor_id?: string | null
           location: string
           model?: string | null
           name: string
@@ -609,6 +611,7 @@ export type Database = {
           garage?: string | null
           id?: string
           image_url?: string | null
+          investor_id?: string | null
           location?: string
           model?: string | null
           name?: string
@@ -618,7 +621,15 @@ export type Database = {
           study?: number | null
           total_investment?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "opportunities_investor_id_fkey"
+            columns: ["investor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       portfolio_for_sale: {
         Row: {

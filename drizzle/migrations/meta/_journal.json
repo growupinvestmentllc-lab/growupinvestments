@@ -57,6 +57,13 @@
       "when": 1792772387028,
       "tag": "0007_add_lot_clearing_completed",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793287861447,
+      "tag": "0008_demo_investor_isolated_catalog",
+      "breakpoints": true
     }
   ]
 }
