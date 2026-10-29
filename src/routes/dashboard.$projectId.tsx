@@ -11,6 +11,7 @@ import { ConstructionProgressBar } from "@/components/ConstructionProgressBar";
 import { GanttChart, ym, type PlannedVsActual } from "@/components/GanttChart";
 import { Button } from "@/components/ui/button";
 import { constructionProgress, constructionStageLabel, isLotForSale } from "@/lib/construction-progress";
+import { demoProjectRoi } from "@/lib/demo-investor";
 
 export const Route = createFileRoute("/dashboard/$projectId")({
   head: () => ({ meta: [
@@ -557,7 +558,9 @@ function ProjectDetail() {
                     value={formatUSD(project.lot_cost)}
                   />
                 )}
-                {is568Cypress ? (
+                {demoProjectRoi(demo, project.id) !== null ? (
+                  <Stat dark label="ROI estimado" value={`${demoProjectRoi(demo, project.id)}%`} />
+                ) : is568Cypress ? (
                   <Stat dark label="ROI estimado" value="11,2%" />
                 ) : normalizedAddress.includes("2130") ? (
                   <Stat dark label="ROI estimado" value="14,2%" />
