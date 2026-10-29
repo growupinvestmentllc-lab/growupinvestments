@@ -144,7 +144,7 @@ function ProjectDetail() {
   const is448Rajah = project?.id === "f17fd366-0e24-46ed-b5eb-84f669cbb219";
   const isTench = project?.id === "370b08ed-9b37-4479-a17f-86a999d893c3";
   const is7305SunNLake = project?.id === "8d9ed84c-7973-4dd5-9d28-2f09cd858379";
-  const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39" || demo;
+  const is2725Embers = project?.id === "22a81a71-0338-49da-9d2e-98c37c8a2c39" || (demo && project?.id === "a85c8831-dce0-4f70-bfe1-6c4e9f03b5bc");
   const is2812 = (project?.address?.toLowerCase() ?? "").includes("2812 nw 27th");
   const is14Trout = (project?.address?.toLowerCase() ?? "").includes("14 trout");
   const is5963Virtudes = (project?.address?.toLowerCase() ?? "").includes("5963") && (project?.address?.toLowerCase() ?? "").includes("virtudes");
