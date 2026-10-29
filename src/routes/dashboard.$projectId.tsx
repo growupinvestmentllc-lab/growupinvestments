@@ -123,6 +123,7 @@ function ProjectDetail() {
       // Bucket is private → generate signed URLs from stored path
       const signed = await Promise.all(rawImgs.map(async (img) => {
         const url = img.image_url || "";
+        if (url.startsWith("/__l5e/assets-v1/")) return img;
         const marker = "/portfolio/";
         const idx = url.indexOf(marker);
         const path = idx >= 0 ? url.slice(idx + marker.length).split("?")[0] : url;

@@ -13,6 +13,7 @@ describe("demo investor privacy", () => {
   });
   it("marks only fictitious addresses for blur", () => {
     expect(isDemoAddress("Dirección ficticia 01, Florida")).toBe(true);
+    expect(isDemoAddress("Dirección ficticia 02, Florida")).toBe(true);
     expect(isDemoAddress("Ubicación ficticia 01")).toBe(true);
     expect(isDemoAddress("2725 Embers Pkwy W")).toBe(false);
   });
