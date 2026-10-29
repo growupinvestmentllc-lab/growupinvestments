@@ -1,0 +1,19 @@
+import { describe, expect, it } from "vitest";
+import { isDemoInvestor, maskDemoMoney, isDemoAddress } from "./demo-investor";
+
+describe("demo investor privacy", () => {
+  it("only enables masking for the requested demo account", () => {
+    expect(isDemoInvestor("ejemplo@growupinvestments.com")).toBe(true);
+    expect(isDemoInvestor("bluecoast@llc.com")).toBe(false);
+    expect(isDemoInvestor(null)).toBe(false);
+  });
+  it("masks money while retaining percentages and dates", () => {
+    expect(maskDemoMoney("$1,883 / $941.50 · 50% · 28/02/2027")).toBe("$XXXX / $XXXX · 50% · 28/02/2027");
+    expect(maskDemoMoney("$2k · ($25.550) · $0")).toBe("$XXXX · ($XXXX) · $XXXX");
+  });
+  it("marks only fictitious addresses for blur", () => {
+    expect(isDemoAddress("Dirección ficticia 01, Florida")).toBe(true);
+    expect(isDemoAddress("Ubicación ficticia 01")).toBe(true);
+    expect(isDemoAddress("2725 Embers Pkwy W")).toBe(false);
+  });
+});
