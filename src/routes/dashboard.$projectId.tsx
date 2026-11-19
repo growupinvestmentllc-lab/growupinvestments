@@ -332,9 +332,9 @@ function ProjectDetail() {
                         ? ({
                             "Hard Construction 1": { planned: { start: ym(2025, 11), end: ym(2026, 0) }, actual: { start: ym(2026, 2), end: ym(2026, 3) } },
                             "Hard Construction 2": { planned: { start: ym(2026, 1), end: ym(2026, 2) }, actual: { start: ym(2026, 4), end: ym(2026, 5) } },
-                            "Hard Construction 3": { planned: { start: ym(2026, 4), end: ym(2026, 5) }, actual: { start: ym(2026, 6), end: ym(2026, 7) } },
-                            "Hard Construction 4": { planned: { start: ym(2026, 5), end: ym(2026, 6) }, actual: { start: ym(2026, 7), end: ym(2026, 8) } },
-                            "CO (Certificado de Ocupación)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2026, 9), end: ym(2026, 9) } },
+                            "Hard Construction 3": { planned: { start: ym(2026, 4), end: ym(2026, 5) }, actual: { start: ym(2026, 6), end: ym(2026, 10) } },
+                            "Hard Construction 4": { planned: { start: ym(2026, 5), end: ym(2026, 6) }, actual: { start: ym(2026, 11), end: ym(2026, 11) } },
+                            "CO (Certificado de Ocupación)": { planned: { start: ym(2026, 6), end: ym(2026, 6) }, actual: { start: ym(2027, 0), end: ym(2027, 0) } },
                           } satisfies PlannedVsActual)
                         : normalizedAddress.includes("710") && normalizedAddress.includes("jaguar")
                         ? ({
