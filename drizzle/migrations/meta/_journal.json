@@ -64,6 +64,13 @@
       "when": 1793287861447,
       "tag": "0008_demo_investor_isolated_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1795100905737,
+      "tag": "0009_bind_storage_reads_to_owners",
+      "breakpoints": true
     }
   ]
 }
