@@ -71,6 +71,13 @@
       "when": 1795100905737,
       "tag": "0009_bind_storage_reads_to_owners",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1795100981167,
+      "tag": "0010_pin_email_functions_and_admin_portfolio_uploads",
+      "breakpoints": true
     }
   ]
 }
